@@ -1,0 +1,81 @@
+############################
+# Android
+############################
+*.iml
+*.apk
+*.aar
+*.ap_
+*.aab
+*.dex
+*.class
+
+# Gradle
+.gradle/
+/build/
+**/build/
+
+# Local configuration (SDK path)
+local.properties
+
+# Android Studio / IntelliJ IDEA
+.idea/
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries/
+.idea/libraries/
+.idea/caches/
+.idea/modules.xml
+.idea/navEditor.xml
+.navigation/
+
+# Generated files
+gen/
+out/
+bin/
+captures/
+
+# External native build
+.externalNativeBuild/
+.cxx/
+
+# Keystore / signing keys — !! Không commit key vào repo !!
+*.jks
+*.keystore
+
+# Proguard
+proguard/
+
+# Log files
+*.log
+build_log.txt
+build_output.txt
+
+############################
+# Firebase
+############################
+# google-services.json chứa API key, KHÔNG nên commit nếu repo public.
+# Nếu repo private thì có thể bỏ comment dòng dưới.
+google-services.json
+
+############################
+# macOS
+############################
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+############################
+# Windows
+############################
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+############################
+# Linux
+############################
+*~

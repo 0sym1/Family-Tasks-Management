@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/workspaceListFragment">
+
+    <fragment
+        android:id="@+id/workspaceListFragment"
+        android:name="com.tngoc.familytaskapp.ui.workspace.WorkspaceListFragment"
+        android:label="Workspace">
+        <action
+            android:id="@+id/action_workspaceList_to_createWorkspace"
+            app:destination="@id/createWorkspaceFragment" />
+        <action
+            android:id="@+id/action_workspaceList_to_workspaceDetail"
+            app:destination="@id/workspaceDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/workspaceDetailFragment"
+        android:name="com.tngoc.familytaskapp.ui.workspace.WorkspaceDetailFragment"
+        android:label="Chi tiết">
+        <argument
+            android:name="workspaceId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_workspaceDetail_to_inviteMember"
+            app:destination="@id/inviteMemberFragment" />
+        <action
+            android:id="@+id/action_workspaceDetail_to_createTask"
+            app:destination="@id/createTaskFragment" />
+        <action
+            android:id="@+id/action_workspaceDetail_to_taskList"
+            app:destination="@id/taskListFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createWorkspaceFragment"
+        android:name="com.tngoc.familytaskapp.ui.workspace.CreateWorkspaceFragment"
+        android:label="Tạo workspace" />
+
+    <fragment
+        android:id="@+id/inviteMemberFragment"
+        android:name="com.tngoc.familytaskapp.ui.workspace.InviteMemberFragment"
+        android:label="Mời thành viên" />
+
+    <fragment
+        android:id="@+id/taskListFragment"
+        android:name="com.tngoc.familytaskapp.ui.task.TaskListFragment"
+        android:label="Nhiệm vụ">
+        <argument
+            android:name="workspaceId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_taskList_to_createTask"
+            app:destination="@id/createTaskFragment" />
+        <action
+            android:id="@+id/action_taskList_to_taskDetail"
+            app:destination="@id/taskDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/taskDetailFragment"
+        android:name="com.tngoc.familytaskapp.ui.task.TaskDetailFragment"
+        android:label="Chi tiết nhiệm vụ">
+        <argument
+            android:name="taskId"
+            app:argType="string" />
+        <argument
+            android:name="workspaceId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/createTaskFragment"
+        android:name="com.tngoc.familytaskapp.ui.task.CreateTaskFragment"
+        android:label="Tạo nhiệm vụ">
+        <argument
+            android:name="workspaceId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.tngoc.familytaskapp.ui.notification.NotificationFragment"
+        android:label="Thông báo" />
+
+    <fragment
+        android:id="@+id/rewardFragment"
+        android:name="com.tngoc.familytaskapp.ui.reward.RewardFragment"
+        android:label="Phần thưởng" />
+
+    <fragment
+        android:id="@+id/historyFragment"
+        android:name="com.tngoc.familytaskapp.ui.history.HistoryFragment"
+        android:label="Lịch sử" />
+
+    <fragment
+        android:id="@+id/chatBotFragment"
+        android:name="com.tngoc.familytaskapp.ui.chatbot.ChatBotFragment"
+        android:label="Trợ lý AI" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.tngoc.familytaskapp.ui.settings.SettingsFragment"
+        android:label="Cài đặt" />
+
+</navigation>

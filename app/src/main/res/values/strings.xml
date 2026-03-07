@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">Family Task App</string>
+
+    <!-- Welcome -->
+    <string name="app_title">Family\nTasks\nManagement</string>
+    <string name="btn_login">Đăng nhập</string>
+    <string name="btn_register">Đăng ký</string>
+    <string name="btn_cancel">Hủy</string>
+    <string name="or">hoặc</string>
+
+    <!-- Login -->
+    <string name="title_login">Đăng nhập</string>
+    <string name="label_username">Tên người dùng</string>
+    <string name="label_password">Mật khẩu</string>
+    <string name="hint_username">Nhập tên người dùng</string>
+    <string name="hint_password">Nhập mật khẩu</string>
+
+    <!-- Register -->
+    <string name="title_register">Đăng ký</string>
+    <string name="label_name">Tên</string>
+    <string name="label_confirm_password">Xác nhận\nmật khẩu</string>
+    <string name="hint_name">Nhập tên của bạn</string>
+    <string name="hint_confirm_password">Nhập lại mật khẩu</string>
+
+    <!-- Errors -->
+    <string name="error_empty_fields">Vui lòng điền đầy đủ thông tin</string>
+    <string name="error_password_mismatch">Mật khẩu không khớp</string>
+
+    <!-- Workspace -->
+    <string name="workspaces">Không gian làm việc</string>
+    <string name="workspace_detail">Chi tiết</string>
+    <string name="create_workspace">Tạo workspace</string>
+    <string name="invite_member">Mời thành viên</string>
+    <string name="workspace_created">Tạo workspace thành công!</string>
+
+    <!-- Task -->
+    <string name="tasks">Nhiệm vụ</string>
+    <string name="task_detail">Chi tiết nhiệm vụ</string>
+    <string name="create_task">Tạo nhiệm vụ</string>
+    <string name="task_created">Tạo nhiệm vụ thành công!</string>
+    <string name="task_completed">Hoàn thành nhiệm vụ!</string>
+
+    <!-- Others -->
+    <string name="notifications">Thông báo</string>
+    <string name="rewards">Phần thưởng</string>
+    <string name="history">Lịch sử</string>
+    <string name="chatbot">Trợ lý AI</string>
+    <string name="settings">Cài đặt</string>
+    <string name="invitation_sent">Đã gửi lời mời!</string>
+</resources>

@@ -1,0 +1,39 @@
+package com.tngoc.familytaskapp.utils;
+
+public class Constants {
+    // Firestore collections
+    public static final String COLLECTION_USERS          = "users";
+    public static final String COLLECTION_WORKSPACES     = "workspaces";
+    public static final String COLLECTION_TASKS          = "tasks";
+    public static final String COLLECTION_INVITATIONS    = "invitations";
+    public static final String COLLECTION_NOTIFICATIONS  = "notifications";
+    public static final String COLLECTION_REWARDS        = "rewards";
+    public static final String COLLECTION_CHAT_HISTORY   = "chatHistory";
+    public static final String COLLECTION_MESSAGES       = "messages";
+
+    // Task status
+    public static final String TASK_STATUS_TODO        = "todo";
+    public static final String TASK_STATUS_IN_PROGRESS = "in_progress";
+    public static final String TASK_STATUS_DONE        = "done";
+
+    // Invitation status
+    public static final String INVITATION_PENDING  = "pending";
+    public static final String INVITATION_ACCEPTED = "accepted";
+    public static final String INVITATION_DECLINED = "declined";
+
+    // Notification types
+    public static final String NOTIF_TASK_ASSIGNED = "task_assigned";
+    public static final String NOTIF_TASK_DONE     = "task_done";
+    public static final String NOTIF_INVITATION    = "invitation";
+    public static final String NOTIF_REWARD        = "reward";
+
+    // SharedPreferences
+    public static final String PREF_NAME     = "FamilyTaskPrefs";
+    public static final String PREF_LANGUAGE = "language";
+    public static final String PREF_USER_ID  = "userId";
+
+    // Chat roles
+    public static final String CHAT_ROLE_USER = "user";
+    public static final String CHAT_ROLE_BOT  = "bot";
+}
+
