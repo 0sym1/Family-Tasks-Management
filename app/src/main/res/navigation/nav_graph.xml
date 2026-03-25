@@ -14,6 +14,9 @@
         <action
             android:id="@+id/action_workspaceList_to_workspaceDetail"
             app:destination="@id/workspaceDetailFragment" />
+        <action
+            android:id="@+id/action_workspaceList_to_taskList"
+            app:destination="@id/taskListFragment" />
     </fragment>
 
     <fragment
@@ -51,12 +54,19 @@
         <argument
             android:name="workspaceId"
             app:argType="string" />
+        <argument
+            android:name="workspaceName"
+            app:argType="string"
+            app:nullable="true" />
         <action
             android:id="@+id/action_taskList_to_createTask"
             app:destination="@id/createTaskFragment" />
         <action
             android:id="@+id/action_taskList_to_taskDetail"
             app:destination="@id/taskDetailFragment" />
+        <action
+            android:id="@+id/action_taskList_to_inviteMember"
+            app:destination="@id/inviteMemberFragment" />
     </fragment>
 
     <fragment

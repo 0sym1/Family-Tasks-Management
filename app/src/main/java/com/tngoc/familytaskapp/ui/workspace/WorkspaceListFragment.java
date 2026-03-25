@@ -16,11 +16,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.tngoc.familytaskapp.R;
+import com.tngoc.familytaskapp.adapter.WorkspaceAdapter;
+import com.tngoc.familytaskapp.data.model.Workspace;
 
 public class WorkspaceListFragment extends Fragment {
 
     private WorkspaceViewModel workspaceViewModel;
     private RecyclerView recyclerView;
+    private WorkspaceAdapter adapter;
 
     @Nullable
     @Override
@@ -36,6 +39,15 @@ public class WorkspaceListFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.recyclerViewWorkspaces);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        
+        adapter = new WorkspaceAdapter();
+        adapter.setOnWorkspaceClickListener(workspace -> {
+            Bundle args = new Bundle();
+            args.putString("workspaceId", workspace.getWorkspaceId());
+            args.putString("workspaceName", workspace.getName());
+            Navigation.findNavController(view).navigate(R.id.action_workspaceList_to_taskList, args);
+        });
+        recyclerView.setAdapter(adapter);
 
         view.findViewById(R.id.fabAddWorkspace).setOnClickListener(v ->
             Navigation.findNavController(v).navigate(R.id.action_workspaceList_to_createWorkspace)
@@ -53,7 +65,9 @@ public class WorkspaceListFragment extends Fragment {
 
     private void observeViewModel() {
         workspaceViewModel.workspacesLiveData.observe(getViewLifecycleOwner(), workspaces -> {
-            // TODO: set adapter data
+            if (workspaces != null) {
+                adapter.setWorkspaces(workspaces);
+            }
         });
 
         workspaceViewModel.errorLiveData.observe(getViewLifecycleOwner(), error -> {
@@ -61,4 +75,3 @@ public class WorkspaceListFragment extends Fragment {
         });
     }
 }
-

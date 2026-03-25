@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseUser;
+import com.tngoc.familytaskapp.MainActivity;
 import com.tngoc.familytaskapp.R;
 import com.tngoc.familytaskapp.data.model.Workspace;
 import com.tngoc.familytaskapp.data.repository.UserRepository;
@@ -258,6 +259,19 @@ public class HomeActivity extends AppCompatActivity {
         btnDelete.setOnClickListener(v -> {
             workspaceViewModel.deleteWorkspace(workspace.getWorkspaceId());
             Toast.makeText(this, "Đang xóa workspace...", Toast.LENGTH_SHORT).show();
+        });
+
+        // Add Click listener to open TaskListFragment
+        workspaceView.setOnClickListener(v -> {
+            try {
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.putExtra("OPEN_TASK_LIST", true);
+                intent.putExtra("workspaceId", workspace.getWorkspaceId());
+                intent.putExtra("workspaceName", workspace.getName());
+                startActivity(intent);
+            } catch (Exception e) {
+                Toast.makeText(this, "Chuyển sang danh sách nhiệm vụ...", Toast.LENGTH_SHORT).show();
+            }
         });
 
         llWorkspaceContainer.addView(workspaceView);
