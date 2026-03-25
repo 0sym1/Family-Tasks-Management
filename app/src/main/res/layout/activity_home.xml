@@ -1,37 +1,317 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/bg_dark">
-
-    <!-- NavHostFragment chứa các Fragment -->
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/nav_host_fragment"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="0dp"
+    <ScrollView
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:defaultNavHost="true"
-        app:navGraph="@navigation/nav_graph"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_weight="1"
+        android:scrollbars="none">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Trang chủ"
+                android:textColor="@color/white"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
 
-    <!-- Bottom Navigation -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Xin chào Phúc"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Đây là những workspace mà bạn quản lý"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                android:layout_marginBottom="12dp" />
+
+            <EditText
+                android:id="@+id/etSearch"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_input_field"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:hint="Nhập tên workspace..."
+                android:textColorHint="@color/input_hint"
+                android:textColor="@color/input_text"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:autofillHints="username"
+                android:drawableStart="@android:drawable/ic_menu_search"
+                android:drawablePadding="8dp"
+                android:layout_marginBottom="12dp" />
+
+            <Button
+                android:id="@+id/btnAddWorkspace"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:text="+"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_plus"
+                android:stateListAnimator="@null"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Card 1 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="8dp"
+                app:cardBackgroundColor="@color/input_bg"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Nhà Kho"
+                            android:textColor="@color/white"
+                            android:textSize="20sp" />
+
+                        <Button
+                            android:id="@+id/btnDelete1"
+                            android:layout_width="56dp"
+                            android:layout_height="32dp"
+                            android:text="Xóa"
+                            android:textSize="11sp"
+                            android:background="@drawable/bg_button_dark"
+                            android:textColor="@color/white"
+                            android:stateListAnimator="@null"
+                            android:layout_marginEnd="8dp"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/tvOptions1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="⋯"
+                            android:textColor="@color/white"
+                            android:textSize="20sp" />
+
+                    </LinearLayout>
+
+                    <ProgressBar
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp"
+                        android:layout_marginTop="12dp"
+                        android:progress="65"
+                        android:max="100"
+                        android:indeterminate="false"
+                        android:progressDrawable="@drawable/progress_horizontal" />
+
+                    <!-- Divider line -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#333333"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="12dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Truy cập"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:layout_gravity="center_horizontal" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card 2 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="8dp"
+                app:cardBackgroundColor="@color/input_bg"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Nhà Kho"
+                            android:textColor="@color/white"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <Button
+                            android:id="@+id/btnDelete2"
+                            android:layout_width="56dp"
+                            android:layout_height="32dp"
+                            android:text="Xóa"
+                            android:textSize="11sp"
+                            android:background="@drawable/bg_button_dark"
+                            android:textColor="@color/white"
+                            android:stateListAnimator="@null"
+                            android:layout_marginEnd="8dp"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/tvOptions2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="⋯"
+                            android:textColor="@color/white"
+                            android:textSize="20sp" />
+
+                    </LinearLayout>
+
+                    <ProgressBar
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp"
+                        android:layout_marginTop="12dp"
+                        android:progress="40"
+                        android:max="100"
+                        android:indeterminate="false"
+                        android:progressDrawable="@drawable/progress_horizontal" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Truy cập"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="12dp" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+            <!-- Card 3 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="8dp"
+                app:cardBackgroundColor="@color/input_bg"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Nhà Kho"
+                            android:textColor="@color/white"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <Button
+                            android:id="@+id/btnDelete3"
+                            android:layout_width="56dp"
+                            android:layout_height="32dp"
+                            android:text="Xóa"
+                            android:textSize="11sp"
+                            android:background="@drawable/bg_button_dark"
+                            android:textColor="@color/white"
+                            android:stateListAnimator="@null"
+                            android:layout_marginEnd="8dp"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:id="@+id/tvOptions3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="⋯"
+                            android:textColor="@color/white"
+                            android:textSize="20sp" />
+
+                    </LinearLayout>
+
+                    <ProgressBar
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp"
+                        android:layout_marginTop="12dp"
+                        android:progress="80"
+                        android:max="100"
+                        android:indeterminate="false"
+                        android:progressDrawable="@drawable/progress_horizontal" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Truy cập"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:textSize="14sp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="12dp" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+    </ScrollView>
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/input_bg"
         app:menu="@menu/bottom_nav_menu"
-        app:itemIconTint="@color/white"
-        app:itemTextColor="@color/white"
-        app:labelVisibilityMode="labeled"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
-
+        app:itemIconTint="@color/bottom_nav_colors"
+        app:itemTextColor="@color/bottom_nav_colors"
+        app:labelVisibilityMode="labeled" />
+</LinearLayout>
