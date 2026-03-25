@@ -48,9 +48,27 @@
     <!-- Task -->
     <string name="tasks">Nhiệm vụ</string>
     <string name="task_detail">Chi tiết nhiệm vụ</string>
-    <string name="create_task">Tạo nhiệm vụ</string>
+    <string name="create_task">Thêm công việc</string>
+    <string name="edit_task">Sửa công việc</string>
     <string name="task_created">Tạo nhiệm vụ thành công!</string>
     <string name="task_completed">Hoàn thành nhiệm vụ!</string>
+    <string name="label_task_name">Tên nhiệm vụ</string>
+    <string name="hint_task_name">Nhập tại đây...</string>
+    <string name="label_status">Tình trạng</string>
+    <string name="label_start_date">Ngày bắt đầu</string>
+    <string name="label_end_date">Ngày kết thúc</string>
+    <string name="label_repeat">Lặp lại</string>
+    <string name="label_created_by">Tạo bởi</string>
+    <string name="label_assigned_to">Được giao</string>
+    <string name="status_doing">Đang làm</string>
+    <string name="status_done">Xong</string>
+    <string name="status_todo">Chưa làm</string>
+    <string name="status_review">Kiểm tra</string>
+    <string name="btn_save">Lưu</string>
+    <string name="btn_apply">Áp dụng</string>
+    <string name="hint_date_format">dd/mm/yyyy</string>
+    <string name="repeat_on">On</string>
+    <string name="repeat_off">Off</string>
 
     <!-- Others -->
     <string name="notifications">Thông báo</string>

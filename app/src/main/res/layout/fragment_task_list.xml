@@ -16,10 +16,9 @@
             android:id="@+id/btnBack"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginTop="32dp"
-            android:background="@drawable/bg_circle_dark"
+            android:layout_marginTop="12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_back"
-            android:padding="8dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tint="@color/white" />
@@ -28,7 +27,7 @@
             android:id="@+id/tvWorkspaceName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:text="Nhà kho"
             android:textColor="@color/white"
             android:textSize="48sp"
@@ -148,31 +147,37 @@
                 android:textSize="12sp" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btnMemberList"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
+        <LinearLayout
+            android:id="@+id/llBottomActions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@drawable/bg_rect_dark"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:text="Danh sách thành viên"
-            android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/llSearch" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toBottomOf="@id/llSearch">
 
-        <ImageButton
-            android:id="@+id/fabAddTask"
-            android:layout_width="56dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/bg_rect_dark"
-            android:src="@android:drawable/ic_input_add"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btnMemberList"
-            app:tint="@color/white" />
+            <Button
+                android:id="@+id/btnMemberList"
+                android:layout_width="0dp"
+                android:layout_height="45dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_rect_dark"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:text="Danh sách thành viên"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <ImageButton
+                android:id="@+id/fabAddTask"
+                android:layout_width="56dp"
+                android:layout_height="45dp"
+                android:layout_marginStart="12dp"
+                android:background="@drawable/bg_rect_dark"
+                android:src="@android:drawable/ic_input_add"
+                app:tint="@color/white" />
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewTasks"
@@ -180,7 +185,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:nestedScrollingEnabled="false"
-            app:layout_constraintTop_toBottomOf="@id/fabAddTask" />
+            app:layout_constraintTop_toBottomOf="@id/llBottomActions" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

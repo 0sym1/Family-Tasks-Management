@@ -96,13 +96,20 @@ public class HomeActivity extends AppCompatActivity {
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.homeFragment) {
-                // Reset to initial state
                 llNormalHeader.setVisibility(View.VISIBLE);
                 llAddWorkspaceHeader.setVisibility(View.GONE);
-                etNewWorkspaceName.setText("");
                 return true;
-            } else if (itemId == R.id.taskFragment) Toast.makeText(this, "Nhiệm vụ", Toast.LENGTH_SHORT).show();
-            else if (itemId == R.id.chatBotFragment) Toast.makeText(this, "Chat bot", Toast.LENGTH_SHORT).show();
+            } else if (itemId == R.id.taskFragment) {
+                if (!allWorkspaces.isEmpty()) {
+                    // Mở danh sách task của workspace đầu tiên
+                    Workspace firstWs = allWorkspaces.get(0);
+                    openTaskList(firstWs.getWorkspaceId(), firstWs.getName());
+                } else {
+                    Toast.makeText(this, "Bạn chưa có workspace nào để xem nhiệm vụ", Toast.LENGTH_SHORT).show();
+                    bottomNav.setSelectedItemId(R.id.homeFragment);
+                }
+                return true;
+            } else if (itemId == R.id.chatBotFragment) Toast.makeText(this, "Chat bot", Toast.LENGTH_SHORT).show();
             else if (itemId == R.id.notificationFragment) Toast.makeText(this, "Thông báo", Toast.LENGTH_SHORT).show();
             else if (itemId == R.id.profileFragment) Toast.makeText(this, "Cá nhân", Toast.LENGTH_SHORT).show();
             return true;
@@ -113,26 +120,15 @@ public class HomeActivity extends AppCompatActivity {
             etSearch.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
                     filterWorkspaces(s.toString());
                 }
-
                 @Override
                 public void afterTextChanged(Editable s) {}
             });
-
-            etSearch.setOnEditorActionListener((v, actionId, event) -> {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
-                    filterWorkspaces(etSearch.getText().toString());
-                    return true;
-                }
-                return false;
-            });
         }
 
-        // Switch to Add Workspace view
         if (btnAddWorkspace != null) {
             btnAddWorkspace.setOnClickListener(v -> {
                 llNormalHeader.setVisibility(View.GONE);
@@ -140,37 +136,29 @@ public class HomeActivity extends AppCompatActivity {
             });
         }
 
-        // Switch back to Normal view
         if (btnCancelAdd != null) {
             btnCancelAdd.setOnClickListener(v -> {
                 llNormalHeader.setVisibility(View.VISIBLE);
                 llAddWorkspaceHeader.setVisibility(View.GONE);
-                etNewWorkspaceName.setText("");
             });
         }
 
-        // Add new workspace logic
         if (btnSubmitAdd != null) {
             btnSubmitAdd.setOnClickListener(v -> {
                 String name = etNewWorkspaceName.getText().toString().trim();
                 if (!name.isEmpty()) {
                     List<String> members = new ArrayList<>();
                     members.add(currentUserId);
-                    // Use current user's name if available, otherwise fallback
                     String creatorName = (currentUserName != null) ? currentUserName : "Người dùng";
                     Workspace newWs = new Workspace(null, name, "", currentUserId, creatorName, members);
                     workspaceViewModel.createWorkspace(newWs);
-                    
                     llNormalHeader.setVisibility(View.VISIBLE);
                     llAddWorkspaceHeader.setVisibility(View.GONE);
                     etNewWorkspaceName.setText("");
-                } else {
-                    Toast.makeText(this, "Vui lòng nhập tên workspace", Toast.LENGTH_SHORT).show();
                 }
             });
         }
 
-        // Observe Workspaces
         workspaceViewModel.workspacesLiveData.observe(this, workspaces -> {
             if (workspaces != null) {
                 allWorkspaces = workspaces;
@@ -179,38 +167,33 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         workspaceViewModel.workspaceIdLiveData.observe(this, id -> {
-            if (id != null) {
-                Toast.makeText(this, "Đã thêm workspace thành công", Toast.LENGTH_SHORT).show();
-                workspaceViewModel.loadWorkspacesForUser(currentUserId);
-            }
+            if (id != null) workspaceViewModel.loadWorkspacesForUser(currentUserId);
         });
 
-        workspaceViewModel.successLiveData.observe(this, success -> {
-            if (success != null && success) {
-                workspaceViewModel.loadWorkspacesForUser(currentUserId);
-            }
-        });
-
-        workspaceViewModel.errorLiveData.observe(this, error -> {
-            if (error != null) {
-                Toast.makeText(this, "Lỗi: " + error, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // Load data
         workspaceViewModel.loadWorkspacesForUser(currentUserId);
+    }
+
+    public void logout() {
+        authViewModel.logout();
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
+    }
+
+    private void openTaskList(String workspaceId, String workspaceName) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("OPEN_TASK_LIST", true);
+        intent.putExtra("workspaceId", workspaceId);
+        intent.putExtra("workspaceName", workspaceName);
+        startActivity(intent);
     }
 
     private String capitalizeAndFormat(String name) {
         if (name == null || name.isEmpty()) return name;
-        
         String[] words = name.toLowerCase().split("\\s+");
         StringBuilder sb = new StringBuilder();
         for (String word : words) {
             if (!word.isEmpty()) {
-                sb.append(Character.toUpperCase(word.charAt(0)))
-                  .append(word.substring(1))
-                  .append(" ");
+                sb.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1)).append(" ");
             }
         }
         return sb.toString().trim();
@@ -219,7 +202,6 @@ public class HomeActivity extends AppCompatActivity {
     private void filterWorkspaces(String query) {
         llWorkspaceContainer.removeAllViews();
         String lowerCaseQuery = query.toLowerCase().trim();
-        
         for (Workspace ws : allWorkspaces) {
             if (ws.getName().toLowerCase().contains(lowerCaseQuery)) {
                 addWorkspaceCardToUI(ws);
@@ -229,57 +211,18 @@ public class HomeActivity extends AppCompatActivity {
 
     private void addWorkspaceCardToUI(Workspace workspace) {
         View workspaceView = LayoutInflater.from(this).inflate(R.layout.item_workspace, llWorkspaceContainer, false);
-        
-        TextView tvName = workspaceView.findViewById(R.id.tvWorkspaceName);
-        TextView tvOwner = workspaceView.findViewById(R.id.tvOwnerName);
-        TextView tvTaskCount = workspaceView.findViewById(R.id.tvTaskCount);
-        ProgressBar pb = workspaceView.findViewById(R.id.pbWorkspace);
-        TextView tvOptions = workspaceView.findViewById(R.id.tvOptions);
-        Button btnDelete = workspaceView.findViewById(R.id.btnDelete);
-        
-        tvName.setText(workspace.getName());
-        tvOwner.setText("Tạo bởi: " + (workspace.getOwnerName() != null ? workspace.getOwnerName() : "Unknown"));
+        ((TextView) workspaceView.findViewById(R.id.tvWorkspaceName)).setText(workspace.getName());
+        ((TextView) workspaceView.findViewById(R.id.tvOwnerName)).setText("Tạo bởi: " + (workspace.getOwnerName() != null ? workspace.getOwnerName() : "Unknown"));
         
         int total = workspace.getTotalTasks();
         int completed = workspace.getCompletedTasks();
-        tvTaskCount.setText(completed + "/" + total + " task");
+        ((TextView) workspaceView.findViewById(R.id.tvTaskCount)).setText(completed + "/" + total + " task");
         
-        // Cập nhật progress bar theo tỷ lệ hoàn thành (0-100)
-        if (total > 0) {
-            int progress = (int) (((float) completed / total) * 100);
-            pb.setProgress(progress);
-        } else {
-            pb.setProgress(0);
-        }
-        
-        tvOptions.setOnClickListener(v -> {
-            btnDelete.setVisibility(btnDelete.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-        });
-        
-        btnDelete.setOnClickListener(v -> {
-            workspaceViewModel.deleteWorkspace(workspace.getWorkspaceId());
-            Toast.makeText(this, "Đang xóa workspace...", Toast.LENGTH_SHORT).show();
-        });
+        ProgressBar pb = workspaceView.findViewById(R.id.pbWorkspace);
+        if (total > 0) pb.setProgress((int) (((float) completed / total) * 100));
+        else pb.setProgress(0);
 
-        // Add Click listener to open TaskListFragment
-        workspaceView.setOnClickListener(v -> {
-            try {
-                Intent intent = new Intent(this, MainActivity.class);
-                intent.putExtra("OPEN_TASK_LIST", true);
-                intent.putExtra("workspaceId", workspace.getWorkspaceId());
-                intent.putExtra("workspaceName", workspace.getName());
-                startActivity(intent);
-            } catch (Exception e) {
-                Toast.makeText(this, "Chuyển sang danh sách nhiệm vụ...", Toast.LENGTH_SHORT).show();
-            }
-        });
-
+        workspaceView.setOnClickListener(v -> openTaskList(workspace.getWorkspaceId(), workspace.getName()));
         llWorkspaceContainer.addView(workspaceView);
-    }
-
-    public void logout() {
-        authViewModel.logout();
-        startActivity(new Intent(this, LoginActivity.class));
-        finish();
     }
 }

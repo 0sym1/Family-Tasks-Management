@@ -1,10 +1,17 @@
 package com.tngoc.familytaskapp.ui.task;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +25,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.tngoc.familytaskapp.R;
 import com.tngoc.familytaskapp.adapter.TaskAdapter;
+import com.tngoc.familytaskapp.data.model.Task;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class TaskListFragment extends Fragment {
 
@@ -27,6 +40,10 @@ public class TaskListFragment extends Fragment {
     private String workspaceId;
     private String workspaceName;
     private TextView tvWorkspaceName;
+    private EditText etSearchTask;
+    private LinearLayout llFilter;
+    private List<Task> allTasks = new ArrayList<>();
+    private Set<String> selectedStatuses = new HashSet<>();
 
     @Nullable
     @Override
@@ -43,13 +60,18 @@ public class TaskListFragment extends Fragment {
         if (getArguments() != null) {
             workspaceId = getArguments().getString("workspaceId");
             workspaceName = getArguments().getString("workspaceName");
-            Log.d("TaskListFragment", "Workspace ID: " + workspaceId);
         }
 
         tvWorkspaceName = view.findViewById(R.id.tvWorkspaceName);
         if (workspaceName != null) {
             tvWorkspaceName.setText(workspaceName);
         }
+
+        etSearchTask = view.findViewById(R.id.etSearchTask);
+        setupSearch();
+
+        llFilter = view.findViewById(R.id.llFilter);
+        llFilter.setOnClickListener(v -> showFilterPopup(v));
 
         recyclerView = view.findViewById(R.id.recyclerViewTasks);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -62,7 +84,6 @@ public class TaskListFragment extends Fragment {
         });
         recyclerView.setAdapter(adapter);
 
-        // Update back button to finish activity and return to HomeActivity
         view.findViewById(R.id.btnBack).setOnClickListener(v -> {
             if (getActivity() != null) {
                 getActivity().finish();
@@ -75,31 +96,83 @@ public class TaskListFragment extends Fragment {
             Navigation.findNavController(v).navigate(R.id.action_taskList_to_createTask, bundle);
         });
 
-        view.findViewById(R.id.btnInvite).setOnClickListener(v -> {
-            Bundle bundle = new Bundle();
-            bundle.putString("workspaceId", workspaceId);
-            Navigation.findNavController(v).navigate(R.id.action_taskList_to_inviteMember, bundle);
-        });
-
         observeViewModel();
         if (workspaceId != null) {
             taskViewModel.loadTasks(workspaceId);
-        } else {
-            Toast.makeText(requireContext(), "Không tìm thấy mã workspace", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void setupSearch() {
+        etSearchTask.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                applyFilters();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+    }
+
+    private void showFilterPopup(View anchor) {
+        View popupView = LayoutInflater.from(requireContext()).inflate(R.layout.layout_filter_dropdown, null);
+        PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        popupWindow.setElevation(10);
+
+        CheckBox cbDoing = popupView.findViewById(R.id.cbDoing);
+        CheckBox cbDone = popupView.findViewById(R.id.cbDone);
+        CheckBox cbTodo = popupView.findViewById(R.id.cbTodo);
+        CheckBox cbReview = popupView.findViewById(R.id.cbReview);
+        Button btnApply = popupView.findViewById(R.id.btnApplyFilter);
+
+        // Restore previous selection
+        cbDoing.setChecked(selectedStatuses.contains("doing"));
+        cbDone.setChecked(selectedStatuses.contains("done"));
+        cbTodo.setChecked(selectedStatuses.contains("todo"));
+        cbReview.setChecked(selectedStatuses.contains("review"));
+
+        btnApply.setOnClickListener(v -> {
+            selectedStatuses.clear();
+            if (cbDoing.isChecked()) selectedStatuses.add("doing");
+            if (cbDone.isChecked()) selectedStatuses.add("done");
+            if (cbTodo.isChecked()) selectedStatuses.add("todo");
+            if (cbReview.isChecked()) selectedStatuses.add("review");
+
+            applyFilters();
+            popupWindow.dismiss();
+        });
+
+        popupWindow.showAsDropDown(anchor, 0, 10);
+    }
+
+    private void applyFilters() {
+        String query = etSearchTask.getText().toString().toLowerCase();
+        List<Task> filteredList = new ArrayList<>();
+
+        for (Task task : allTasks) {
+            boolean matchesSearch = task.getTitle().toLowerCase().contains(query);
+            boolean matchesStatus = selectedStatuses.isEmpty() || selectedStatuses.contains(task.getStatus());
+
+            if (matchesSearch && matchesStatus) {
+                filteredList.add(task);
+            }
+        }
+        adapter.setTaskList(filteredList);
     }
 
     private void observeViewModel() {
         taskViewModel.tasksLiveData.observe(getViewLifecycleOwner(), tasks -> {
             if (tasks != null) {
-                Log.d("TaskListFragment", "Tasks loaded: " + tasks.size());
-                adapter.setTaskList(tasks);
+                allTasks = tasks;
+                applyFilters();
             }
         });
 
         taskViewModel.errorLiveData.observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
-                Log.e("TaskListFragment", "Error: " + error);
                 Toast.makeText(requireContext(), "Lỗi: " + error, Toast.LENGTH_SHORT).show();
             }
         });

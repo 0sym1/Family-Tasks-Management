@@ -1,8 +1,10 @@
 package com.tngoc.familytaskapp.adapter;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -54,6 +56,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     static class TaskViewHolder extends RecyclerView.ViewHolder {
         TextView tvTaskTime, tvTaskDeadline, tvTaskStatus, tvTaskTitle;
+        ImageView ivRepeat;
         SimpleDateFormat sdf = new SimpleDateFormat("HH'h' EEE dd/MM", new Locale("vi", "VN"));
 
         public TaskViewHolder(@NonNull View itemView) {
@@ -62,6 +65,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             tvTaskDeadline = itemView.findViewById(R.id.tvTaskDeadline);
             tvTaskStatus = itemView.findViewById(R.id.tvTaskStatus);
             tvTaskTitle = itemView.findViewById(R.id.tvTaskTitle);
+            ivRepeat = itemView.findViewById(R.id.ivRepeat);
         }
 
         public void bind(Task task, OnTaskClickListener listener) {
@@ -71,20 +75,33 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
                 tvTaskTime.setText(sdf.format(task.getCreatedAt().toDate()));
             }
             
-            if (task.getDueDate() != null) {
-                tvTaskDeadline.setText("Hạn: " + sdf.format(task.getDueDate().toDate()));
+            if (task.getEndDate() != null) {
+                tvTaskDeadline.setText("Hạn: " + sdf.format(task.getEndDate().toDate()));
             }
+
+            ivRepeat.setVisibility(task.isRepeat() ? View.VISIBLE : View.GONE);
 
             String status = task.getStatus();
             if ("done".equalsIgnoreCase(status)) {
                 tvTaskStatus.setText("XONG");
-                tvTaskStatus.setTextColor(itemView.getContext().getResources().getColor(android.R.color.holo_green_light));
-            } else if ("in_progress".equalsIgnoreCase(status)) {
+                tvTaskStatus.setTextColor(Color.parseColor("#59D595"));
+                tvTaskStatus.getBackground().setTint(Color.parseColor("#1B3022"));
+            } else if ("doing".equalsIgnoreCase(status) || "in_progress".equalsIgnoreCase(status)) {
                 tvTaskStatus.setText("ĐANG LÀM");
-                tvTaskStatus.setTextColor(itemView.getContext().getResources().getColor(android.R.color.holo_blue_light));
+                tvTaskStatus.setTextColor(Color.parseColor("#5EB5F7"));
+                tvTaskStatus.getBackground().setTint(Color.parseColor("#1A2B3D"));
+            } else if ("todo".equalsIgnoreCase(status)) {
+                tvTaskStatus.setText("CHƯA LÀM");
+                tvTaskStatus.setTextColor(Color.parseColor("#888888"));
+                tvTaskStatus.getBackground().setTint(Color.parseColor("#333333"));
+            } else if ("review".equalsIgnoreCase(status)) {
+                tvTaskStatus.setText("KIỂM TRA");
+                tvTaskStatus.setTextColor(Color.parseColor("#FFD700"));
+                tvTaskStatus.getBackground().setTint(Color.parseColor("#332D00"));
             } else {
                 tvTaskStatus.setText("TODO");
-                tvTaskStatus.setTextColor(itemView.getContext().getResources().getColor(android.R.color.white));
+                tvTaskStatus.setTextColor(Color.WHITE);
+                tvTaskStatus.getBackground().setTint(Color.parseColor("#1E1E1E"));
             }
 
             itemView.setOnClickListener(v -> {
