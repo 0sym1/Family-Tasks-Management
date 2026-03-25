@@ -26,6 +26,18 @@
     <string name="error_empty_fields">Vui lòng điền đầy đủ thông tin</string>
     <string name="error_password_mismatch">Mật khẩu không khớp</string>
 
+    <!-- Home -->
+    <string name="home_title">Trang chủ</string>
+    <string name="home_welcome">Xin chào Phúc</string>
+    <string name="home_workspace_description">Đây là những workspace mà bạn quản lý</string>
+    <string name="hint_search_workspace">Nhập tên workspace...</string>
+    <string name="btn_delete">Xóa</string>
+    <string name="access">Truy cập</string>
+    <string name="workspace_name_demo">Nhà Kho</string>
+    <string name="label_workspace_name">Tên workspace</string>
+    <string name="hint_enter_workspace_name">Nhập tên workspace...</string>
+    <string name="btn_add">Thêm</string>
+
     <!-- Workspace -->
     <string name="workspaces">Không gian làm việc</string>
     <string name="workspace_detail">Chi tiết</string>
