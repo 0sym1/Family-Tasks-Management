@@ -50,7 +50,9 @@
         android:label="Nhiệm vụ">
         <argument
             android:name="workspaceId"
-            app:argType="string" />
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
         <action
             android:id="@+id/action_taskList_to_createTask"
             app:destination="@id/createTaskFragment" />
@@ -103,8 +105,8 @@
         android:label="Trợ lý AI" />
 
     <fragment
-        android:id="@+id/settingsFragment"
-        android:name="com.tngoc.familytaskapp.ui.settings.SettingsFragment"
-        android:label="Cài đặt" />
+        android:id="@+id/profileFragment"
+        android:name="com.tngoc.familytaskapp.ui.profile.ProfileFragment"
+        android:label="@string/profile" />
 
 </navigation>

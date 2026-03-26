@@ -3,21 +3,21 @@
     <item
         android:id="@+id/workspaceListFragment"
         android:icon="@drawable/ic_home"
-        android:title="@string/workspaces" />
+        android:title="@string/home" />
     <item
-        android:id="@+id/notificationFragment"
-        android:icon="@drawable/ic_notification"
-        android:title="@string/notifications" />
-    <item
-        android:id="@+id/rewardFragment"
-        android:icon="@drawable/ic_reward"
-        android:title="@string/rewards" />
+        android:id="@+id/taskListFragment"
+        android:icon="@drawable/ic_task"
+        android:title="@string/tasks" />
     <item
         android:id="@+id/chatBotFragment"
         android:icon="@drawable/ic_chat"
         android:title="@string/chatbot" />
     <item
-        android:id="@+id/settingsFragment"
-        android:icon="@drawable/ic_settings"
-        android:title="@string/settings" />
+        android:id="@+id/notificationFragment"
+        android:icon="@drawable/ic_notification"
+        android:title="@string/notifications" />
+    <item
+        android:id="@+id/profileFragment"
+        android:icon="@drawable/ic_profile"
+        android:title="@string/profile" />
 </menu>

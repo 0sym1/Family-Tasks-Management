@@ -27,8 +27,27 @@ public class UserRepository {
                 .document(userId)
                 .get()
                 .addOnSuccessListener(snapshot -> {
-                    User user = snapshot.toObject(User.class);
-                    userLiveData.setValue(user);
+                    if (snapshot.exists()) {
+                        try {
+                            User user = snapshot.toObject(User.class);
+                            if (user != null) {
+                                // Set userId từ DocumentId
+                                user.setUserId(snapshot.getId());
+                                // Nếu displayName null, thử lấy từ "name"
+                                if ((user.getDisplayName() == null || user.getDisplayName().isEmpty()) && snapshot.contains("name")) {
+                                    user.setDisplayName((String) snapshot.get("name"));
+                                }
+                                // Set default values nếu null
+                                if (user.getEmail() == null) user.setEmail("");
+                                if (user.getAvatarUrl() == null) user.setAvatarUrl("");
+                            }
+                            userLiveData.setValue(user);
+                        } catch (Exception e) {
+                            errorLiveData.setValue("Error parsing user data: " + e.getMessage());
+                        }
+                    } else {
+                        errorLiveData.setValue("User not found");
+                    }
                 })
                 .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
     }

@@ -9,8 +9,9 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.tngoc.familytaskapp.R;
-import com.tngoc.familytaskapp.ui.auth.LoginActivity;
+import com.tngoc.familytaskapp.ui.auth.WelcomeActivity;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -32,7 +33,13 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     public void logout() {
-        startActivity(new Intent(this, LoginActivity.class));
+        // Sign out from Firebase
+        FirebaseAuth.getInstance().signOut();
+
+        // Navigate to Welcome screen
+        Intent intent = new Intent(this, WelcomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
         finish();
     }
 }
