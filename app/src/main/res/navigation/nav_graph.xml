@@ -113,8 +113,8 @@
         android:label="Trợ lý AI" />
 
     <fragment
-        android:id="@+id/settingsFragment"
-        android:name="com.tngoc.familytaskapp.ui.settings.SettingsFragment"
-        android:label="Cài đặt" />
+        android:id="@+id/profileFragment"
+        android:name="com.tngoc.familytaskapp.ui.profile.ProfileFragment"
+        android:label="@string/profile" />
 
 </navigation>
