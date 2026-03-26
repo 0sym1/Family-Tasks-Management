@@ -2,7 +2,8 @@ package com.tngoc.familytaskapp.data.repository;
 
 import androidx.lifecycle.MutableLiveData;
 import com.google.firebase.firestore.FirebaseFirestore;
-import java.util.Map;
+import com.tngoc.familytaskapp.data.model.User;
+import com.tngoc.familytaskapp.utils.Constants;
 
 public class UserRepository {
     private final FirebaseFirestore db;
@@ -47,6 +48,24 @@ public class UserRepository {
                     }
                 })
                 .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
+    }
+
+    public void getUserName(String userId, MutableLiveData<String> nameLiveData) {
+        db.collection(Constants.COLLECTION_USERS)
+                .document(userId)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    if (snapshot.exists()) {
+                        String name = snapshot.getString("displayName");
+                        if (name == null || name.isEmpty()) {
+                            name = snapshot.getString("name");
+                        }
+                        nameLiveData.setValue(name);
+                    } else {
+                        nameLiveData.setValue(null);
+                    }
+                })
+                .addOnFailureListener(e -> nameLiveData.setValue(null));
     }
 
     public void updateUser(User user, MutableLiveData<Boolean> successLiveData, MutableLiveData<String> errorLiveData) {

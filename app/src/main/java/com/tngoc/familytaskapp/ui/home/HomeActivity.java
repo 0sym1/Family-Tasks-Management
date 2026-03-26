@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.tngoc.familytaskapp.MainActivity;
 import com.tngoc.familytaskapp.R;
@@ -29,6 +30,7 @@ import com.tngoc.familytaskapp.data.repository.NotificationRepository;
 import com.tngoc.familytaskapp.data.repository.UserRepository;
 import com.tngoc.familytaskapp.ui.auth.AuthViewModel;
 import com.tngoc.familytaskapp.ui.auth.LoginActivity;
+import com.tngoc.familytaskapp.ui.auth.WelcomeActivity;
 import com.tngoc.familytaskapp.ui.workspace.WorkspaceViewModel;
 
 import java.util.ArrayList;
@@ -130,6 +132,9 @@ public class HomeActivity extends AppCompatActivity {
             } else if (itemId == R.id.notificationFragment) {
                 showNotificationFragment();
                 return true;
+            } else if (itemId == R.id.profileFragment) {
+                showProfileFragment();
+                return true;
             } else if (itemId == R.id.taskFragment) {
                 if (!allWorkspaces.isEmpty()) {
                     openTaskList(allWorkspaces.get(0).getWorkspaceId(), allWorkspaces.get(0).getName());
@@ -168,6 +173,16 @@ public class HomeActivity extends AppCompatActivity {
                     .replace(R.id.fragment_container, new com.tngoc.familytaskapp.ui.notification.NotificationFragment())
                     .commit();
             notificationRepository.markAllAsRead(currentUserId);
+        }
+    }
+
+    private void showProfileFragment() {
+        findViewById(R.id.mainScrollView).setVisibility(View.GONE);
+        if (fragmentContainer != null) {
+            fragmentContainer.setVisibility(View.VISIBLE);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new com.tngoc.familytaskapp.ui.profile.ProfileFragment())
+                    .commit();
         }
     }
 
