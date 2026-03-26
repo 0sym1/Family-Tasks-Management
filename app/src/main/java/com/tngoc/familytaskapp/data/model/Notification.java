@@ -2,6 +2,7 @@ package com.tngoc.familytaskapp.data.model;
 
 import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.PropertyName;
 
 public class Notification {
     @DocumentId
@@ -9,8 +10,8 @@ public class Notification {
     private String userId;
     private String title;
     private String message;
-    private String type;     // "task_assigned" | "task_done" | "invitation" | "reward"
-    private String refId;    // taskId hoặc workspaceId liên quan
+    private String type;
+    private String refId;
     private boolean isRead;
     private Timestamp createdAt;
 
@@ -44,10 +45,11 @@ public class Notification {
     public String getRefId() { return refId; }
     public void setRefId(String refId) { this.refId = refId; }
 
+    @PropertyName("isRead")
     public boolean isRead() { return isRead; }
+    @PropertyName("isRead")
     public void setRead(boolean read) { isRead = read; }
 
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
 }
-

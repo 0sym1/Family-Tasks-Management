@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -45,6 +46,7 @@ public class CreateTaskFragment extends Fragment {
     private TextView tvStartDate, tvEndDate, tvCreatedBy, tvTitle;
     private RadioGroup rgRepeat;
     private RadioButton rbRepeatOn, rbRepeatOff;
+    private ImageView ivEditRepeat;
     private Button btnSave, btnCancel;
     private ImageButton btnBack;
     
@@ -98,11 +100,15 @@ public class CreateTaskFragment extends Fragment {
         rgRepeat = view.findViewById(R.id.rgRepeat);
         rbRepeatOn = view.findViewById(R.id.rbRepeatOn);
         rbRepeatOff = view.findViewById(R.id.rbRepeatOff);
+        ivEditRepeat = view.findViewById(R.id.ivEditRepeat);
         btnSave = view.findViewById(R.id.btnSave);
         btnCancel = view.findViewById(R.id.btnCancel);
 
         startCalendar = Calendar.getInstance();
         endCalendar = Calendar.getInstance();
+        
+        // Initial visibility
+        updateRepeatIconVisibility();
     }
 
     private void setupSpinners() {
@@ -140,6 +146,10 @@ public class CreateTaskFragment extends Fragment {
     private void setupListeners() {
         btnBack.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
         btnCancel.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
+        
+        rgRepeat.setOnCheckedChangeListener((group, checkedId) -> {
+            updateRepeatIconVisibility();
+        });
 
         btnSave.setOnClickListener(v -> {
             String name = etTaskName.getText().toString().trim();
@@ -170,6 +180,12 @@ public class CreateTaskFragment extends Fragment {
 
             taskViewModel.createTask(workspaceId, task);
         });
+    }
+    
+    private void updateRepeatIconVisibility() {
+        if (ivEditRepeat != null) {
+            ivEditRepeat.setVisibility(rbRepeatOn.isChecked() ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void observeViewModel() {

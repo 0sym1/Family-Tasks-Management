@@ -2,7 +2,7 @@
     <string name="app_name">Family Task App</string>
 
     <!-- Welcome -->
-    <string name="app_title">Family\nTasks\nManagement</string>
+    <string name="app_title">Quản lý\nCông việc\nGia đình</string>
     <string name="btn_login">Đăng nhập</string>
     <string name="btn_register">Đăng ký</string>
     <string name="btn_cancel">Hủy</string>
@@ -10,14 +10,14 @@
 
     <!-- Login -->
     <string name="title_login">Đăng nhập</string>
-    <string name="label_username">Tên người dùng</string>
+    <string name="label_username">Tên đăng nhập</string>
     <string name="label_password">Mật khẩu</string>
-    <string name="hint_username">Nhập tên người dùng</string>
+    <string name="hint_username">Nhập tên đăng nhập</string>
     <string name="hint_password">Nhập mật khẩu</string>
 
     <!-- Register -->
     <string name="title_register">Đăng ký</string>
-    <string name="label_name">Tên</string>
+    <string name="label_name">Họ và tên</string>
     <string name="label_confirm_password">Xác nhận\nmật khẩu</string>
     <string name="hint_name">Nhập tên của bạn</string>
     <string name="hint_confirm_password">Nhập lại mật khẩu</string>
@@ -28,9 +28,9 @@
 
     <!-- Home -->
     <string name="home_title">Trang chủ</string>
-    <string name="home_welcome">Xin chào Phúc</string>
-    <string name="home_workspace_description">Đây là những workspace mà bạn quản lý</string>
-    <string name="hint_search_workspace">Nhập tên workspace...</string>
+    <string name="home_welcome">Xin chào</string>
+    <string name="home_workspace_description">Đây là những không gian làm việc bạn quản lý</string>
+    <string name="hint_search_workspace">Tìm kiếm không gian làm việc...</string>
     <string name="btn_delete">Xóa</string>
     <string name="access">Truy cập</string>
     <string name="workspace_name_demo">Nhà Kho</string>
@@ -43,7 +43,7 @@
     <string name="workspace_detail">Chi tiết</string>
     <string name="create_workspace">Tạo workspace</string>
     <string name="invite_member">Mời thành viên</string>
-    <string name="workspace_created">Tạo workspace thành công!</string>
+    <string name="workspace_created">Tạo không gian làm việc thành công!</string>
 
     <!-- Task -->
     <string name="tasks">Nhiệm vụ</string>
@@ -67,8 +67,17 @@
     <string name="btn_save">Lưu</string>
     <string name="btn_apply">Áp dụng</string>
     <string name="hint_date_format">dd/mm/yyyy</string>
-    <string name="repeat_on">On</string>
-    <string name="repeat_off">Off</string>
+    <string name="repeat_on">Bật</string>
+    <string name="repeat_off">Tắt</string>
+    <string name="repeat_daily">Hàng ngày</string>
+    <string name="repeat_weekly">Hàng tuần</string>
+    <string name="label_select_days">Chọn ngày</string>
+    <string name="label_end_repeat">Kết thúc lặp</string>
+    <string name="repeat_never">Không bao giờ</string>
+    <string name="repeat_after">Sau</string>
+    <string name="repeat_times">lần</string>
+    <string name="repeat_after_date">Sau ngày</string>
+    <string name="btn_confirm">Xác nhận</string>
 
     <!-- Others -->
     <string name="notifications">Thông báo</string>
@@ -77,4 +86,6 @@
     <string name="chatbot">Trợ lý AI</string>
     <string name="settings">Cài đặt</string>
     <string name="invitation_sent">Đã gửi lời mời!</string>
+    <string name="btn_logout">Đăng xuất</string>
+    <string name="empty_notifications">Chưa có thông báo nào</string>
 </resources>

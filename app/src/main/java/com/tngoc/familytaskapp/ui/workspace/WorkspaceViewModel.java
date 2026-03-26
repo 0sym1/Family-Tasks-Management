@@ -3,14 +3,18 @@ package com.tngoc.familytaskapp.ui.workspace;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.tngoc.familytaskapp.data.model.Notification;
 import com.tngoc.familytaskapp.data.model.Workspace;
+import com.tngoc.familytaskapp.data.repository.NotificationRepository;
 import com.tngoc.familytaskapp.data.repository.WorkspaceRepository;
+import com.tngoc.familytaskapp.utils.Constants;
 
 import java.util.List;
 
 public class WorkspaceViewModel extends ViewModel {
 
     private final WorkspaceRepository workspaceRepository;
+    private final NotificationRepository notificationRepository;
 
     public final MutableLiveData<List<Workspace>> workspacesLiveData  = new MutableLiveData<>();
     public final MutableLiveData<Workspace>       workspaceLiveData   = new MutableLiveData<>();
@@ -20,6 +24,7 @@ public class WorkspaceViewModel extends ViewModel {
 
     public WorkspaceViewModel() {
         this.workspaceRepository = new WorkspaceRepository();
+        this.notificationRepository = new NotificationRepository();
     }
 
     public void loadWorkspacesForUser(String userId) {
@@ -32,6 +37,17 @@ public class WorkspaceViewModel extends ViewModel {
 
     public void createWorkspace(Workspace workspace) {
         workspaceRepository.createWorkspace(workspace, workspaceIdLiveData, errorLiveData);
+        // Gửi thông báo test khi tạo mới workspace
+        if (workspace.getOwnerId() != null) {
+            Notification notif = new Notification(
+                    workspace.getOwnerId(),
+                    "Tạo Workspace thành công",
+                    "Bạn vừa tạo mới không gian làm việc: " + workspace.getName(),
+                    "test",
+                    null
+            );
+            notificationRepository.sendNotification(notif);
+        }
     }
 
     public void updateWorkspace(Workspace workspace) {
@@ -42,4 +58,3 @@ public class WorkspaceViewModel extends ViewModel {
         workspaceRepository.deleteWorkspace(workspaceId, successLiveData, errorLiveData);
     }
 }
-

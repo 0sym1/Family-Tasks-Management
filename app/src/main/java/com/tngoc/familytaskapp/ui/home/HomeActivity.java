@@ -6,23 +6,26 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseUser;
 import com.tngoc.familytaskapp.MainActivity;
 import com.tngoc.familytaskapp.R;
 import com.tngoc.familytaskapp.data.model.Workspace;
+import com.tngoc.familytaskapp.data.repository.NotificationRepository;
 import com.tngoc.familytaskapp.data.repository.UserRepository;
 import com.tngoc.familytaskapp.ui.auth.AuthViewModel;
 import com.tngoc.familytaskapp.ui.auth.LoginActivity;
@@ -39,12 +42,15 @@ public class HomeActivity extends AppCompatActivity {
     private EditText etNewWorkspaceName;
     private EditText etSearch;
     private TextView tvWelcome;
+    private FrameLayout fragmentContainer;
     
     private WorkspaceViewModel workspaceViewModel;
     private AuthViewModel authViewModel;
+    private NotificationRepository notificationRepository;
     private UserRepository userRepository;
     private String currentUserId;
     private String currentUserName;
+    private BadgeDrawable notificationBadge;
     
     private List<Workspace> allWorkspaces = new ArrayList<>();
 
@@ -53,9 +59,9 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        // Initialize ViewModels and Repositories
         workspaceViewModel = new ViewModelProvider(this).get(WorkspaceViewModel.class);
         authViewModel = new ViewModelProvider(this).get(AuthViewModel.class);
+        notificationRepository = new NotificationRepository();
         userRepository = new UserRepository();
 
         FirebaseUser currentUser = authViewModel.getCurrentUser();
@@ -66,108 +72,33 @@ public class HomeActivity extends AppCompatActivity {
         }
         currentUserId = currentUser.getUid();
         
-        // Initialize views
         llNormalHeader = findViewById(R.id.llNormalHeader);
         llAddWorkspaceHeader = findViewById(R.id.llAddWorkspaceHeader);
         llWorkspaceContainer = findViewById(R.id.llWorkspaceContainer);
         etNewWorkspaceName = findViewById(R.id.etNewWorkspaceName);
         etSearch = findViewById(R.id.etSearch);
         tvWelcome = findViewById(R.id.tvWelcome);
+        fragmentContainer = findViewById(R.id.fragment_container);
         
-        // Fetch current user name and update welcome message
+        setupBottomNavigation();
+        setupSearch();
+        setupAddWorkspace();
+        setupNotifications();
+
         MutableLiveData<String> nameLiveData = new MutableLiveData<>();
         nameLiveData.observe(this, name -> {
             if (name != null) {
                 currentUserName = capitalizeAndFormat(name);
-                if (tvWelcome != null) {
-                    tvWelcome.setText("Xin chào " + currentUserName);
-                }
+                if (tvWelcome != null) tvWelcome.setText("Xin chào " + currentUserName);
             }
         });
         userRepository.getUserName(currentUserId, nameLiveData);
-
-        Button btnAddWorkspace = findViewById(R.id.btnAddWorkspace);
-        Button btnCancelAdd = findViewById(R.id.btnCancelAdd);
-        Button btnSubmitAdd = findViewById(R.id.btnSubmitAdd);
-
-        // Set up BottomNavigationView
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-        bottomNav.setSelectedItemId(R.id.homeFragment);
-        bottomNav.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.homeFragment) {
-                llNormalHeader.setVisibility(View.VISIBLE);
-                llAddWorkspaceHeader.setVisibility(View.GONE);
-                return true;
-            } else if (itemId == R.id.taskFragment) {
-                if (!allWorkspaces.isEmpty()) {
-                    // Mở danh sách task của workspace đầu tiên
-                    Workspace firstWs = allWorkspaces.get(0);
-                    openTaskList(firstWs.getWorkspaceId(), firstWs.getName());
-                } else {
-                    Toast.makeText(this, "Bạn chưa có workspace nào để xem nhiệm vụ", Toast.LENGTH_SHORT).show();
-                    bottomNav.setSelectedItemId(R.id.homeFragment);
-                }
-                return true;
-            } else if (itemId == R.id.chatBotFragment) Toast.makeText(this, "Chat bot", Toast.LENGTH_SHORT).show();
-            else if (itemId == R.id.notificationFragment) Toast.makeText(this, "Thông báo", Toast.LENGTH_SHORT).show();
-            else if (itemId == R.id.profileFragment) Toast.makeText(this, "Cá nhân", Toast.LENGTH_SHORT).show();
-            return true;
-        });
-
-        // Search logic
-        if (etSearch != null) {
-            etSearch.addTextChangedListener(new TextWatcher() {
-                @Override
-                public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-                @Override
-                public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    filterWorkspaces(s.toString());
-                }
-                @Override
-                public void afterTextChanged(Editable s) {}
-            });
-        }
-
-        if (btnAddWorkspace != null) {
-            btnAddWorkspace.setOnClickListener(v -> {
-                llNormalHeader.setVisibility(View.GONE);
-                llAddWorkspaceHeader.setVisibility(View.VISIBLE);
-            });
-        }
-
-        if (btnCancelAdd != null) {
-            btnCancelAdd.setOnClickListener(v -> {
-                llNormalHeader.setVisibility(View.VISIBLE);
-                llAddWorkspaceHeader.setVisibility(View.GONE);
-            });
-        }
-
-        if (btnSubmitAdd != null) {
-            btnSubmitAdd.setOnClickListener(v -> {
-                String name = etNewWorkspaceName.getText().toString().trim();
-                if (!name.isEmpty()) {
-                    List<String> members = new ArrayList<>();
-                    members.add(currentUserId);
-                    String creatorName = (currentUserName != null) ? currentUserName : "Người dùng";
-                    Workspace newWs = new Workspace(null, name, "", currentUserId, creatorName, members);
-                    workspaceViewModel.createWorkspace(newWs);
-                    llNormalHeader.setVisibility(View.VISIBLE);
-                    llAddWorkspaceHeader.setVisibility(View.GONE);
-                    etNewWorkspaceName.setText("");
-                }
-            });
-        }
 
         workspaceViewModel.workspacesLiveData.observe(this, workspaces -> {
             if (workspaces != null) {
                 allWorkspaces = workspaces;
                 filterWorkspaces(etSearch.getText().toString());
             }
-        });
-
-        workspaceViewModel.workspaceIdLiveData.observe(this, id -> {
-            if (id != null) workspaceViewModel.loadWorkspacesForUser(currentUserId);
         });
 
         workspaceViewModel.loadWorkspacesForUser(currentUserId);
@@ -177,6 +108,96 @@ public class HomeActivity extends AppCompatActivity {
         authViewModel.logout();
         startActivity(new Intent(this, LoginActivity.class));
         finish();
+    }
+
+    private void setupBottomNavigation() {
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        notificationBadge = bottomNav.getOrCreateBadge(R.id.notificationFragment);
+        notificationBadge.setVisible(false);
+        notificationBadge.setMaxCharacterCount(2); // 9+ style
+
+        bottomNav.setSelectedItemId(R.id.homeFragment);
+        bottomNav.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.homeFragment) {
+                showHomeContent();
+                return true;
+            } else if (itemId == R.id.notificationFragment) {
+                showNotificationFragment();
+                return true;
+            } else if (itemId == R.id.taskFragment) {
+                if (!allWorkspaces.isEmpty()) {
+                    openTaskList(allWorkspaces.get(0).getWorkspaceId(), allWorkspaces.get(0).getName());
+                } else {
+                    Toast.makeText(this, "Bạn chưa có workspace nào", Toast.LENGTH_SHORT).show();
+                }
+                return false;
+            }
+            return false;
+        });
+    }
+
+    private void setupNotifications() {
+        MutableLiveData<Integer> unreadCount = new MutableLiveData<>();
+        unreadCount.observe(this, count -> {
+            if (count != null && count > 0) {
+                notificationBadge.setVisible(true);
+                notificationBadge.setNumber(count);
+            } else {
+                notificationBadge.setVisible(false);
+            }
+        });
+        notificationRepository.getUnreadCountRealtime(currentUserId, unreadCount);
+    }
+
+    private void showHomeContent() {
+        if (fragmentContainer != null) fragmentContainer.setVisibility(View.GONE);
+        findViewById(R.id.mainScrollView).setVisibility(View.VISIBLE);
+    }
+
+    private void showNotificationFragment() {
+        findViewById(R.id.mainScrollView).setVisibility(View.GONE);
+        if (fragmentContainer != null) {
+            fragmentContainer.setVisibility(View.VISIBLE);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new com.tngoc.familytaskapp.ui.notification.NotificationFragment())
+                    .commit();
+            notificationRepository.markAllAsRead(currentUserId);
+        }
+    }
+
+    private void setupSearch() {
+        if (etSearch != null) {
+            etSearch.addTextChangedListener(new TextWatcher() {
+                @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+                @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    filterWorkspaces(s.toString());
+                }
+                @Override public void afterTextChanged(Editable s) {}
+            });
+        }
+    }
+
+    private void setupAddWorkspace() {
+        findViewById(R.id.btnAddWorkspace).setOnClickListener(v -> {
+            llNormalHeader.setVisibility(View.GONE);
+            llAddWorkspaceHeader.setVisibility(View.VISIBLE);
+        });
+        findViewById(R.id.btnCancelAdd).setOnClickListener(v -> {
+            llNormalHeader.setVisibility(View.VISIBLE);
+            llAddWorkspaceHeader.setVisibility(View.GONE);
+        });
+        findViewById(R.id.btnSubmitAdd).setOnClickListener(v -> {
+            String name = etNewWorkspaceName.getText().toString().trim();
+            if (!name.isEmpty()) {
+                List<String> members = new ArrayList<>();
+                members.add(currentUserId);
+                workspaceViewModel.createWorkspace(new Workspace(null, name, "", currentUserId, currentUserName, members));
+                llNormalHeader.setVisibility(View.VISIBLE);
+                llAddWorkspaceHeader.setVisibility(View.GONE);
+                etNewWorkspaceName.setText("");
+            }
+        });
     }
 
     private void openTaskList(String workspaceId, String workspaceName) {
@@ -221,6 +242,19 @@ public class HomeActivity extends AppCompatActivity {
         ProgressBar pb = workspaceView.findViewById(R.id.pbWorkspace);
         if (total > 0) pb.setProgress((int) (((float) completed / total) * 100));
         else pb.setProgress(0);
+
+        TextView tvOptions = workspaceView.findViewById(R.id.tvOptions);
+        Button btnDelete = workspaceView.findViewById(R.id.btnDelete);
+
+        tvOptions.setOnClickListener(v -> btnDelete.setVisibility(btnDelete.getVisibility() == View.GONE ? View.VISIBLE : View.GONE));
+        btnDelete.setOnClickListener(v -> {
+            new AlertDialog.Builder(this)
+                    .setTitle("Xóa Workspace")
+                    .setMessage("Bạn có chắc chắn muốn xóa \"" + workspace.getName() + "\"?")
+                    .setPositiveButton("Xóa", (dialog, which) -> workspaceViewModel.deleteWorkspace(workspace.getWorkspaceId()))
+                    .setNegativeButton("Hủy", null)
+                    .show();
+        });
 
         workspaceView.setOnClickListener(v -> openTaskList(workspace.getWorkspaceId(), workspace.getName()));
         llWorkspaceContainer.addView(workspaceView);

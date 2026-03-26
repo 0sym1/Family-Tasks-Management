@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -47,6 +48,18 @@ public class WorkspaceListFragment extends Fragment {
             args.putString("workspaceName", workspace.getName());
             Navigation.findNavController(view).navigate(R.id.action_workspaceList_to_taskList, args);
         });
+
+        adapter.setOnDeleteClickListener(workspace -> {
+            new AlertDialog.Builder(requireContext())
+                    .setTitle("Xóa Workspace")
+                    .setMessage("Bạn có chắc chắn muốn xóa workspace \"" + workspace.getName() + "\"?")
+                    .setPositiveButton("Xóa", (dialog, which) -> {
+                        workspaceViewModel.deleteWorkspace(workspace.getWorkspaceId());
+                    })
+                    .setNegativeButton("Hủy", null)
+                    .show();
+        });
+
         recyclerView.setAdapter(adapter);
 
         view.findViewById(R.id.fabAddWorkspace).setOnClickListener(v ->
@@ -70,8 +83,19 @@ public class WorkspaceListFragment extends Fragment {
             }
         });
 
+        workspaceViewModel.successLiveData.observe(getViewLifecycleOwner(), success -> {
+            if (Boolean.TRUE.equals(success)) {
+                Toast.makeText(requireContext(), "Xóa thành công", Toast.LENGTH_SHORT).show();
+                loadData(); // Tải lại danh sách sau khi xóa
+                workspaceViewModel.successLiveData.setValue(null); // Reset state
+            }
+        });
+
         workspaceViewModel.errorLiveData.observe(getViewLifecycleOwner(), error -> {
-            if (error != null) Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+            if (error != null) {
+                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+                workspaceViewModel.errorLiveData.setValue(null);
+            }
         });
     }
 }
