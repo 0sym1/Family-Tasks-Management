@@ -5,19 +5,19 @@
         android:icon="@drawable/ic_home"
         android:title="@string/workspaces" />
     <item
-        android:id="@+id/notificationFragment"
-        android:icon="@drawable/ic_notification"
-        android:title="@string/notifications" />
-    <item
-        android:id="@+id/rewardFragment"
-        android:icon="@drawable/ic_reward"
-        android:title="@string/rewards" />
+        android:id="@+id/historyFragment"
+        android:icon="@drawable/ic_task"
+        android:title="@string/history" />
     <item
         android:id="@+id/chatBotFragment"
         android:icon="@drawable/ic_chat"
         android:title="@string/chatbot" />
     <item
+        android:id="@+id/notificationFragment"
+        android:icon="@drawable/ic_notification"
+        android:title="@string/notifications" />
+    <item
         android:id="@+id/settingsFragment"
-        android:icon="@drawable/ic_settings"
+        android:icon="@drawable/ic_person"
         android:title="@string/settings" />
 </menu>

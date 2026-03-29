@@ -2,6 +2,7 @@ package com.tngoc.familytaskapp.data.model;
 
 import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.Timestamp;
+import java.util.List;
 
 public class Task {
     @DocumentId
@@ -15,6 +16,14 @@ public class Task {
     private int rewardPoints;
     private Timestamp dueDate;
     private Timestamp createdAt;
+
+    // Repeat settings
+    private boolean repeating = false;
+    private String repeatType; // "Daily", "Weekly"
+    private List<String> repeatDays; // ["Mon", "Tue", ...]
+    private String repeatEndType; // "Never", "AfterTimes", "AfterDate"
+    private int repeatCount;
+    private Timestamp repeatUntil;
 
     public Task() {}
 
@@ -59,5 +68,22 @@ public class Task {
 
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
-}
 
+    public boolean isRepeating() { return repeating; }
+    public void setRepeating(boolean repeating) { this.repeating = repeating; }
+
+    public String getRepeatType() { return repeatType; }
+    public void setRepeatType(String repeatType) { this.repeatType = repeatType; }
+
+    public List<String> getRepeatDays() { return repeatDays; }
+    public void setRepeatDays(List<String> repeatDays) { this.repeatDays = repeatDays; }
+
+    public String getRepeatEndType() { return repeatEndType; }
+    public void setRepeatEndType(String repeatEndType) { this.repeatEndType = repeatEndType; }
+
+    public int getRepeatCount() { return repeatCount; }
+    public void setRepeatCount(int repeatCount) { this.repeatCount = repeatCount; }
+
+    public Timestamp getRepeatUntil() { return repeatUntil; }
+    public void setRepeatUntil(Timestamp repeatUntil) { this.repeatUntil = repeatUntil; }
+}

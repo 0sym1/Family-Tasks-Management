@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/workspaceListFragment">
+    app:startDestination="@id/rankingFragment">
 
     <fragment
         android:id="@+id/workspaceListFragment"
@@ -14,6 +14,9 @@
         <action
             android:id="@+id/action_workspaceList_to_workspaceDetail"
             app:destination="@id/workspaceDetailFragment" />
+        <action
+            android:id="@+id/action_workspaceListFragment_to_historyFragment"
+            app:destination="@id/historyFragment" />
     </fragment>
 
     <fragment
@@ -80,6 +83,9 @@
             app:argType="string"
             app:nullable="true"
             android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_createTask_to_editRepeat"
+            app:destination="@id/editRepeatFragment" />
     </fragment>
 
     <fragment
@@ -106,5 +112,17 @@
         android:id="@+id/settingsFragment"
         android:name="com.tngoc.familytaskapp.ui.settings.SettingsFragment"
         android:label="Cài đặt" />
+    <fragment
+        android:id="@+id/rankingFragment"
+        android:name="com.tngoc.familytaskapp.ui.ranking.RankingFragment"
+        android:label="RankingFragment" />
+    <fragment
+        android:id="@+id/editRepeatFragment"
+        android:name="com.tngoc.familytaskapp.ui.task.EditRepeatFragment"
+        android:label="EditRepeatFragment" />
+    <fragment
+        android:id="@+id/changeLanguageFragment"
+        android:name="com.tngoc.familytaskapp.ui.settings.ChangeLanguageFragment"
+        android:label="ChangeLanguageFragment" />
 
 </navigation>

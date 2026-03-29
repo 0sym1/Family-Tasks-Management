@@ -10,14 +10,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.tngoc.familytaskapp.R;
+import com.tngoc.familytaskapp.ui.BaseActivity;
 import com.tngoc.familytaskapp.ui.home.HomeActivity;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
     private AuthViewModel authViewModel;
     private EditText etUsername, etPassword;
@@ -62,17 +62,17 @@ public class LoginActivity extends AppCompatActivity {
             boolean valid = true;
 
             if (email.isEmpty()) {
-                tvUsernameError.setText("Vui lòng nhập email");
+                tvUsernameError.setText(getString(R.string.error_empty_fields));
                 tvUsernameError.setVisibility(View.VISIBLE);
                 valid = false;
             } else if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-                tvUsernameError.setText("Email không đúng định dạng");
+                tvUsernameError.setText("Email invalid"); // Should be in strings.xml ideally
                 tvUsernameError.setVisibility(View.VISIBLE);
                 valid = false;
             }
 
             if (password.isEmpty()) {
-                tvPasswordError.setText("Vui lòng nhập mật khẩu");
+                tvPasswordError.setText(getString(R.string.error_empty_fields));
                 tvPasswordError.setVisibility(View.VISIBLE);
                 valid = false;
             }

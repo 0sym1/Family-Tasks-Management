@@ -1,0 +1,86 @@
+<resources>
+    <string name="app_name">Family Task App</string>
+
+    <!-- Welcome -->
+    <string name="app_title">Family\nTasks\nManagement</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_register">Register</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="or">or</string>
+
+    <!-- Login -->
+    <string name="title_login">Login</string>
+    <string name="label_username">Username</string>
+    <string name="label_password">Password</string>
+    <string name="hint_username">Enter username</string>
+    <string name="hint_password">Enter password</string>
+
+    <!-- Register -->
+    <string name="title_register">Register</string>
+    <string name="label_name">Name</string>
+    <string name="label_confirm_password">Confirm\npassword</string>
+    <string name="hint_name">Enter your name</string>
+    <string name="hint_confirm_password">Re-enter password</string>
+
+    <!-- Errors -->
+    <string name="error_empty_fields">Please fill in all fields</string>
+    <string name="error_password_mismatch">Passwords do not match</string>
+
+    <!-- Workspace -->
+    <string name="workspaces">Home</string>
+    <string name="workspace_detail">Detail</string>
+    <string name="create_workspace">Create Workspace</string>
+    <string name="invite_member">Invite Member</string>
+    <string name="workspace_created">Workspace created successfully!</string>
+
+    <!-- Task -->
+    <string name="tasks">Tasks</string>
+    <string name="task_detail">Task Detail</string>
+    <string name="create_task">Create Task</string>
+    <string name="task_created">Task created successfully!</string>
+    <string name="task_completed">Task completed!</string>
+
+    <!-- Edit Repeat -->
+    <string name="edit_repeat_title">Edit Repeat</string>
+    <string name="repeat_label">Repeat</string>
+    <string name="daily">Daily</string>
+    <string name="weekly">Weekly</string>
+    <string name="choose_days_label">Choose days</string>
+    <string name="end_repeat_label">End repeat</string>
+    <string name="never">Never</string>
+    <string name="after">After</string>
+    <string name="times">times</string>
+    <string name="after_date">After date</string>
+    <string name="date_placeholder">dd/mm/yyyy</string>
+    <string name="mon">Mon</string>
+    <string name="tue">Tue</string>
+    <string name="wed">Wed</string>
+    <string name="thu">Thu</string>
+    <string name="fri">Fri</string>
+    <string name="sat">Sat</string>
+    <string name="sun">Sun</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Change Language -->
+    <string name="select_language_title">Select Language</string>
+    <string name="lang_vietnamese">Vietnamese</string>
+    <string name="lang_english">English</string>
+    <string name="lang_french">French</string>
+    <string name="btn_save">Save</string>
+
+    <!-- Others -->
+    <string name="notifications">Notifications</string>
+    <string name="rewards">Rewards</string>
+    <string name="history">Tasks</string>
+    <string name="chatbot">Chatbot</string>
+    <string name="settings">Personal</string>
+    <string name="invitation_sent">Invitation sent!</string>
+    <string name="history_title">Work History</string>
+    <string name="tab_all">All</string>
+    <string name="tab_task">Tasks</string>
+    <string name="tab_point">Points</string>
+
+    <string name="sample_task">Received +5 points</string>
+    <string name="sample_reason">Reason: On time</string>
+</resources>

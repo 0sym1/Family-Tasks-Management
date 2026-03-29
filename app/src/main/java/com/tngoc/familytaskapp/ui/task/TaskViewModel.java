@@ -3,6 +3,7 @@ package com.tngoc.familytaskapp.ui.task;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.google.firebase.Timestamp;
 import com.tngoc.familytaskapp.data.model.Task;
 import com.tngoc.familytaskapp.data.repository.TaskRepository;
 
@@ -16,6 +17,14 @@ public class TaskViewModel extends ViewModel {
     public final MutableLiveData<String>     taskIdLiveData = new MutableLiveData<>();
     public final MutableLiveData<Boolean>    successLiveData = new MutableLiveData<>();
     public final MutableLiveData<String>     errorLiveData  = new MutableLiveData<>();
+
+    // Temporary repeat settings for task creation
+    public final MutableLiveData<Boolean> isRepeating = new MutableLiveData<>(false);
+    public final MutableLiveData<String> repeatType = new MutableLiveData<>();
+    public final MutableLiveData<List<String>> repeatDays = new MutableLiveData<>();
+    public final MutableLiveData<String> repeatEndType = new MutableLiveData<>();
+    public final MutableLiveData<Integer> repeatCount = new MutableLiveData<>(0);
+    public final MutableLiveData<Timestamp> repeatUntil = new MutableLiveData<>();
 
     public TaskViewModel() {
         this.taskRepository = new TaskRepository();
@@ -36,5 +45,13 @@ public class TaskViewModel extends ViewModel {
     public void deleteTask(String workspaceId, String taskId) {
         taskRepository.deleteTask(workspaceId, taskId, successLiveData, errorLiveData);
     }
+    
+    public void resetRepeatSettings() {
+        isRepeating.setValue(false);
+        repeatType.setValue(null);
+        repeatDays.setValue(null);
+        repeatEndType.setValue(null);
+        repeatCount.setValue(0);
+        repeatUntil.setValue(null);
+    }
 }
-

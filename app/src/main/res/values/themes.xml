@@ -4,7 +4,6 @@
         <item name="colorPrimary">@color/btn_primary</item>
         <item name="colorPrimaryVariant">@color/btn_primary</item>
         <item name="colorSecondary">@color/btn_primary</item>
-        <item name="materialButtonStyle">@style/Widget.AppCompat.Button</item>
     </style>
 
     <style name="Theme.FamilyTaskApp" parent="Base.Theme.FamilyTaskApp" />
@@ -14,5 +13,10 @@
         <item name="android:textColorHint">@color/input_hint</item>
         <item name="android:textColor">@color/input_text</item>
         <item name="android:background">@null</item>
+    </style>
+
+    <style name="RoundedButton">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">28dp</item>
     </style>
 </resources>

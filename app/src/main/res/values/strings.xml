@@ -27,7 +27,7 @@
     <string name="error_password_mismatch">Mật khẩu không khớp</string>
 
     <!-- Workspace -->
-    <string name="workspaces">Không gian làm việc</string>
+    <string name="workspaces">Trang chủ</string>
     <string name="workspace_detail">Chi tiết</string>
     <string name="create_workspace">Tạo workspace</string>
     <string name="invite_member">Mời thành viên</string>
@@ -40,11 +40,47 @@
     <string name="task_created">Tạo nhiệm vụ thành công!</string>
     <string name="task_completed">Hoàn thành nhiệm vụ!</string>
 
+    <!-- Edit Repeat -->
+    <string name="edit_repeat_title">Sửa lặp lại</string>
+    <string name="repeat_label">Lặp lại</string>
+    <string name="daily">Hàng ngày</string>
+    <string name="weekly">Hàng tuần</string>
+    <string name="choose_days_label">Chọn ngày</string>
+    <string name="end_repeat_label">Kết thúc lặp</string>
+    <string name="never">Không bao giờ</string>
+    <string name="after">Sau</string>
+    <string name="times">lần</string>
+    <string name="after_date">Sau ngày</string>
+    <string name="date_placeholder">dd/mm/yyyy</string>
+    <string name="mon">T2</string>
+    <string name="tue">T3</string>
+    <string name="wed">T4</string>
+    <string name="thu">T5</string>
+    <string name="fri">T6</string>
+    <string name="sat">T7</string>
+    <string name="sun">CN</string>
+    <string name="confirm">Xác nhận</string>
+    <string name="cancel">Hủy</string>
+
+    <!-- Change Language -->
+    <string name="select_language_title">Chọn ngôn ngữ</string>
+    <string name="lang_vietnamese">Tiếng Việt</string>
+    <string name="lang_english">English</string>
+    <string name="lang_french">Français</string>
+    <string name="btn_save">Lưu</string>
+
     <!-- Others -->
     <string name="notifications">Thông báo</string>
     <string name="rewards">Phần thưởng</string>
-    <string name="history">Lịch sử</string>
-    <string name="chatbot">Trợ lý AI</string>
-    <string name="settings">Cài đặt</string>
+    <string name="history">Nhiệm vụ</string>
+    <string name="chatbot">Chatbot</string>
+    <string name="settings">Cá nhân</string>
     <string name="invitation_sent">Đã gửi lời mời!</string>
+    <string name="history_title">Lịch sử làm việc</string>
+    <string name="tab_all">Tất cả</string>
+    <string name="tab_task">Nhiệm vụ</string>
+    <string name="tab_point">Điểm</string>
+
+    <string name="sample_task">Phát nhánh +5 điểm</string>
+    <string name="sample_reason">Lý do: Đúng hạn</string>
 </resources>

@@ -2,12 +2,10 @@ package com.tngoc.familytaskapp.ui.auth;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.tngoc.familytaskapp.R;
+import com.tngoc.familytaskapp.ui.BaseActivity;
 
-public class WelcomeActivity extends AppCompatActivity {
+public class WelcomeActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,4 +21,3 @@ public class WelcomeActivity extends AppCompatActivity {
         );
     }
 }
-

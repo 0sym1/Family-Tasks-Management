@@ -1,26 +1,19 @@
 package com.tngoc.familytaskapp.data.model;
 
-import com.google.firebase.firestore.DocumentId;
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.DocumentId;
 
 public class Reward {
     @DocumentId
     private String rewardId;
     private String userId;
+    private int points;
+    private String type; // task_completed, bonus, penalty
     private String taskId;
-    private String taskTitle;
-    private int pointsEarned;
-    private Timestamp earnedAt;
+    private String note;
+    private Timestamp createdAt;
 
     public Reward() {}
-
-    public Reward(String userId, String taskId, String taskTitle, int pointsEarned) {
-        this.userId = userId;
-        this.taskId = taskId;
-        this.taskTitle = taskTitle;
-        this.pointsEarned = pointsEarned;
-        this.earnedAt = Timestamp.now();
-    }
 
     public String getRewardId() { return rewardId; }
     public void setRewardId(String rewardId) { this.rewardId = rewardId; }
@@ -28,16 +21,18 @@ public class Reward {
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
 
+    public int getPoints() { return points; }
+    public void setPoints(int points) { this.points = points; }
+
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
+
     public String getTaskId() { return taskId; }
     public void setTaskId(String taskId) { this.taskId = taskId; }
 
-    public String getTaskTitle() { return taskTitle; }
-    public void setTaskTitle(String taskTitle) { this.taskTitle = taskTitle; }
+    public String getNote() { return note; }
+    public void setNote(String note) { this.note = note; }
 
-    public int getPointsEarned() { return pointsEarned; }
-    public void setPointsEarned(int pointsEarned) { this.pointsEarned = pointsEarned; }
-
-    public Timestamp getEarnedAt() { return earnedAt; }
-    public void setEarnedAt(Timestamp earnedAt) { this.earnedAt = earnedAt; }
+    public Timestamp getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
 }
-

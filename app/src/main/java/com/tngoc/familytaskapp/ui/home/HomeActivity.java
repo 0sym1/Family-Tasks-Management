@@ -3,16 +3,16 @@ package com.tngoc.familytaskapp.ui.home;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.tngoc.familytaskapp.R;
+import com.tngoc.familytaskapp.ui.BaseActivity;
 import com.tngoc.familytaskapp.ui.auth.LoginActivity;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends BaseActivity {
 
     private NavController navController;
 
@@ -36,4 +36,3 @@ public class HomeActivity extends AppCompatActivity {
         finish();
     }
 }
-
