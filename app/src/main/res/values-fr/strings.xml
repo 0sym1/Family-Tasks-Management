@@ -1,0 +1,86 @@
+<resources>
+    <string name="app_name">Appli Tâches Familiales</string>
+
+    <!-- Welcome -->
+    <string name="app_title">Gestion\ndes Tâches\nFamiliales</string>
+    <string name="btn_login">Connexion</string>
+    <string name="btn_register">S\'inscrire</string>
+    <string name="btn_cancel">Annuler</string>
+    <string name="or">ou</string>
+
+    <!-- Login -->
+    <string name="title_login">Connexion</string>
+    <string name="label_username">Nom d\'utilisateur</string>
+    <string name="label_password">Mot de passe</string>
+    <string name="hint_username">Entrez l\'utilisateur</string>
+    <string name="hint_password">Entrez le mot de passe</string>
+
+    <!-- Register -->
+    <string name="title_register">S\'inscrire</string>
+    <string name="label_name">Nom</string>
+    <string name="label_confirm_password">Confirmer\nle mot de passe</string>
+    <string name="hint_name">Entrez votre nom</string>
+    <string name="hint_confirm_password">Ressaisir le mot de passe</string>
+
+    <!-- Errors -->
+    <string name="error_empty_fields">Veuillez remplir tous les champs</string>
+    <string name="error_password_mismatch">Les mots de passe ne correspondent pas</string>
+
+    <!-- Workspace -->
+    <string name="workspaces">Accueil</string>
+    <string name="workspace_detail">Détail</string>
+    <string name="create_workspace">Créer un Espace</string>
+    <string name="invite_member">Inviter un Membre</string>
+    <string name="workspace_created">Espace créé avec succès !</string>
+
+    <!-- Task -->
+    <string name="tasks">Tâches</string>
+    <string name="task_detail">Détail de la Tâche</string>
+    <string name="create_task">Créer une Tâche</string>
+    <string name="task_created">Tâche créée avec succès !</string>
+    <string name="task_completed">Tâche terminée !</string>
+
+    <!-- Edit Repeat -->
+    <string name="edit_repeat_title">Modifier la répétition</string>
+    <string name="repeat_label">Répéter</string>
+    <string name="daily">Quotidien</string>
+    <string name="weekly">Hebdomadaire</string>
+    <string name="choose_days_label">Choisir les jours</string>
+    <string name="end_repeat_label">Fin de répétition</string>
+    <string name="never">Jamais</string>
+    <string name="after">Après</string>
+    <string name="times">fois</string>
+    <string name="after_date">Après le</string>
+    <string name="date_placeholder">jj/mm/aaaa</string>
+    <string name="mon">Lun</string>
+    <string name="tue">Mar</string>
+    <string name="wed">Mer</string>
+    <string name="thu">Jeu</string>
+    <string name="fri">Ven</string>
+    <string name="sat">Sam</string>
+    <string name="sun">Dim</string>
+    <string name="confirm">Confirmer</string>
+    <string name="cancel">Annuler</string>
+
+    <!-- Change Language -->
+    <string name="select_language_title">Choisir la Langue</string>
+    <string name="lang_vietnamese">Vietnamien</string>
+    <string name="lang_english">Anglais</string>
+    <string name="lang_french">Français</string>
+    <string name="btn_save">Enregistrer</string>
+
+    <!-- Others -->
+    <string name="notifications">Notifications</string>
+    <string name="rewards">Récompenses</string>
+    <string name="history">Tâches</string>
+    <string name="chatbot">Chatbot</string>
+    <string name="settings">Personnel</string>
+    <string name="invitation_sent">Invitation envoyée !</string>
+    <string name="history_title">Historique du Travail</string>
+    <string name="tab_all">Tout</string>
+    <string name="tab_task">Tâches</string>
+    <string name="tab_point">Points</string>
+
+    <string name="sample_task">Reçu +5 points</string>
+    <string name="sample_reason">Raison : À l\'heure</string>
+</resources>

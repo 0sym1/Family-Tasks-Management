@@ -4,46 +4,53 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.tngoc.familytaskapp.data.model.Notification;
+import com.tngoc.familytaskapp.data.repository.NotificationRepository;
+import com.tngoc.familytaskapp.data.repository.WorkspaceRepository;
 import com.tngoc.familytaskapp.utils.Constants;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class NotificationViewModel extends ViewModel {
 
-    private final FirebaseFirestore db;
+    private final NotificationRepository notificationRepository;
+    private final WorkspaceRepository workspaceRepository;
 
     public final MutableLiveData<List<Notification>> notificationsLiveData = new MutableLiveData<>();
     public final MutableLiveData<String>             errorLiveData         = new MutableLiveData<>();
+    public final MutableLiveData<Boolean>            acceptSuccessLiveData = new MutableLiveData<>();
 
     public NotificationViewModel() {
-        this.db = FirebaseFirestore.getInstance();
+        this.notificationRepository = new NotificationRepository();
+        this.workspaceRepository = new WorkspaceRepository();
     }
 
     public void loadNotifications(String userId) {
-        db.collection(Constants.COLLECTION_USERS)
-                .document(userId)
-                .collection(Constants.COLLECTION_NOTIFICATIONS)
-                .orderBy("createdAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
-                .get()
-                .addOnSuccessListener(snapshots -> {
-                    List<Notification> list = new ArrayList<>();
-                    for (QueryDocumentSnapshot doc : snapshots) {
-                        list.add(doc.toObject(Notification.class));
-                    }
-                    notificationsLiveData.setValue(list);
-                })
-                .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
+        notificationRepository.getNotificationsRealtime(userId, notificationsLiveData);
     }
 
     public void markAsRead(String userId, String notificationId) {
-        db.collection(Constants.COLLECTION_USERS)
+        FirebaseFirestore.getInstance().collection(Constants.COLLECTION_USERS)
                 .document(userId)
                 .collection(Constants.COLLECTION_NOTIFICATIONS)
                 .document(notificationId)
                 .update("isRead", true);
     }
-}
 
+    public void acceptInvitation(String userId, Notification notification) {
+        workspaceRepository.addMemberToWorkspace(notification.getWorkspaceId(), userId, acceptSuccessLiveData, errorLiveData);
+        updateNotificationType(userId, notification.getNotificationId(), "invitation_accepted");
+    }
+
+    public void declineInvitation(String userId, String notificationId) {
+        updateNotificationType(userId, notificationId, "invitation_declined");
+    }
+
+    private void updateNotificationType(String userId, String notificationId, String newType) {
+        FirebaseFirestore.getInstance().collection(Constants.COLLECTION_USERS)
+                .document(userId)
+                .collection(Constants.COLLECTION_NOTIFICATIONS)
+                .document(notificationId)
+                .update("type", newType, "isRead", true);
+    }
+}

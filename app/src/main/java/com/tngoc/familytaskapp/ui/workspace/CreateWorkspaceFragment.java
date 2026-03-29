@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.tngoc.familytaskapp.R;
 import com.tngoc.familytaskapp.data.model.Workspace;
 
@@ -50,9 +51,18 @@ public class CreateWorkspaceFragment extends Fragment {
                 Toast.makeText(requireContext(), getString(R.string.error_empty_fields), Toast.LENGTH_SHORT).show();
                 return;
             }
-            String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            Workspace workspace = new Workspace(null, name, desc, uid, new ArrayList<>(Arrays.asList(uid)));
-            workspaceViewModel.createWorkspace(workspace);
+            
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user != null) {
+                String uid = user.getUid();
+                // Lấy tên hiển thị nếu có, hoặc mặc định là "Tôi"
+                String ownerName = (user.getDisplayName() != null && !user.getDisplayName().isEmpty()) 
+                                   ? user.getDisplayName() : "Tôi";
+                
+                // Cập nhật đúng 6 tham số cho constructor: id, name, desc, ownerId, ownerName, members
+                Workspace workspace = new Workspace(null, name, desc, uid, ownerName, new ArrayList<>(Arrays.asList(uid)));
+                workspaceViewModel.createWorkspace(workspace);
+            }
         });
 
         observeViewModel();
@@ -71,4 +81,3 @@ public class CreateWorkspaceFragment extends Fragment {
         });
     }
 }
-

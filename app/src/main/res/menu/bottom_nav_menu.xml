@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/workspaceListFragment"
+        android:id="@+id/homeFragment"
         android:icon="@drawable/ic_home"
-        android:title="@string/workspaces" />
+        android:title="Trang chủ" />
     <item
-        android:id="@+id/notificationFragment"
-        android:icon="@drawable/ic_notification"
-        android:title="@string/notifications" />
-    <item
-        android:id="@+id/rewardFragment"
-        android:icon="@drawable/ic_reward"
-        android:title="@string/rewards" />
+        android:id="@+id/taskFragment"
+        android:icon="@drawable/ic_task"
+        android:title="Nhiệm vụ" />
     <item
         android:id="@+id/chatBotFragment"
         android:icon="@drawable/ic_chat"
-        android:title="@string/chatbot" />
+        android:title="Chat bot" />
     <item
-        android:id="@+id/settingsFragment"
-        android:icon="@drawable/ic_settings"
-        android:title="@string/settings" />
+        android:id="@+id/notificationFragment"
+        android:icon="@drawable/ic_notification"
+        android:title="Thông báo" />
+    <item
+        android:id="@+id/profileFragment"
+        android:icon="@drawable/ic_profile"
+        android:title="Cá nhân" />
 </menu>

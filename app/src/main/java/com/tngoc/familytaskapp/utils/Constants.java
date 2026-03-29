@@ -13,8 +13,10 @@ public class Constants {
 
     // Task status
     public static final String TASK_STATUS_TODO        = "todo";
+    public static final String TASK_STATUS_IN_PROGRESS = "in_progress";
     public static final String TASK_STATUS_PENDING     = "pending"; // Chờ duyệt
-    public static final String TASK_STATUS_DONE        = "done";    // Xong
+    public static final String TASK_STATUS_DONE        = "done";
+    public static final String TASK_STATUS_OVERDUE     = "overdue"; // Quá hạn
 
     // Invitation status
     public static final String INVITATION_PENDING  = "pending";

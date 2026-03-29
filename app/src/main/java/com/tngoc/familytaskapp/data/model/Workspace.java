@@ -10,18 +10,24 @@ public class Workspace {
     private String name;
     private String description;
     private String ownerId;
+    private String ownerName;
     private List<String> memberIds;
     private Timestamp createdAt;
+    private int totalTasks;
+    private int completedTasks;
 
     public Workspace() {}
 
-    public Workspace(String workspaceId, String name, String description, String ownerId, List<String> memberIds) {
+    public Workspace(String workspaceId, String name, String description, String ownerId, String ownerName, List<String> memberIds) {
         this.workspaceId = workspaceId;
         this.name = name;
         this.description = description;
         this.ownerId = ownerId;
+        this.ownerName = ownerName;
         this.memberIds = memberIds;
         this.createdAt = Timestamp.now();
+        this.totalTasks = 0;
+        this.completedTasks = 0;
     }
 
     public String getWorkspaceId() { return workspaceId; }
@@ -36,10 +42,18 @@ public class Workspace {
     public String getOwnerId() { return ownerId; }
     public void setOwnerId(String ownerId) { this.ownerId = ownerId; }
 
+    public String getOwnerName() { return ownerName; }
+    public void setOwnerName(String ownerName) { this.ownerName = ownerName; }
+
     public List<String> getMemberIds() { return memberIds; }
     public void setMemberIds(List<String> memberIds) { this.memberIds = memberIds; }
 
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
-}
 
+    public int getTotalTasks() { return totalTasks; }
+    public void setTotalTasks(int totalTasks) { this.totalTasks = totalTasks; }
+
+    public int getCompletedTasks() { return completedTasks; }
+    public void setCompletedTasks(int completedTasks) { this.completedTasks = completedTasks; }
+}

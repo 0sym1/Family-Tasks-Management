@@ -1,139 +1,345 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/bg_dark"
-    android:padding="24dp">
+    android:fillViewport="true">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/create_task"
-        android:textColor="@color/white"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="32dp" />
+        android:orientation="vertical"
+        android:padding="20dp">
 
-    <!-- Tiêu đề -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:background="@drawable/bg_input_field"
-        android:gravity="center_vertical"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:layout_marginBottom="14dp">
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginStart="-12dp"
+            android:padding="12dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_back"
+            app:tint="@color/white" />
 
         <TextView
-            android:layout_width="80dp"
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tiêu đề"
-            android:textColor="@color/input_label"
-            android:textSize="14sp" />
+            android:text="@string/create_task"
+            android:textColor="@color/white"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="32dp" />
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="24dp"
-            android:background="@color/input_border"
-            android:layout_marginEnd="12dp" />
+        <!-- Tên nhiệm vụ -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_input_field"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="14dp">
 
-        <EditText
-            android:id="@+id/etTaskTitle"
-            style="@style/DarkEditText"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:hint="Nhập tiêu đề nhiệm vụ"
-            android:textSize="14sp"
-            android:autofillHints=""
-            android:singleLine="true" />
-    </LinearLayout>
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="@string/label_task_name"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
 
-    <!-- Mô tả -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:background="@drawable/bg_input_field"
-        android:gravity="center_vertical"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:layout_marginBottom="14dp">
+            <View
+                android:layout_width="1dp"
+                android:layout_height="24dp"
+                android:background="@color/divider"
+                android:layout_marginEnd="12dp" />
 
-        <TextView
-            android:layout_width="80dp"
+            <EditText
+                android:id="@+id/etTaskName"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:hint="@string/hint_task_name"
+                android:textColor="@color/white"
+                android:textColorHint="@color/text_secondary"
+                android:background="@android:color/transparent"
+                android:textSize="14sp"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <!-- Mô tả nhiệm vụ -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mô tả"
-            android:textColor="@color/input_label"
-            android:textSize="14sp" />
+            android:minHeight="100dp"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_input_field"
+            android:gravity="top"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp"
+            android:layout_marginBottom="14dp">
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="24dp"
-            android:background="@color/input_border"
-            android:layout_marginEnd="12dp" />
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="Mô tả"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp" />
 
-        <EditText
-            android:id="@+id/etTaskDescription"
-            style="@style/DarkEditText"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:hint="Nhập mô tả (tuỳ chọn)"
-            android:textSize="14sp"
-            android:autofillHints=""
-            android:singleLine="true" />
-    </LinearLayout>
+            <View
+                android:layout_width="1dp"
+                android:layout_height="80dp"
+                android:background="@color/divider"
+                android:layout_marginEnd="12dp" />
 
-    <!-- Điểm thưởng -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:orientation="horizontal"
-        android:background="@drawable/bg_input_field"
-        android:gravity="center_vertical"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:layout_marginBottom="14dp">
+            <EditText
+                android:id="@+id/etTaskDescription"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Nhập mô tả chi tiết..."
+                android:textColor="@color/white"
+                android:textColorHint="@color/text_secondary"
+                android:background="@android:color/transparent"
+                android:textSize="14sp"
+                android:gravity="top"
+                android:inputType="textMultiLine"
+                android:scrollbars="vertical"
+                android:maxLines="5" />
+        </LinearLayout>
 
-        <TextView
-            android:layout_width="80dp"
+        <!-- Tình trạng -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_input_field"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="14dp">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="@string/label_status"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="24dp"
+                android:background="@color/divider"
+                android:layout_marginEnd="12dp" />
+
+            <Spinner
+                android:id="@+id/spinnerStatus"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:spinnerMode="dropdown" />
+        </LinearLayout>
+
+        <!-- Ngày bắt đầu -->
+        <LinearLayout
+            android:id="@+id/llStartDate"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_input_field"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="14dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="@string/label_start_date"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="24dp"
+                android:background="@color/divider"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:id="@+id/tvStartDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/hint_date_format"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Ngày kết thúc -->
+        <LinearLayout
+            android:id="@+id/llEndDate"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_input_field"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="14dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="@string/label_end_date"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="24dp"
+                android:background="@color/divider"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:id="@+id/tvEndDate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/hint_date_format"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Lặp lại -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_input_field"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="14dp">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="@string/label_repeat"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="24dp"
+                android:background="@color/divider"
+                android:layout_marginEnd="12dp" />
+
+            <RadioGroup
+                android:id="@+id/rgRepeat"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rbRepeatOn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/repeat_on"
+                    android:textColor="@color/white"
+                    android:buttonTint="@color/white"
+                    android:layout_marginEnd="16dp" />
+
+                <RadioButton
+                    android:id="@+id/rbRepeatOff"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/repeat_off"
+                    android:textColor="@color/white"
+                    android:buttonTint="@color/white"
+                    android:checked="true" />
+            </RadioGroup>
+
+            <ImageView
+                android:id="@+id/ivEditRepeat"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_edit"
+                app:tint="@color/white" />
+        </LinearLayout>
+
+        <!-- Người làm -->
+        <LinearLayout
+            android:id="@+id/llAssignedTo"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Điểm thưởng"
-            android:textColor="@color/input_label"
-            android:textSize="14sp" />
+            android:minHeight="56dp"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_input_field"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="32dp"
+            android:clickable="true"
+            android:focusable="true">
 
-        <View
-            android:layout_width="1dp"
-            android:layout_height="24dp"
-            android:background="@color/input_border"
-            android:layout_marginEnd="12dp" />
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="@string/label_assigned_to"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
 
-        <EditText
-            android:id="@+id/etRewardPoints"
-            style="@style/DarkEditText"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:hint="0"
-            android:textSize="14sp"
-            android:inputType="number"
-            android:autofillHints=""
-            android:singleLine="true" />
+            <View
+                android:layout_width="1dp"
+                android:layout_height="24dp"
+                android:background="@color/divider"
+                android:layout_marginEnd="12dp" />
+
+            <TextView
+                android:id="@+id/tvAssignedTo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Chọn người làm..."
+                android:textColor="@color/white"
+                android:textColorHint="@color/text_secondary"
+                android:textSize="14sp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="@string/btn_save"
+            android:textColor="@color/white"
+            android:background="@drawable/bg_button_dark"
+            android:layout_marginBottom="12dp"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/btnCancel"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="@string/btn_cancel"
+            android:textColor="@color/white"
+            android:background="@drawable/bg_button_dark"
+            android:textAllCaps="false" />
+
     </LinearLayout>
-
-    <Button
-        android:id="@+id/btnCreateTask"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:text="@string/create_task"
-        android:textColor="@color/white"
-        android:background="@drawable/bg_button_dark"
-        android:stateListAnimator="@null"
-        android:layout_marginTop="16dp" />
-
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>
