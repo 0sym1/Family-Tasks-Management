@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="150dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_rect_dark"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/label_status"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/divider" />
+
+    <CheckBox
+        android:id="@+id/cbDoing"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:buttonTint="@color/white"
+        android:text="@string/status_doing"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        android:paddingStart="4dp" />
+
+    <CheckBox
+        android:id="@+id/cbDone"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:buttonTint="@color/white"
+        android:text="@string/status_done"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        android:paddingStart="4dp" />
+
+    <CheckBox
+        android:id="@+id/cbTodo"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:buttonTint="@color/white"
+        android:text="@string/status_todo"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        android:paddingStart="4dp" />
+
+    <CheckBox
+        android:id="@+id/cbReview"
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:buttonTint="@color/white"
+        android:text="@string/status_review"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        android:paddingStart="4dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="12dp"
+        android:background="@color/divider" />
+
+    <Button
+        android:id="@+id/btnApplyFilter"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/bg_rect_dark"
+        android:backgroundTint="#3A3A3A"
+        android:text="@string/btn_apply"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

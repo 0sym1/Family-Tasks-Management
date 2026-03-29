@@ -2,7 +2,7 @@
     <string name="app_name">Family Task App</string>
 
     <!-- Welcome -->
-    <string name="app_title">Family\nTasks\nManagement</string>
+    <string name="app_title">Quản lý\nCông việc\nGia đình</string>
     <string name="btn_login">Đăng nhập</string>
     <string name="btn_register">Đăng ký</string>
     <string name="btn_cancel">Hủy</string>
@@ -10,14 +10,14 @@
 
     <!-- Login -->
     <string name="title_login">Đăng nhập</string>
-    <string name="label_username">Tên người dùng</string>
+    <string name="label_username">Tên đăng nhập</string>
     <string name="label_password">Mật khẩu</string>
-    <string name="hint_username">Nhập tên người dùng</string>
+    <string name="hint_username">Nhập tên đăng nhập</string>
     <string name="hint_password">Nhập mật khẩu</string>
 
     <!-- Register -->
     <string name="title_register">Đăng ký</string>
-    <string name="label_name">Tên</string>
+    <string name="label_name">Họ và tên</string>
     <string name="label_confirm_password">Xác nhận\nmật khẩu</string>
     <string name="hint_name">Nhập tên của bạn</string>
     <string name="hint_confirm_password">Nhập lại mật khẩu</string>
@@ -26,19 +26,58 @@
     <string name="error_empty_fields">Vui lòng điền đầy đủ thông tin</string>
     <string name="error_password_mismatch">Mật khẩu không khớp</string>
 
+    <!-- Home -->
+    <string name="home_title">Trang chủ</string>
+    <string name="home_welcome">Xin chào</string>
+    <string name="home_workspace_description">Đây là những không gian làm việc bạn quản lý</string>
+    <string name="hint_search_workspace">Tìm kiếm không gian làm việc...</string>
+    <string name="btn_delete">Xóa</string>
+    <string name="access">Truy cập</string>
+    <string name="workspace_name_demo">Nhà Kho</string>
+    <string name="label_workspace_name">Tên workspace</string>
+    <string name="hint_enter_workspace_name">Nhập tên workspace...</string>
+    <string name="btn_add">Thêm</string>
+
     <!-- Workspace -->
     <string name="workspaces">Trang chủ</string>
     <string name="workspace_detail">Chi tiết</string>
     <string name="create_workspace">Tạo workspace</string>
     <string name="invite_member">Mời thành viên</string>
-    <string name="workspace_created">Tạo workspace thành công!</string>
+    <string name="workspace_created">Tạo không gian làm việc thành công!</string>
 
     <!-- Task -->
     <string name="tasks">Nhiệm vụ</string>
     <string name="task_detail">Chi tiết nhiệm vụ</string>
-    <string name="create_task">Tạo nhiệm vụ</string>
+    <string name="create_task">Thêm công việc</string>
+    <string name="edit_task">Sửa công việc</string>
     <string name="task_created">Tạo nhiệm vụ thành công!</string>
     <string name="task_completed">Hoàn thành nhiệm vụ!</string>
+    <string name="label_task_name">Tên nhiệm vụ</string>
+    <string name="hint_task_name">Nhập tại đây...</string>
+    <string name="label_status">Tình trạng</string>
+    <string name="label_start_date">Ngày bắt đầu</string>
+    <string name="label_end_date">Ngày kết thúc</string>
+    <string name="label_repeat">Lặp lại</string>
+    <string name="label_created_by">Tạo bởi</string>
+    <string name="label_assigned_to">Được giao</string>
+    <string name="status_doing">Đang làm</string>
+    <string name="status_done">Xong</string>
+    <string name="status_todo">Chưa làm</string>
+    <string name="status_review">Kiểm tra</string>
+    <string name="btn_save">Lưu</string>
+    <string name="btn_apply">Áp dụng</string>
+    <string name="hint_date_format">dd/mm/yyyy</string>
+    <string name="repeat_on">Bật</string>
+    <string name="repeat_off">Tắt</string>
+    <string name="repeat_daily">Hàng ngày</string>
+    <string name="repeat_weekly">Hàng tuần</string>
+    <string name="label_select_days">Chọn ngày</string>
+    <string name="label_end_repeat">Kết thúc lặp</string>
+    <string name="repeat_never">Không bao giờ</string>
+    <string name="repeat_after">Sau</string>
+    <string name="repeat_times">lần</string>
+    <string name="repeat_after_date">Sau ngày</string>
+    <string name="btn_confirm">Xác nhận</string>
 
     <!-- Edit Repeat -->
     <string name="edit_repeat_title">Sửa lặp lại</string>
@@ -70,17 +109,29 @@
     <string name="btn_save">Lưu</string>
 
     <!-- Others -->
+    <string name="home">Trang chủ</string>
     <string name="notifications">Thông báo</string>
+    <string name="empty_notifications">Không có thông báo nào</string>
     <string name="rewards">Phần thưởng</string>
-    <string name="history">Nhiệm vụ</string>
-    <string name="chatbot">Chatbot</string>
-    <string name="settings">Cá nhân</string>
+    <string name="history">Lịch sử</string>
+    <string name="chatbot">Trợ lý AI</string>
+    <string name="settings">Cài đặt</string>
+    <string name="profile">Cá nhân</string>
     <string name="invitation_sent">Đã gửi lời mời!</string>
-    <string name="history_title">Lịch sử làm việc</string>
-    <string name="tab_all">Tất cả</string>
-    <string name="tab_task">Nhiệm vụ</string>
-    <string name="tab_point">Điểm</string>
 
-    <string name="sample_task">Phát nhánh +5 điểm</string>
-    <string name="sample_reason">Lý do: Đúng hạn</string>
+    <!-- Profile -->
+    <string name="profile_title">Hộ số</string>
+    <string name="profile_avatar">Avatar</string>
+    <string name="profile_edit_avatar">Chỉnh sửa avatar</string>
+    <string name="profile_points">Điểm: %d</string>
+    <string name="profile_points_default">Điểm: 0</string>
+    <string name="profile_change_password">Đổi mật khẩu?</string>
+    <string name="profile_old_password">Nhập mật khẩu hiện tại</string>
+    <string name="profile_new_password">Nhập mật khẩu mới</string>
+    <string name="profile_confirm_password">Xác nhận mật khẩu mới</string>
+    <string name="profile_language">Ngôn ngữ</string>
+    <string name="profile_language_vi">Ngôn ngữ</string>
+    <string name="profile_save">Lưu</string>
+    <string name="profile_logout">Đăng xuất</string>
+    <string name="btn_logout">Đăng xuất</string>
 </resources>

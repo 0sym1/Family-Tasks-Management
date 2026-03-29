@@ -1,22 +1,79 @@
 <resources>
     <style name="Base.Theme.FamilyTaskApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Tắt Material3 button tint, dùng màu tối -->
-        <item name="colorPrimary">@color/btn_primary</item>
-        <item name="colorPrimaryVariant">@color/btn_primary</item>
-        <item name="colorSecondary">@color/btn_primary</item>
+        <!-- Màu chủ đạo trắng cho các icon/nút quan trọng -->
+        <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryVariant">@color/white</item>
+        <item name="colorSecondary">@color/white</item>
+        <item name="materialButtonStyle">@style/Widget.AppCompat.Button</item>
+
+        <!-- Màu nền mặc định cho các popup/menu -->
+        <item name="android:colorBackground">#1A1A1A</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+
+        <!-- Tùy chỉnh PopupMenu (3 chấm) -->
+        <item name="actionOverflowMenuStyle">@style/CustomPopupMenu</item>
+        <item name="popupMenuStyle">@style/CustomPopupMenu</item>
     </style>
 
     <style name="Theme.FamilyTaskApp" parent="Base.Theme.FamilyTaskApp" />
 
-    <!-- EditText hint color cho dark theme -->
+    <style name="CustomPopupMenu" parent="Widget.AppCompat.PopupMenu">
+        <item name="android:itemBackground">#2C2C2C</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <!-- Thêm thuộc tính này để ép chữ trắng cho item -->
+        <item name="android:textAppearanceLarge">@style/DialogListItemTextAppearance</item>
+        <item name="android:textAppearanceMedium">@style/DialogListItemTextAppearance</item>
+        <item name="android:textAppearanceSmall">@style/DialogListItemTextAppearance</item>
+    </style>
+
     <style name="DarkEditText">
         <item name="android:textColorHint">@color/input_hint</item>
         <item name="android:textColor">@color/input_text</item>
         <item name="android:background">@null</item>
     </style>
 
-    <style name="RoundedButton">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">28dp</item>
+    <!-- Theme cho AlertDialog (Xác nhận xóa) -->
+    <style name="CustomDialogTheme" parent="Theme.MaterialComponents.DayNight.Dialog.Alert">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:background">#2C2C2C</item>
+        <item name="colorSurface">#2C2C2C</item>
+        <item name="colorOnSurface">#FFFFFF</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColorSecondary">#FFFFFF</item>
+        <item name="colorPrimary">#FFFFFF</item>
+        <item name="android:textAppearanceListItem">@style/DialogListItemTextAppearance</item>
+        <item name="buttonBarPositiveButtonStyle">@style/DialogButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/DialogButtonStyle</item>
+    </style>
+
+    <style name="DialogListItemTextAppearance" parent="">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!-- Theme RIÊNG cho MaterialDatePicker -->
+    <style name="CustomDatePickerTheme" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">
+        <item name="colorSurface">#2C2C2C</item>
+        <item name="colorOnSurface">#FFFFFF</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColorSecondary">#FFFFFF</item>
+        <item name="colorPrimary">#FFFFFF</item>
+        <item name="colorOnPrimary">#2C2C2C</item>
+        <item name="textAppearanceCaption">@style/CustomDayOfWeekTextAppearance</item>
+    </style>
+
+    <style name="CustomDayOfWeekTextAppearance" parent="TextAppearance.MaterialComponents.Caption">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="DialogButtonStyle" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CircleImage">
+        <item name="cornerSize">50%</item>
     </style>
 </resources>

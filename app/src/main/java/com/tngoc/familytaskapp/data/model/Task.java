@@ -10,11 +10,13 @@ public class Task {
     private String workspaceId;
     private String title;
     private String description;
-    private String assignedTo;   // userId
+    private List<String> assignedToIds;
     private String createdBy;    // userId
-    private String status;       // "todo" | "in_progress" | "done"
+    private String status;       // "doing" | "done" | "todo"
     private int rewardPoints;
-    private Timestamp dueDate;
+    private Timestamp startDate;
+    private Timestamp endDate;
+    private boolean isRepeat;
     private Timestamp createdAt;
 
     // Repeat settings
@@ -27,15 +29,17 @@ public class Task {
 
     public Task() {}
 
-    public Task(String workspaceId, String title, String description, String assignedTo, String createdBy, String status, int rewardPoints, Timestamp dueDate) {
+    public Task(String workspaceId, String title, String description, List<String> assignedToIds, String createdBy, String status, int rewardPoints, Timestamp startDate, Timestamp endDate, boolean isRepeat) {
         this.workspaceId = workspaceId;
         this.title = title;
         this.description = description;
-        this.assignedTo = assignedTo;
+        this.assignedToIds = assignedToIds;
         this.createdBy = createdBy;
         this.status = status;
         this.rewardPoints = rewardPoints;
-        this.dueDate = dueDate;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.isRepeat = isRepeat;
         this.createdAt = Timestamp.now();
     }
 
@@ -51,8 +55,8 @@ public class Task {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
-    public String getAssignedTo() { return assignedTo; }
-    public void setAssignedTo(String assignedTo) { this.assignedTo = assignedTo; }
+    public List<String> getAssignedToIds() { return assignedToIds; }
+    public void setAssignedToIds(List<String> assignedToIds) { this.assignedToIds = assignedToIds; }
 
     public String getCreatedBy() { return createdBy; }
     public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
@@ -63,8 +67,14 @@ public class Task {
     public int getRewardPoints() { return rewardPoints; }
     public void setRewardPoints(int rewardPoints) { this.rewardPoints = rewardPoints; }
 
-    public Timestamp getDueDate() { return dueDate; }
-    public void setDueDate(Timestamp dueDate) { this.dueDate = dueDate; }
+    public Timestamp getStartDate() { return startDate; }
+    public void setStartDate(Timestamp startDate) { this.startDate = startDate; }
+
+    public Timestamp getEndDate() { return endDate; }
+    public void setEndDate(Timestamp endDate) { this.endDate = endDate; }
+
+    public boolean isRepeat() { return isRepeat; }
+    public void setRepeat(boolean repeat) { isRepeat = repeat; }
 
     public Timestamp getCreatedAt() { return createdAt; }
     public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
