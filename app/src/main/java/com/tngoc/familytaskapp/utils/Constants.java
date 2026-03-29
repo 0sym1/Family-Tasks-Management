@@ -8,13 +8,13 @@ public class Constants {
     public static final String COLLECTION_INVITATIONS    = "invitations";
     public static final String COLLECTION_NOTIFICATIONS  = "notifications";
     public static final String COLLECTION_REWARDS        = "rewards";
-    public static final String COLLECTION_CHAT_HISTORY   = "chatHistory";
-    public static final String COLLECTION_MESSAGES       = "messages";
+    public static final String COLLECTION_CHAT_HISTORY   = "chat_history"; // Sửa theo sơ đồ
+    public static final String COLLECTION_MESSAGES       = "message";      // Sửa theo sơ đồ
 
     // Task status
     public static final String TASK_STATUS_TODO        = "todo";
-    public static final String TASK_STATUS_IN_PROGRESS = "in_progress";
-    public static final String TASK_STATUS_DONE        = "done";
+    public static final String TASK_STATUS_PENDING     = "pending"; // Chờ duyệt
+    public static final String TASK_STATUS_DONE        = "done";    // Xong
 
     // Invitation status
     public static final String INVITATION_PENDING  = "pending";
@@ -35,5 +35,7 @@ public class Constants {
     // Chat roles
     public static final String CHAT_ROLE_USER = "user";
     public static final String CHAT_ROLE_BOT  = "bot";
-}
 
+    // Gemini API Key
+    public static final String GEMINI_API_KEY = "AIzaSyAqWGrOmVRdtEcvIggAaftVZZ-s7T0PW8g";
+}

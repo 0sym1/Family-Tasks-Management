@@ -3,7 +3,9 @@ package com.tngoc.familytaskapp.data.repository;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.tngoc.familytaskapp.data.model.ChatHistory;
 import com.tngoc.familytaskapp.data.model.ChatMessage;
 import com.tngoc.familytaskapp.utils.Constants;
 
@@ -18,20 +20,49 @@ public class ChatRepository {
         this.db = FirebaseFirestore.getInstance();
     }
 
-    public void saveMessage(String userId, ChatMessage message, MutableLiveData<String> messageIdLiveData, MutableLiveData<String> errorLiveData) {
-        db.collection(Constants.COLLECTION_CHAT_HISTORY)
+    public void createChatHistory(String userId, ChatHistory history, MutableLiveData<String> historyIdLiveData, MutableLiveData<String> errorLiveData) {
+        db.collection(Constants.COLLECTION_USERS)
                 .document(userId)
+                .collection(Constants.COLLECTION_CHAT_HISTORY)
+                .add(history)
+                .addOnSuccessListener(ref -> historyIdLiveData.setValue(ref.getId()))
+                .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
+    }
+
+    public void getChatHistories(String userId, MutableLiveData<List<ChatHistory>> historiesLiveData, MutableLiveData<String> errorLiveData) {
+        db.collection(Constants.COLLECTION_USERS)
+                .document(userId)
+                .collection(Constants.COLLECTION_CHAT_HISTORY)
+                .orderBy("timestamp", Query.Direction.DESCENDING) // Sắp xếp mới nhất lên đầu
+                .get()
+                .addOnSuccessListener(snapshots -> {
+                    List<ChatHistory> list = new ArrayList<>();
+                    for (QueryDocumentSnapshot doc : snapshots) {
+                        list.add(doc.toObject(ChatHistory.class));
+                    }
+                    historiesLiveData.setValue(list);
+                })
+                .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
+    }
+
+    public void saveMessage(String userId, String historyId, ChatMessage message, MutableLiveData<String> messageIdLiveData, MutableLiveData<String> errorLiveData) {
+        db.collection(Constants.COLLECTION_USERS)
+                .document(userId)
+                .collection(Constants.COLLECTION_CHAT_HISTORY)
+                .document(historyId)
                 .collection(Constants.COLLECTION_MESSAGES)
                 .add(message)
                 .addOnSuccessListener(ref -> messageIdLiveData.setValue(ref.getId()))
                 .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
     }
 
-    public void getChatHistory(String userId, MutableLiveData<List<ChatMessage>> messagesLiveData, MutableLiveData<String> errorLiveData) {
-        db.collection(Constants.COLLECTION_CHAT_HISTORY)
+    public void getMessages(String userId, String historyId, MutableLiveData<List<ChatMessage>> messagesLiveData, MutableLiveData<String> errorLiveData) {
+        db.collection(Constants.COLLECTION_USERS)
                 .document(userId)
+                .collection(Constants.COLLECTION_CHAT_HISTORY)
+                .document(historyId)
                 .collection(Constants.COLLECTION_MESSAGES)
-                .orderBy("timestamp")
+                .orderBy("time")
                 .get()
                 .addOnSuccessListener(snapshots -> {
                     List<ChatMessage> list = new ArrayList<>();
@@ -42,19 +73,4 @@ public class ChatRepository {
                 })
                 .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
     }
-
-    public void clearChatHistory(String userId, MutableLiveData<Boolean> successLiveData, MutableLiveData<String> errorLiveData) {
-        db.collection(Constants.COLLECTION_CHAT_HISTORY)
-                .document(userId)
-                .collection(Constants.COLLECTION_MESSAGES)
-                .get()
-                .addOnSuccessListener(snapshots -> {
-                    for (QueryDocumentSnapshot doc : snapshots) {
-                        doc.getReference().delete();
-                    }
-                    successLiveData.setValue(true);
-                })
-                .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
-    }
 }
-
