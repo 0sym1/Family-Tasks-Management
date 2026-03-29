@@ -1,5 +1,6 @@
 package com.tngoc.familytaskapp.ui.notification;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.tngoc.familytaskapp.MainActivity;
 import com.tngoc.familytaskapp.R;
 import com.tngoc.familytaskapp.adapter.NotificationAdapter;
 import com.tngoc.familytaskapp.data.model.Notification;
@@ -53,14 +55,26 @@ public class NotificationFragment extends Fragment {
         adapter.setOnNotificationActionListener(new NotificationAdapter.OnNotificationActionListener() {
             @Override
             public void onAccept(Notification notification) {
-                Toast.makeText(requireContext(), "Đã chấp nhận", Toast.LENGTH_SHORT).show();
-                notificationViewModel.markAsRead(FirebaseAuth.getInstance().getUid(), notification.getNotificationId());
+                String uid = FirebaseAuth.getInstance().getUid();
+                if (uid != null) {
+                    notificationViewModel.acceptInvitation(uid, notification);
+                    
+                    // Sau khi chấp nhận, chuyển hướng vào workspace
+                    Intent intent = new Intent(requireContext(), MainActivity.class);
+                    intent.putExtra("OPEN_TASK_LIST", true);
+                    intent.putExtra("workspaceId", notification.getWorkspaceId());
+                    intent.putExtra("workspaceName", notification.getTitle()); // Hoặc lấy từ message nếu cần
+                    startActivity(intent);
+                }
             }
 
             @Override
             public void onDecline(Notification notification) {
-                Toast.makeText(requireContext(), "Đã từ chối", Toast.LENGTH_SHORT).show();
-                notificationViewModel.markAsRead(FirebaseAuth.getInstance().getUid(), notification.getNotificationId());
+                String uid = FirebaseAuth.getInstance().getUid();
+                if (uid != null) {
+                    notificationViewModel.declineInvitation(uid, notification.getNotificationId());
+                    Toast.makeText(requireContext(), "Đã từ chối lời mời", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -109,6 +123,12 @@ public class NotificationFragment extends Fragment {
 
         notificationViewModel.errorLiveData.observe(getViewLifecycleOwner(), error -> {
             if (error != null) Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+        });
+        
+        notificationViewModel.acceptSuccessLiveData.observe(getViewLifecycleOwner(), success -> {
+            if (Boolean.TRUE.equals(success)) {
+                Toast.makeText(requireContext(), "Đã tham gia Workspace", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 }

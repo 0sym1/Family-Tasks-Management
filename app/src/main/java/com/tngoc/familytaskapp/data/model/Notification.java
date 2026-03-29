@@ -11,18 +11,22 @@ public class Notification {
     private String title;
     private String message;
     private String type;
-    private String refId;
+    private String workspaceId;
+    private String fromUserId;
     private boolean isRead;
     private Timestamp createdAt;
 
-    public Notification() {}
+    public Notification() {
+        this.isRead = false;
+        this.createdAt = Timestamp.now();
+    }
 
-    public Notification(String userId, String title, String message, String type, String refId) {
+    public Notification(String userId, String title, String message, String type, String workspaceId) {
         this.userId = userId;
         this.title = title;
         this.message = message;
         this.type = type;
-        this.refId = refId;
+        this.workspaceId = workspaceId;
         this.isRead = false;
         this.createdAt = Timestamp.now();
     }
@@ -42,8 +46,11 @@ public class Notification {
     public String getType() { return type; }
     public void setType(String type) { this.type = type; }
 
-    public String getRefId() { return refId; }
-    public void setRefId(String refId) { this.refId = refId; }
+    public String getWorkspaceId() { return workspaceId; }
+    public void setWorkspaceId(String workspaceId) { this.workspaceId = workspaceId; }
+
+    public String getFromUserId() { return fromUserId; }
+    public void setFromUserId(String fromUserId) { this.fromUserId = fromUserId; }
 
     @PropertyName("isRead")
     public boolean isRead() { return isRead; }

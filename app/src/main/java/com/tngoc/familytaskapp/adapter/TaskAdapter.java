@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,13 +23,22 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     private List<Task> taskList = new ArrayList<>();
     private OnTaskClickListener listener;
+    private OnTaskMoreActionsListener moreActionsListener;
 
     public interface OnTaskClickListener {
         void onTaskClick(Task task);
     }
 
+    public interface OnTaskMoreActionsListener {
+        void onDeleteTask(Task task);
+    }
+
     public void setOnTaskClickListener(OnTaskClickListener listener) {
         this.listener = listener;
+    }
+
+    public void setOnTaskMoreActionsListener(OnTaskMoreActionsListener moreActionsListener) {
+        this.moreActionsListener = moreActionsListener;
     }
 
     public void setTaskList(List<Task> tasks) {
@@ -46,7 +56,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     @Override
     public void onBindViewHolder(@NonNull TaskViewHolder holder, int position) {
         Task task = taskList.get(position);
-        holder.bind(task, listener);
+        holder.bind(task, listener, moreActionsListener);
     }
 
     @Override
@@ -56,7 +66,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
     static class TaskViewHolder extends RecyclerView.ViewHolder {
         TextView tvTaskTime, tvTaskDeadline, tvTaskStatus, tvTaskTitle;
-        ImageView ivRepeat;
+        ImageView ivRepeat, ivMore;
         SimpleDateFormat sdf = new SimpleDateFormat("HH'h' EEE dd/MM", new Locale("vi", "VN"));
 
         public TaskViewHolder(@NonNull View itemView) {
@@ -66,9 +76,10 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
             tvTaskStatus = itemView.findViewById(R.id.tvTaskStatus);
             tvTaskTitle = itemView.findViewById(R.id.tvTaskTitle);
             ivRepeat = itemView.findViewById(R.id.ivRepeat);
+            ivMore = itemView.findViewById(R.id.ivMore);
         }
 
-        public void bind(Task task, OnTaskClickListener listener) {
+        public void bind(Task task, OnTaskClickListener listener, OnTaskMoreActionsListener moreListener) {
             tvTaskTitle.setText(task.getTitle());
             
             if (task.getCreatedAt() != null) {
@@ -106,6 +117,19 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
             itemView.setOnClickListener(v -> {
                 if (listener != null) listener.onTaskClick(task);
+            });
+
+            ivMore.setOnClickListener(v -> {
+                PopupMenu popup = new PopupMenu(v.getContext(), v);
+                popup.getMenu().add("Xóa");
+                popup.setOnMenuItemClickListener(item -> {
+                    if (item.getTitle().equals("Xóa")) {
+                        if (moreListener != null) moreListener.onDeleteTask(task);
+                        return true;
+                    }
+                    return false;
+                });
+                popup.show();
             });
         }
     }

@@ -2,6 +2,7 @@ package com.tngoc.familytaskapp.data.repository;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -26,6 +27,14 @@ public class WorkspaceRepository {
         db.collection(Constants.COLLECTION_WORKSPACES)
                 .add(workspace)
                 .addOnSuccessListener(ref -> workspaceIdLiveData.setValue(ref.getId()))
+                .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
+    }
+
+    public void addMemberToWorkspace(String workspaceId, String userId, MutableLiveData<Boolean> successLiveData, MutableLiveData<String> errorLiveData) {
+        db.collection(Constants.COLLECTION_WORKSPACES)
+                .document(workspaceId)
+                .update("memberIds", FieldValue.arrayUnion(userId))
+                .addOnSuccessListener(unused -> successLiveData.setValue(true))
                 .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
     }
 

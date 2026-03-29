@@ -1,9 +1,16 @@
 package com.tngoc.familytaskapp.data.repository;
 
 import androidx.lifecycle.MutableLiveData;
+
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.tngoc.familytaskapp.data.model.User;
 import com.tngoc.familytaskapp.utils.Constants;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserRepository {
     private final FirebaseFirestore db;
@@ -29,13 +36,10 @@ public class UserRepository {
                         try {
                             User user = snapshot.toObject(User.class);
                             if (user != null) {
-                                // Set userId từ DocumentId
                                 user.setUserId(snapshot.getId());
-                                // Nếu displayName null, thử lấy từ "name"
                                 if ((user.getDisplayName() == null || user.getDisplayName().isEmpty()) && snapshot.contains("name")) {
                                     user.setDisplayName((String) snapshot.get("name"));
                                 }
-                                // Set default values nếu null
                                 if (user.getEmail() == null) user.setEmail("");
                                 if (user.getAvatarUrl() == null) user.setAvatarUrl("");
                             }
@@ -48,6 +52,33 @@ public class UserRepository {
                     }
                 })
                 .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
+    }
+
+    public void getUsers(List<String> userIds, MutableLiveData<List<User>> usersLiveData, MutableLiveData<String> errorLiveData) {
+        if (userIds == null || userIds.isEmpty()) {
+            usersLiveData.setValue(new ArrayList<>());
+            return;
+        }
+
+        List<Task<DocumentSnapshot>> tasks = new ArrayList<>();
+        for (String id : userIds) {
+            tasks.add(db.collection(Constants.COLLECTION_USERS).document(id).get());
+        }
+
+        Tasks.whenAllSuccess(tasks).addOnSuccessListener(results -> {
+            List<User> users = new ArrayList<>();
+            for (Object res : results) {
+                DocumentSnapshot snapshot = (DocumentSnapshot) res;
+                if (snapshot.exists()) {
+                    User user = snapshot.toObject(User.class);
+                    if (user != null) {
+                        user.setUserId(snapshot.getId());
+                        users.add(user);
+                    }
+                }
+            }
+            usersLiveData.setValue(users);
+        }).addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
     }
 
     public void getUserName(String userId, MutableLiveData<String> nameLiveData) {

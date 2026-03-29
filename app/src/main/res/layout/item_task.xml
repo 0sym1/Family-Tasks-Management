@@ -19,9 +19,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="@+id/ivMore"
             app:layout_constraintEnd_toStartOf="@+id/tvTaskStatus"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="@+id/ivMore">
 
             <TextView
                 android:id="@+id/tvTaskTime"
@@ -57,25 +58,37 @@
             android:id="@+id/tvTaskStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/bg_rect_dark"
             android:backgroundTint="#1B3022"
-            android:paddingStart="14dp"
+            android:paddingStart="12dp"
             android:paddingTop="4dp"
-            android:paddingEnd="14dp"
+            android:paddingEnd="12dp"
             android:paddingBottom="4dp"
             android:text="XONG"
             android:textColor="#59D595"
-            android:textSize="11sp"
+            android:textSize="10sp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/ivMore"
+            app:layout_constraintEnd_toStartOf="@+id/ivMore"
+            app:layout_constraintTop_toTopOf="@+id/ivMore" />
+
+        <ImageView
+            android:id="@+id/ivMore"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_more_vert"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/white" />
 
         <TextView
             android:id="@+id/tvTaskTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:text="Sweeping the floor"
             android:textColor="@color/white"
             android:textSize="18sp"
@@ -85,13 +98,12 @@
 
         <ImageView
             android:id="@+id/ivRepeat"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
             android:src="@drawable/ic_repeat"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="@+id/tvTaskTitle"
-            app:layout_constraintEnd_toEndOf="@+id/tvTaskStatus"
-            app:layout_constraintStart_toStartOf="@+id/tvTaskStatus"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tvTaskTitle"
             app:tint="#59D595" />
 

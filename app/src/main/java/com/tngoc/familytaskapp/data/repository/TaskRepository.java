@@ -22,8 +22,23 @@ public class TaskRepository {
         db.collection(Constants.COLLECTION_WORKSPACES)
                 .document(workspaceId)
                 .collection(Constants.COLLECTION_TASKS)
-                .add(task)
-                .addOnSuccessListener(ref -> taskIdLiveData.setValue(ref.getId()))
+                .whereEqualTo("title", task.getTitle())
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        errorLiveData.setValue("Tên nhiệm vụ này đã tồn tại trong không gian làm việc này.");
+                    } else {
+                        db.collection(Constants.COLLECTION_WORKSPACES)
+                                .document(workspaceId)
+                                .collection(Constants.COLLECTION_TASKS)
+                                .add(task)
+                                .addOnSuccessListener(ref -> {
+                                    taskIdLiveData.setValue(ref.getId());
+                                    updateWorkspaceTaskCounts(workspaceId);
+                                })
+                                .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
+                    }
+                })
                 .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
     }
 
@@ -31,13 +46,52 @@ public class TaskRepository {
         db.collection(Constants.COLLECTION_WORKSPACES)
                 .document(workspaceId)
                 .collection(Constants.COLLECTION_TASKS)
-                .get()
-                .addOnSuccessListener(snapshots -> {
-                    List<Task> list = new ArrayList<>();
-                    for (QueryDocumentSnapshot doc : snapshots) {
-                        list.add(doc.toObject(Task.class));
+                .addSnapshotListener((snapshots, e) -> {
+                    if (e != null) {
+                        errorLiveData.setValue(e.getMessage());
+                        return;
                     }
-                    tasksLiveData.setValue(list);
+                    if (snapshots != null) {
+                        List<Task> list = new ArrayList<>();
+                        for (QueryDocumentSnapshot doc : snapshots) {
+                            Task task = doc.toObject(Task.class);
+                            task.setTaskId(doc.getId());
+                            list.add(task);
+                        }
+                        tasksLiveData.setValue(list);
+                    }
+                });
+    }
+
+    public void getTask(String workspaceId, String taskId, MutableLiveData<Task> taskLiveData, MutableLiveData<String> errorLiveData) {
+        db.collection(Constants.COLLECTION_WORKSPACES)
+                .document(workspaceId)
+                .collection(Constants.COLLECTION_TASKS)
+                .document(taskId)
+                .addSnapshotListener((snapshot, e) -> {
+                    if (e != null) {
+                        errorLiveData.setValue(e.getMessage());
+                        return;
+                    }
+                    if (snapshot != null && snapshot.exists()) {
+                        Task task = snapshot.toObject(Task.class);
+                        if (task != null) {
+                            task.setTaskId(snapshot.getId());
+                            taskLiveData.setValue(task);
+                        }
+                    }
+                });
+    }
+
+    public void updateTask(String workspaceId, Task task, MutableLiveData<Boolean> successLiveData, MutableLiveData<String> errorLiveData) {
+        db.collection(Constants.COLLECTION_WORKSPACES)
+                .document(workspaceId)
+                .collection(Constants.COLLECTION_TASKS)
+                .document(task.getTaskId())
+                .set(task)
+                .addOnSuccessListener(unused -> {
+                    successLiveData.setValue(true);
+                    updateWorkspaceTaskCounts(workspaceId);
                 })
                 .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
     }
@@ -48,7 +102,10 @@ public class TaskRepository {
                 .collection(Constants.COLLECTION_TASKS)
                 .document(taskId)
                 .update("status", newStatus)
-                .addOnSuccessListener(unused -> successLiveData.setValue(true))
+                .addOnSuccessListener(unused -> {
+                    successLiveData.setValue(true);
+                    updateWorkspaceTaskCounts(workspaceId);
+                })
                 .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
     }
 
@@ -58,8 +115,29 @@ public class TaskRepository {
                 .collection(Constants.COLLECTION_TASKS)
                 .document(taskId)
                 .delete()
-                .addOnSuccessListener(unused -> successLiveData.setValue(true))
+                .addOnSuccessListener(unused -> {
+                    successLiveData.setValue(true);
+                    updateWorkspaceTaskCounts(workspaceId);
+                })
                 .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
     }
-}
 
+    private void updateWorkspaceTaskCounts(String workspaceId) {
+        db.collection(Constants.COLLECTION_WORKSPACES)
+                .document(workspaceId)
+                .collection(Constants.COLLECTION_TASKS)
+                .get()
+                .addOnSuccessListener(snapshots -> {
+                    int total = snapshots.size();
+                    int completed = 0;
+                    for (QueryDocumentSnapshot doc : snapshots) {
+                        if (Constants.TASK_STATUS_DONE.equals(doc.getString("status"))) {
+                            completed++;
+                        }
+                    }
+                    db.collection(Constants.COLLECTION_WORKSPACES)
+                            .document(workspaceId)
+                            .update("totalTasks", total, "completedTasks", completed);
+                });
+    }
+}
