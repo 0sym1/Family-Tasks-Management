@@ -1,22 +1,30 @@
 package com.tngoc.familytaskapp.data.repository;
 
+import android.net.Uri;
+
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.tngoc.familytaskapp.data.model.User;
 import com.tngoc.familytaskapp.utils.Constants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class UserRepository {
     private final FirebaseFirestore db;
+    private final FirebaseStorage storage;
 
     public UserRepository() {
         this.db = FirebaseFirestore.getInstance();
+        this.storage = FirebaseStorage.getInstance();
     }
 
     public void createUser(User user, MutableLiveData<Boolean> successLiveData, MutableLiveData<String> errorLiveData) {
@@ -41,7 +49,13 @@ public class UserRepository {
                                     user.setDisplayName((String) snapshot.get("name"));
                                 }
                                 if (user.getEmail() == null) user.setEmail("");
-                                if (user.getAvatarUrl() == null) user.setAvatarUrl("");
+                                if (user.getAvatarUrl() == null) {
+                                    if (snapshot.contains("avt_url")) {
+                                        user.setAvatarUrl(snapshot.getString("avt_url"));
+                                    } else {
+                                        user.setAvatarUrl("");
+                                    }
+                                }
                             }
                             userLiveData.setValue(user);
                         } catch (Exception e) {
@@ -51,6 +65,20 @@ public class UserRepository {
                         errorLiveData.setValue("User not found");
                     }
                 })
+                .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
+    }
+
+    public void uploadAvatar(String userId, Uri imageUri, MutableLiveData<String> avatarUrlLiveData, MutableLiveData<String> errorLiveData) {
+        StorageReference ref = storage.getReference().child("avatars/" + userId + ".jpg");
+        ref.putFile(imageUri)
+                .addOnSuccessListener(taskSnapshot -> ref.getDownloadUrl().addOnSuccessListener(uri -> {
+                    String url = uri.toString();
+                    Map<String, Object> update = new HashMap<>();
+                    update.put("avt_url", url);
+                    db.collection(Constants.COLLECTION_USERS).document(userId).update(update)
+                            .addOnSuccessListener(unused -> avatarUrlLiveData.setValue(url))
+                            .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
+                }))
                 .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
     }
 

@@ -18,13 +18,16 @@
     <!-- Register -->
     <string name="title_register">Đăng ký</string>
     <string name="label_name">Họ và tên</string>
+    <string name="label_email">Email</string>
     <string name="label_confirm_password">Xác nhận\nmật khẩu</string>
     <string name="hint_name">Nhập tên của bạn</string>
+    <string name="hint_email">Nhập email của bạn</string>
     <string name="hint_confirm_password">Nhập lại mật khẩu</string>
 
     <!-- Errors -->
     <string name="error_empty_fields">Vui lòng điền đầy đủ thông tin</string>
     <string name="error_password_mismatch">Mật khẩu không khớp</string>
+    <string name="error_invalid_username">Tên đăng nhập không hợp lệ</string>
 
     <!-- Home -->
     <string name="home_title">Trang chủ</string>
@@ -106,7 +109,6 @@
     <string name="lang_vietnamese">Tiếng Việt</string>
     <string name="lang_english">English</string>
     <string name="lang_french">Français</string>
-    <string name="btn_save">Lưu</string>
 
     <!-- Others -->
     <string name="home">Trang chủ</string>
@@ -118,6 +120,12 @@
     <string name="settings">Cài đặt</string>
     <string name="profile">Cá nhân</string>
     <string name="invitation_sent">Đã gửi lời mời!</string>
+    <string name="history_title">Lịch sử công việc</string>
+    <string name="tab_all">Tất cả</string>
+    <string name="tab_task">Công việc</string>
+    <string name="tab_point">Điểm</string>
+    <string name="sample_task">Nhận +5 điểm</string>
+    <string name="sample_reason">Lý do: Đúng hạn</string>
 
     <!-- Profile -->
     <string name="profile_title">Hộ số</string>

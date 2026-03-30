@@ -20,8 +20,8 @@ import com.tngoc.familytaskapp.ui.home.HomeActivity;
 public class RegisterActivity extends AppCompatActivity {
 
     private AuthViewModel authViewModel;
-    private EditText etName, etEmail, etPassword, etConfirmPassword;
-    private TextView tvNameError, tvEmailError, tvPasswordError, tvConfirmError;
+    private EditText etName, etEmail, etUsername, etPassword, etConfirmPassword;
+    private TextView tvNameError, tvEmailError, tvUsernameError, tvPasswordError, tvConfirmError;
     private ProgressBar progressBar;
 
     @Override
@@ -37,10 +37,12 @@ public class RegisterActivity extends AppCompatActivity {
     private void initViews() {
         etName            = findViewById(R.id.etName);
         etEmail           = findViewById(R.id.etEmail);
+        etUsername        = findViewById(R.id.etUsername);
         etPassword        = findViewById(R.id.etPassword);
         etConfirmPassword = findViewById(R.id.etConfirmPassword);
         tvNameError       = findViewById(R.id.tvNameError);
         tvEmailError      = findViewById(R.id.tvEmailError);
+        tvUsernameError   = findViewById(R.id.tvUsernameError);
         tvPasswordError   = findViewById(R.id.tvPasswordError);
         tvConfirmError    = findViewById(R.id.tvConfirmError);
         progressBar       = findViewById(R.id.progressBar);
@@ -51,12 +53,14 @@ public class RegisterActivity extends AppCompatActivity {
         // Xóa lỗi khi user nhập lại
         etName.addTextChangedListener(clearError(tvNameError));
         etEmail.addTextChangedListener(clearError(tvEmailError));
+        etUsername.addTextChangedListener(clearError(tvUsernameError));
         etPassword.addTextChangedListener(clearError(tvPasswordError));
         etConfirmPassword.addTextChangedListener(clearError(tvConfirmError));
 
         btnRegister.setOnClickListener(v -> {
             String name     = etName.getText().toString().trim();
             String email    = etEmail.getText().toString().trim();
+            String username = etUsername.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
             String confirm  = etConfirmPassword.getText().toString().trim();
 
@@ -84,6 +88,17 @@ public class RegisterActivity extends AppCompatActivity {
                 valid = false;
             }
 
+            // Validate username
+            if (username.isEmpty()) {
+                tvUsernameError.setText("Vui lòng nhập tên đăng nhập");
+                tvUsernameError.setVisibility(View.VISIBLE);
+                valid = false;
+            } else if (username.length() < 3) {
+                tvUsernameError.setText("Tên đăng nhập phải có ít nhất 3 ký tự");
+                tvUsernameError.setVisibility(View.VISIBLE);
+                valid = false;
+            }
+
             // Validate mật khẩu
             if (password.isEmpty()) {
                 tvPasswordError.setText("Vui lòng nhập mật khẩu");
@@ -107,7 +122,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
 
             if (!valid) return;
-            authViewModel.register(email, password, name);
+            authViewModel.register(email, password, name, username);
         });
 
         btnCancel.setOnClickListener(v -> {

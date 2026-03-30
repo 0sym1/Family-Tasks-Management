@@ -6,6 +6,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,7 +44,7 @@ public class AuthRepository {
     }
 
     /** Đăng ký: tạo Firebase Auth account, rồi lưu profile vào Firestore */
-    public void register(String email, String password, String name,
+    public void register(String email, String password, String name, String username,
                          MutableLiveData<FirebaseUser> userLiveData,
                          MutableLiveData<Boolean> loadingLiveData,
                          MutableLiveData<String> errorLiveData) {
@@ -57,9 +60,12 @@ public class AuthRepository {
                     // Lưu profile vào Firestore collection "users"
                     Map<String, Object> profile = new HashMap<>();
                     profile.put("name", name);
+                    profile.put("username", username);
+                    profile.put("password", hashPassword(password));
                     profile.put("email", email);
-                    profile.put("avatar_url", "");
-                    profile.put("language", "vietnam");
+                    profile.put("language", "vietnamese");
+                    profile.put("point", 0);
+                    profile.put("avt_url", "");
 
                     db.collection("users")
                             .document(user.getUid())
@@ -77,6 +83,24 @@ public class AuthRepository {
                     loadingLiveData.setValue(false);
                     errorLiveData.setValue(mapError(e.getMessage()));
                 });
+    }
+
+    private String hashPassword(String password) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] encodedhash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
+            StringBuilder hexString = new StringBuilder(2 * encodedhash.length);
+            for (byte b : encodedhash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (NoSuchAlgorithmException e) {
+            return password; // Fallback to plain text if hashing fails (not ideal)
+        }
     }
 
     public void logout() {
