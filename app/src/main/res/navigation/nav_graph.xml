@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/rankingFragment">
+    app:startDestination="@id/workspaceListFragment">
 
     <fragment
         android:id="@+id/workspaceListFragment"
@@ -70,6 +70,21 @@
     </fragment>
 
     <fragment
+        android:id="@+id/myTasksFragment"
+        android:name="com.tngoc.familytaskapp.ui.task.MyTasksFragment"
+        android:label="Nhiệm vụ của tôi">
+        <action
+            android:id="@+id/action_myTasks_to_createTask"
+            app:destination="@id/createTaskFragment" />
+        <action
+            android:id="@+id/action_myTasks_to_taskDetail"
+            app:destination="@id/taskDetailFragment" />
+        <action
+            android:id="@+id/action_myTasks_to_workReport"
+            app:destination="@id/workReportFragment" />
+    </fragment>
+
+    <fragment
         android:id="@+id/taskDetailFragment"
         android:name="com.tngoc.familytaskapp.ui.task.TaskDetailFragment"
         android:label="Chi tiết nhiệm vụ">
@@ -124,5 +139,15 @@
         android:id="@+id/profileFragment"
         android:name="com.tngoc.familytaskapp.ui.profile.ProfileFragment"
         android:label="@string/profile" />
+
+    <fragment
+        android:id="@+id/rankingFragment"
+        android:name="com.tngoc.familytaskapp.ui.ranking.RankingFragment"
+        android:label="Bảng xếp hạng" />
+
+    <fragment
+        android:id="@+id/workReportFragment"
+        android:name="com.tngoc.familytaskapp.ui.task.WorkReportFragment"
+        android:label="Báo cáo công việc" />
 
 </navigation>

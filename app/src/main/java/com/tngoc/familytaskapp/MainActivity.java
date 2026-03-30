@@ -20,8 +20,10 @@ public class MainActivity extends BaseActivity {
 
         Intent intent = getIntent();
         boolean openTaskList = intent.getBooleanExtra("OPEN_TASK_LIST", false);
+        boolean showTaskDetail = intent.getBooleanExtra("SHOW_TASK_DETAIL", false);
+        boolean openWorkReport = intent.getBooleanExtra("OPEN_WORK_REPORT", false);
 
-        if (!openTaskList) {
+        if (!openTaskList && !showTaskDetail && !openWorkReport) {
             // Luồng khởi tạo bình thường (Splash/Redirect)
             if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                 startActivity(new Intent(this, HomeActivity.class));
@@ -32,23 +34,27 @@ public class MainActivity extends BaseActivity {
             return;
         }
 
-        // Luồng mở danh sách task từ HomeActivity
+        // Luồng mở từ HomeActivity
         setContentView(R.layout.activity_main);
         
-        String wsId = intent.getStringExtra("workspaceId");
-        String wsName = intent.getStringExtra("workspaceName");
-
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
         
         if (navHostFragment != null) {
             NavController navController = navHostFragment.getNavController();
             Bundle bundle = new Bundle();
-            bundle.putString("workspaceId", wsId);
-            bundle.putString("workspaceName", wsName);
             
-            // Navigate đến taskListFragment
-            navController.navigate(R.id.taskListFragment, bundle);
+            if (showTaskDetail) {
+                bundle.putString("workspaceId", intent.getStringExtra("workspaceId"));
+                bundle.putString("taskId", intent.getStringExtra("taskId"));
+                navController.navigate(R.id.taskDetailFragment, bundle);
+            } else if (openWorkReport) {
+                navController.navigate(R.id.workReportFragment);
+            } else {
+                bundle.putString("workspaceId", intent.getStringExtra("workspaceId"));
+                bundle.putString("workspaceName", intent.getStringExtra("workspaceName"));
+                navController.navigate(R.id.taskListFragment, bundle);
+            }
         }
     }
 }

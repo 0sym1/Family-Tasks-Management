@@ -37,6 +37,7 @@ import com.tngoc.familytaskapp.ui.auth.LoginActivity;
 import com.tngoc.familytaskapp.ui.auth.WelcomeActivity;
 import com.tngoc.familytaskapp.ui.workspace.WorkspaceViewModel;
 import com.tngoc.familytaskapp.ui.chatbot.ChatBotViewModel;
+import com.tngoc.familytaskapp.ui.task.MyTasksFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +79,8 @@ public class HomeActivity extends BaseActivity {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
             return;
+        }
+
         // Khởi tạo ChatBotViewModel ở cấp Activity để có thể chia sẻ với Fragment
         chatBotViewModel = new ViewModelProvider(this).get(ChatBotViewModel.class);
 
@@ -160,13 +163,13 @@ public class HomeActivity extends BaseActivity {
             } else if (itemId == R.id.profileFragment) {
                 showProfileFragment();
                 return true;
+            } else if (itemId == R.id.chatBotFragment) {
+                chatBotViewModel.resetChat();
+                showChatBotFragment();
+                return true;
             } else if (itemId == R.id.taskFragment) {
-                if (!allWorkspaces.isEmpty()) {
-                    openTaskList(allWorkspaces.get(0).getWorkspaceId(), allWorkspaces.get(0).getName());
-                } else {
-                    Toast.makeText(this, "Bạn chưa có workspace nào", Toast.LENGTH_SHORT).show();
-                }
-                return false;
+                showMyTasksFragment();
+                return true;
             }
             return false;
         });
@@ -207,6 +210,26 @@ public class HomeActivity extends BaseActivity {
             fragmentContainer.setVisibility(View.VISIBLE);
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, new com.tngoc.familytaskapp.ui.profile.ProfileFragment())
+                    .commit();
+        }
+    }
+
+    private void showChatBotFragment() {
+        findViewById(R.id.mainScrollView).setVisibility(View.GONE);
+        if (fragmentContainer != null) {
+            fragmentContainer.setVisibility(View.VISIBLE);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new com.tngoc.familytaskapp.ui.chatbot.ChatBotFragment())
+                    .commit();
+        }
+    }
+
+    private void showMyTasksFragment() {
+        findViewById(R.id.mainScrollView).setVisibility(View.GONE);
+        if (fragmentContainer != null) {
+            fragmentContainer.setVisibility(View.VISIBLE);
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new MyTasksFragment())
                     .commit();
         }
     }

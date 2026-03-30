@@ -1,5 +1,7 @@
 package com.tngoc.familytaskapp.ui.chatbot;
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -10,27 +12,29 @@ import com.google.ai.client.generativeai.type.GenerateContentResponse;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.tngoc.familytaskapp.data.model.ChatHistory;
 import com.tngoc.familytaskapp.data.model.ChatMessage;
 import com.tngoc.familytaskapp.data.model.Task;
+import com.tngoc.familytaskapp.data.model.User;
 import com.tngoc.familytaskapp.data.model.Workspace;
 import com.tngoc.familytaskapp.data.repository.ChatRepository;
-import com.tngoc.familytaskapp.data.repository.TaskRepository;
-import com.tngoc.familytaskapp.data.repository.WorkspaceRepository;
 import com.tngoc.familytaskapp.utils.Constants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class ChatBotViewModel extends ViewModel {
 
     private final ChatRepository chatRepository;
-    private final TaskRepository taskRepository;
-    private final WorkspaceRepository workspaceRepository;
     private GenerativeModelFutures model;
     private final Executor executor = Executors.newSingleThreadExecutor();
+    private final FirebaseFirestore db;
 
     public final MutableLiveData<List<ChatHistory>> historiesLiveData = new MutableLiveData<>();
     public final MutableLiveData<List<ChatMessage>> messagesLiveData = new MutableLiveData<>(new ArrayList<>());
@@ -38,14 +42,15 @@ public class ChatBotViewModel extends ViewModel {
     public final MutableLiveData<Boolean>           loadingLiveData  = new MutableLiveData<>(false);
     public final MutableLiveData<String>            errorLiveData    = new MutableLiveData<>();
 
-    private List<Task> contextTasks = new ArrayList<>();
-    private List<Workspace> contextWorkspaces = new ArrayList<>();
+    private List<Workspace> userWorkspaces = new ArrayList<>();
+    private Map<String, List<Task>> workspaceTasks = new HashMap<>();
+    private Map<String, User> userCache = new HashMap<>();
+    private List<Task> myAssignedTasks = new ArrayList<>();
+    private List<Task> myCreatedTasks = new ArrayList<>();
 
     public ChatBotViewModel() {
         this.chatRepository = new ChatRepository();
-        this.taskRepository = new TaskRepository();
-        this.workspaceRepository = new WorkspaceRepository();
-        
+        this.db = FirebaseFirestore.getInstance();
         initModel(Constants.GEMINI_API_KEY);
     }
 
@@ -55,17 +60,70 @@ public class ChatBotViewModel extends ViewModel {
     }
 
     public void loadContextData(String userId) {
-        // Load workspaces first
-        MutableLiveData<List<Workspace>> workspacesLD = new MutableLiveData<>();
-        workspacesLD.observeForever(workspaces -> {
-            if (workspaces != null) {
-                this.contextWorkspaces = workspaces;
-                for (Workspace ws : workspaces) {
-                    taskRepository.getTasksInWorkspace(ws.getWorkspaceId(), new MutableLiveData<>(), errorLiveData);
-                }
+        // 1. Load Workspaces
+        db.collection(Constants.COLLECTION_WORKSPACES)
+                .whereArrayContains("memberIds", userId)
+                .get()
+                .addOnSuccessListener(wsSnapshots -> {
+                    userWorkspaces.clear();
+                    workspaceTasks.clear();
+                    for (QueryDocumentSnapshot doc : wsSnapshots) {
+                        Workspace ws = doc.toObject(Workspace.class);
+                        ws.setWorkspaceId(doc.getId());
+                        userWorkspaces.add(ws);
+                        
+                        // Load members for cache
+                        loadWorkspaceMembers(ws.getMemberIds());
+                        
+                        // Load tasks for this workspace
+                        loadWorkspaceTasks(ws.getWorkspaceId());
+                    }
+                });
+
+        // 2. Load Tasks specifically related to the user
+        db.collectionGroup(Constants.COLLECTION_TASKS)
+                .whereArrayContains("assignedToIds", userId)
+                .get()
+                .addOnSuccessListener(taskSnapshots -> {
+                    myAssignedTasks.clear();
+                    for (QueryDocumentSnapshot doc : taskSnapshots) {
+                        myAssignedTasks.add(doc.toObject(Task.class));
+                    }
+                });
+
+        db.collectionGroup(Constants.COLLECTION_TASKS)
+                .whereEqualTo("createdBy", userId)
+                .get()
+                .addOnSuccessListener(taskSnapshots -> {
+                    myCreatedTasks.clear();
+                    for (QueryDocumentSnapshot doc : taskSnapshots) {
+                        myCreatedTasks.add(doc.toObject(Task.class));
+                    }
+                });
+    }
+
+    private void loadWorkspaceMembers(List<String> memberIds) {
+        if (memberIds == null) return;
+        for (String mId : memberIds) {
+            if (!userCache.containsKey(mId)) {
+                db.collection(Constants.COLLECTION_USERS).document(mId).get()
+                        .addOnSuccessListener(doc -> {
+                            if (doc.exists()) userCache.put(mId, doc.toObject(User.class));
+                        });
             }
-        });
-        workspaceRepository.getWorkspacesForUser(userId, workspacesLD, errorLiveData);
+        }
+    }
+
+    private void loadWorkspaceTasks(String wsId) {
+        db.collection(Constants.COLLECTION_WORKSPACES).document(wsId)
+                .collection(Constants.COLLECTION_TASKS).get()
+                .addOnSuccessListener(snapshots -> {
+                    List<Task> list = new ArrayList<>();
+                    for (QueryDocumentSnapshot doc : snapshots) {
+                        list.add(doc.toObject(Task.class));
+                    }
+                    workspaceTasks.put(wsId, list);
+                });
     }
 
     public void loadHistories(String userId) {
@@ -118,16 +176,46 @@ public class ChatBotViewModel extends ViewModel {
     private void callGemini(String userId, String historyId, String userPrompt) {
         loadingLiveData.setValue(true);
 
-        StringBuilder contextBuilder = new StringBuilder();
-        contextBuilder.append("Hệ thống có các Workspace sau: ");
-        for (Workspace ws : contextWorkspaces) {
-            contextBuilder.append(ws.getName()).append(" (Thành viên: ").append(ws.getMemberIds().size()).append("), ");
+        StringBuilder sb = new StringBuilder();
+        sb.append("Dữ liệu hệ thống của người dùng (ID: ").append(userId).append("):\n\n");
+        
+        sb.append("1. CÁC WORKSPACE ĐANG THAM GIA:\n");
+        for (Workspace ws : userWorkspaces) {
+            sb.append("- ").append(ws.getName()).append(" (ID: ").append(ws.getWorkspaceId()).append(")\n");
+            sb.append("  Thành viên: ");
+            for (String mId : ws.getMemberIds()) {
+                User u = userCache.get(mId);
+                sb.append(u != null ? u.getDisplayName() : mId).append(", ");
+            }
+            sb.append("\n");
         }
 
-        String systemPrompt = "Bạn là trợ lý ảo cho ứng dụng Family Task App. " +
-                "Dữ liệu hiện tại: " + contextBuilder.toString() + ". " +
-                "QUY TẮC: Chỉ được trả lời các câu hỏi về tasks, workspaces và con người trong hệ thống. " +
-                "Nếu người dùng hỏi về chủ đề khác, hãy từ chối lịch sự và hướng dẫn họ quay lại chủ đề chính.";
+        sb.append("\n2. DANH SÁCH NHIỆM VỤ (TASKS):\n");
+        for (Map.Entry<String, List<Task>> entry : workspaceTasks.entrySet()) {
+            String wsName = "Workspace ID " + entry.getKey();
+            for (Workspace ws : userWorkspaces) if (ws.getWorkspaceId().equals(entry.getKey())) wsName = ws.getName();
+            
+            sb.append("- Tại ").append(wsName).append(":\n");
+            for (Task t : entry.getValue()) {
+                sb.append("  + [").append(t.getStatus()).append("] ").append(t.getTitle())
+                  .append(" (Giao cho: ").append(t.getAssignedToIds()).append(")\n");
+            }
+        }
+
+        sb.append("\n3. LỊCH SỬ CÁ NHÂN:\n");
+        sb.append("- Nhiệm vụ bạn được giao: ");
+        for (Task t : myAssignedTasks) sb.append(t.getTitle()).append(" (").append(t.getStatus()).append("), ");
+        sb.append("\n- Nhiệm vụ bạn đã tạo: ");
+        for (Task t : myCreatedTasks) sb.append(t.getTitle()).append(" (").append(t.getStatus()).append("), ");
+
+        String systemPrompt = "Bạn là trợ lý ảo AI thông minh của ứng dụng 'Family Task App'. " +
+                "Dưới đây là ngữ cảnh dữ liệu thực tế của người dùng hiện tại:\n" + sb.toString() + "\n" +
+                "QUY TẮC TRẢ LỜI:\n" +
+                "1. Ưu tiên sử dụng dữ liệu trên để trả lời câu hỏi của người dùng.\n" +
+                "2. Xưng hô thân thiện (ví dụ: 'Chào bạn', 'Mình có thể giúp gì...').\n" +
+                "3. Nếu người dùng hỏi về ai đó trong workspace, hãy tìm tên họ trong danh sách thành viên.\n" +
+                "4. Nếu người dùng hỏi về công việc, hãy tổng hợp từ mục Tasks và Lịch sử cá nhân.\n" +
+                "5. Chỉ trả lời các vấn đề liên quan đến ứng dụng và công việc. Từ chối các chủ đề nhạy cảm hoặc không liên quan.";
 
         Content inputContent = new Content.Builder()
                 .addText(systemPrompt + "\n\nUser: " + userPrompt)
@@ -149,7 +237,7 @@ public class ChatBotViewModel extends ViewModel {
 
             @Override
             public void onFailure(Throwable t) {
-                errorLiveData.postValue("Lỗi Gemini: " + t.getMessage());
+                errorLiveData.postValue("Lỗi kết nối AI: " + t.getMessage());
                 loadingLiveData.postValue(false);
             }
         }, executor);

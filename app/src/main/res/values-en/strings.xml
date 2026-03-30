@@ -78,9 +78,6 @@
     <string name="repeat_times">times</string>
     <string name="repeat_after_date">After date</string>
     <string name="btn_confirm">Confirm</string>
-    <string name="create_task">Create Task</string>
-    <string name="task_created">Task created successfully!</string>
-    <string name="task_completed">Task completed!</string>
 
     <!-- Edit Repeat -->
     <string name="edit_repeat_title">Edit Repeat</string>
@@ -109,7 +106,6 @@
     <string name="lang_vietnamese">Vietnamese</string>
     <string name="lang_english">English</string>
     <string name="lang_french">French</string>
-    <string name="btn_save">Save</string>
 
     <!-- Others -->
     <string name="notifications">Notifications</string>
@@ -120,10 +116,6 @@
     <string name="invitation_sent">Invitation sent!</string>
     <string name="btn_logout">Logout</string>
     <string name="empty_notifications">No notifications yet</string>
-    <string name="history">Tasks</string>
-    <string name="chatbot">Chatbot</string>
-    <string name="settings">Personal</string>
-    <string name="invitation_sent">Invitation sent!</string>
     <string name="history_title">Work History</string>
     <string name="tab_all">All</string>
     <string name="tab_task">Tasks</string>

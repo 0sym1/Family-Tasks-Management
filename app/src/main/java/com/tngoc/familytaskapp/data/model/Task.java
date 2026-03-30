@@ -12,6 +12,7 @@ public class Task {
     private String description;
     private List<String> assignedToIds;
     private String createdBy;    // userId
+    private String ownerName;    // name of the person who created the task
     private String status;       // "doing" | "done" | "todo"
     private int rewardPoints;
     private Timestamp startDate;
@@ -43,6 +44,12 @@ public class Task {
         this.createdAt = Timestamp.now();
     }
 
+    // Constructor with ownerName
+    public Task(String workspaceId, String title, String description, List<String> assignedToIds, String createdBy, String ownerName, String status, int rewardPoints, Timestamp startDate, Timestamp endDate, boolean isRepeat) {
+        this(workspaceId, title, description, assignedToIds, createdBy, status, rewardPoints, startDate, endDate, isRepeat);
+        this.ownerName = ownerName;
+    }
+
     public String getTaskId() { return taskId; }
     public void setTaskId(String taskId) { this.taskId = taskId; }
 
@@ -60,6 +67,9 @@ public class Task {
 
     public String getCreatedBy() { return createdBy; }
     public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
+
+    public String getOwnerName() { return ownerName; }
+    public void setOwnerName(String ownerName) { this.ownerName = ownerName; }
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
