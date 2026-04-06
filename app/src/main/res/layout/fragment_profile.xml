@@ -13,92 +13,68 @@
         android:orientation="vertical"
         android:padding="24dp">
 
-        <!-- Header Title -->
-        <TextView
+        <!-- Header with Title and Language Option -->
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/profile_title"
-            android:textColor="@color/white"
-            android:textSize="28sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="32dp">
 
-        <!-- Profile Header Card (Avatar & Name) -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/input_bg"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="0dp"
-            app:strokeWidth="0dp"
-            android:layout_marginBottom="20dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:padding="24dp">
+                android:text="@string/profile_title"
+                android:textColor="@color/white"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true" />
 
-                <FrameLayout
-                    android:id="@+id/layoutAvatar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?attr/selectableItemBackgroundBorderless">
+            <!-- Language Button on Top Right -->
+            <LinearLayout
+                android:id="@+id/llChangeLanguage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_rect_dark"
+                android:paddingStart="12dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="8dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:clickable="true"
+                android:focusable="true">
 
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/ivAvatar"
-                        android:layout_width="110dp"
-                        android:layout_height="110dp"
-                        android:padding="2dp"
-                        app:strokeColor="#33FFFFFF"
-                        app:strokeWidth="2dp"
-                        android:src="@drawable/ic_user_default"
-                        app:shapeAppearanceOverlay="@style/CircleImage"
-                        android:scaleType="centerCrop" />
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        app:cardBackgroundColor="@color/white"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="4dp"
-                        android:layout_gravity="bottom|end">
-                        <ImageView
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_edit"
-                            app:tint="@color/bg_dark" />
-                    </com.google.android.material.card.MaterialCardView>
-                </FrameLayout>
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_language"
+                    app:tint="@color/white"
+                    android:layout_marginEnd="8dp" />
 
                 <TextView
-                    android:id="@+id/tvName"
+                    android:id="@+id/tvCurrentLanguage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Nguyen Tuan Ngoc"
+                    android:text="Tiếng Việt"
                     android:textColor="@color/white"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="4dp" />
+                    android:textSize="13sp"
+                    android:layout_marginEnd="4dp" />
 
-                <TextView
-                    android:id="@+id/tvUsername"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@TuanNgoc"
-                    android:textColor="@color/text_secondary"
-                    android:textSize="14sp" />
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/ic_arrow_right"
+                    app:tint="@color/text_hint" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Account Info Card -->
-        <com.google.android.material.card.MaterialCardView
+        </RelativeLayout>
+
+        <!-- Avatar Section -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:cardBackgroundColor="@color/input_bg"
@@ -107,8 +83,59 @@
             app:strokeWidth="0dp"
             android:layout_marginBottom="20dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <ImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/ic_user_default"
+                android:contentDescription="@string/profile_avatar"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center" />
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_edit"
+                app:tint="@color/white"
+                android:contentDescription="@string/profile_edit_avatar"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp" />
+
+        </FrameLayout>
+
+        <!-- User Info -->
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nguyen Tuan Ngoc"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/tvUsername"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@Tuan Ngoc"
+            android:textColor="@color/text_hint"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="32dp">
+
+            <TextView
+                android:id="@+id/tvEmail"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="16dp">
@@ -163,138 +190,66 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Language Section Label -->
-        <TextView
+        <!-- Divider -->
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/profile_language"
-            android:textColor="@color/text_secondary"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            android:textAllCaps="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_height="1dp"
+            android:background="@color/divider"
+            android:layout_marginBottom="24dp" />
 
-        <!-- Language Switcher Card -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/input_bg"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="0dp"
-            app:strokeWidth="0dp"
-            android:layout_marginBottom="24dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="8dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnLanguageVi"
-                    android:layout_width="0dp"
-                    android:layout_height="44dp"
-                    android:layout_weight="1"
-                    android:text="🇻🇳 Tiếng Việt"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:background="@drawable/bg_button_dark"
-                    android:stateListAnimator="@null"
-                    android:layout_marginEnd="4dp" />
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnLanguageEn"
-                    android:layout_width="0dp"
-                    android:layout_height="44dp"
-                    android:layout_weight="1"
-                    android:text="🇬🇧 English"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:textSize="14sp"
-                    android:background="@drawable/bg_button_dark"
-                    android:stateListAnimator="@null"
-                    android:layout_marginStart="4dp" />
-
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Security Section Label -->
+        <!-- Password Change Section -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/profile_change_password"
-            android:textColor="@color/text_secondary"
-            android:textSize="13sp"
-            android:textStyle="bold"
-            android:textAllCaps="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Password Inputs Card -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/input_bg"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="0dp"
-            app:strokeWidth="0dp"
-            android:layout_marginBottom="32dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <EditText
-                    android:id="@+id/etOldPassword"
-                    style="@style/DarkEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:hint="@string/profile_old_password"
-                    android:inputType="textPassword"
-                    android:paddingHorizontal="16dp"
-                    android:background="@drawable/bg_input_field"
-                    android:layout_marginBottom="12dp" />
-
-                <EditText
-                    android:id="@+id/etNewPassword"
-                    style="@style/DarkEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:hint="@string/profile_new_password"
-                    android:inputType="textPassword"
-                    android:paddingHorizontal="16dp"
-                    android:background="@drawable/bg_input_field"
-                    android:layout_marginBottom="12dp" />
-
-                <EditText
-                    android:id="@+id/etConfirmPassword"
-                    style="@style/DarkEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:hint="@string/profile_confirm_password"
-                    android:inputType="textPassword"
-                    android:paddingHorizontal="16dp"
-                    android:background="@drawable/bg_input_field" />
-
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Action Buttons -->
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnSave"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="@string/profile_save"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold"
+            android:layout_marginBottom="16dp" />
+
+        <EditText
+            android:id="@+id/etOldPassword"
+            style="@style/DarkEditText"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="@string/profile_old_password"
+            android:inputType="textPassword"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_input_field" />
+
+        <EditText
+            android:id="@+id/etNewPassword"
+            style="@style/DarkEditText"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="@string/profile_new_password"
+            android:inputType="textPassword"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/bg_input_field" />
+
+        <EditText
+            android:id="@+id/etConfirmPassword"
+            style="@style/DarkEditText"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:hint="@string/profile_confirm_password"
+            android:inputType="textPassword"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="24dp"
+            android:background="@drawable/bg_input_field" />
+
+        <!-- Action Buttons -->
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="@string/profile_save"
+            android:textColor="@color/white"
             android:background="@drawable/bg_button_dark"
             android:stateListAnimator="@null"
             android:layout_marginBottom="16dp" />
@@ -311,4 +266,4 @@
 
     </LinearLayout>
 
-</androidx.core.widget.NestedScrollView>
+</ScrollView>

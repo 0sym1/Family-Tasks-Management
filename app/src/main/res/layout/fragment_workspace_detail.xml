@@ -28,7 +28,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Thành viên"
+        android:text="@string/member_list"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -51,7 +51,7 @@
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:text="Mời thành viên"
+            android:text="@string/invite_member"
             android:textColor="@color/white"
             android:background="@drawable/bg_button_dark"
             android:stateListAnimator="@null"
@@ -62,11 +62,10 @@
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:text="Thêm nhiệm vụ"
+            android:text="@string/create_task"
             android:textColor="@color/white"
             android:background="@drawable/bg_button_dark"
             android:stateListAnimator="@null" />
     </LinearLayout>
 
 </LinearLayout>
-

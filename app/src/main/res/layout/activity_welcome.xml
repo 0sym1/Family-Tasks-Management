@@ -12,7 +12,7 @@
         android:id="@+id/tvAppTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Family\nTasks\nManagement"
+        android:text="@string/app_title"
         android:textColor="@color/white"
         android:textSize="36sp"
         android:textStyle="bold"
@@ -90,4 +90,3 @@
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

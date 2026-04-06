@@ -3,21 +3,21 @@
     <item
         android:id="@+id/homeFragment"
         android:icon="@drawable/ic_home"
-        android:title="Trang chủ" />
+        android:title="@string/home" />
     <item
         android:id="@+id/taskFragment"
         android:icon="@drawable/ic_task"
-        android:title="Nhiệm vụ" />
+        android:title="@string/tasks" />
     <item
         android:id="@+id/chatBotFragment"
         android:icon="@drawable/ic_chat"
-        android:title="Chat bot" />
+        android:title="@string/chatbot" />
     <item
         android:id="@+id/notificationFragment"
         android:icon="@drawable/ic_notification"
-        android:title="Thông báo" />
+        android:title="@string/notifications" />
     <item
         android:id="@+id/profileFragment"
         android:icon="@drawable/ic_profile"
-        android:title="Cá nhân" />
+        android:title="@string/profile" />
 </menu>

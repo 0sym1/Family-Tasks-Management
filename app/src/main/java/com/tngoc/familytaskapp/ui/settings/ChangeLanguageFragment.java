@@ -1,6 +1,7 @@
 package com.tngoc.familytaskapp.ui.settings;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,32 +43,50 @@ public class ChangeLanguageFragment extends Fragment {
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
-        // Get currently saved language to show existing tick
-        currentSavedLanguage = LocaleHelper.getSavedLanguage(requireContext(), "vi");
-        selectedLanguage = currentSavedLanguage;
+        if (getContext() != null) {
+            currentSavedLanguage = LocaleHelper.getSavedLanguage(requireContext(), "vi");
+            selectedLanguage = currentSavedLanguage;
+        }
 
         updateUI(view);
+        setupClickListeners(view);
+    }
 
-        view.findViewById(R.id.btnLangVi).setOnClickListener(v -> {
-            selectedLanguage = "vi";
-            updateUI(view);
-        });
+    private void setupClickListeners(View view) {
+        View btnVi = view.findViewById(R.id.btnLangVi);
+        View btnEn = view.findViewById(R.id.btnLangEn);
+        View btnFr = view.findViewById(R.id.btnLangFr);
 
-        view.findViewById(R.id.btnLangEn).setOnClickListener(v -> {
-            selectedLanguage = "en";
-            updateUI(view);
-        });
+        if (btnVi != null) {
+            btnVi.setOnClickListener(v -> {
+                selectedLanguage = "vi";
+                updateUI(view);
+            });
+        }
 
-        view.findViewById(R.id.btnLangFr).setOnClickListener(v -> {
-            selectedLanguage = "fr";
-            updateUI(view);
-        });
+        if (btnEn != null) {
+            btnEn.setOnClickListener(v -> {
+                selectedLanguage = "en";
+                updateUI(view);
+            });
+        }
 
-        view.findViewById(R.id.btnCancel).setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
+        if (btnFr != null) {
+            btnFr.setOnClickListener(v -> {
+                selectedLanguage = "fr";
+                updateUI(view);
+            });
+        }
 
-        view.findViewById(R.id.btnSave).setOnClickListener(v -> {
-            saveLanguageToFirebase(selectedLanguage);
-        });
+        View btnCancel = view.findViewById(R.id.btnCancel);
+        if (btnCancel != null) {
+            btnCancel.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
+        }
+
+        View btnSave = view.findViewById(R.id.btnSave);
+        if (btnSave != null) {
+            btnSave.setOnClickListener(v -> saveLanguageToFirebase(selectedLanguage));
+        }
     }
 
     private void saveLanguageToFirebase(String langCode) {
@@ -76,45 +94,75 @@ public class ChangeLanguageFragment extends Fragment {
         if (user != null) {
             db.collection("users").document(user.getUid())
                     .update("language", langCode)
-                    .addOnSuccessListener(aVoid -> {
-                        LocaleHelper.setLocale(requireContext(), langCode);
-                        restartApp();
-                    })
-                    .addOnFailureListener(e -> {
-                        // Even if firebase fails, we should apply it locally
-                        LocaleHelper.setLocale(requireContext(), langCode);
-                        restartApp();
-                    });
+                    .addOnSuccessListener(aVoid -> applyLanguageAndRestart(langCode))
+                    .addOnFailureListener(e -> applyLanguageAndRestart(langCode));
         } else {
+            applyLanguageAndRestart(langCode);
+        }
+    }
+
+    private void applyLanguageAndRestart(String langCode) {
+        if (getContext() != null) {
             LocaleHelper.setLocale(requireContext(), langCode);
             restartApp();
         }
     }
 
     private void restartApp() {
-        Intent intent = new Intent(requireActivity(), HomeActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-        requireActivity().finish();
+        if (getActivity() != null) {
+            Intent intent = new Intent(getActivity(), HomeActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            getActivity().finish();
+        }
     }
 
     private void updateUI(View root) {
+        if (getContext() == null || root == null) return;
+        
         int activeColor = ContextCompat.getColor(requireContext(), R.color.white);
         int inactiveColor = ContextCompat.getColor(requireContext(), R.color.text_secondary);
 
-        updateRowUI(root.findViewById(R.id.btnLangVi), selectedLanguage.equals("vi"), currentSavedLanguage.equals("vi"), activeColor, inactiveColor);
-        updateRowUI(root.findViewById(R.id.btnLangEn), selectedLanguage.equals("en"), currentSavedLanguage.equals("en"), activeColor, inactiveColor);
-        updateRowUI(root.findViewById(R.id.btnLangFr), selectedLanguage.equals("fr"), currentSavedLanguage.equals("fr"), activeColor, inactiveColor);
+        updateRowUI(root, "vi", activeColor, inactiveColor);
+        updateRowUI(root, "en", activeColor, inactiveColor);
+        updateRowUI(root, "fr", activeColor, inactiveColor);
     }
 
-    private void updateRowUI(View row, boolean isSelected, boolean isActuallySaved, int activeColor, int inactiveColor) {
-        RadioButton rb = (RadioButton) ((ViewGroup) row).getChildAt(0);
-        TextView tv = (TextView) ((ViewGroup) row).getChildAt(2);
-        ImageView iv = (ImageView) ((ViewGroup) row).getChildAt(3);
+    private void updateRowUI(View root, String langCode, int activeColor, int inactiveColor) {
+        boolean isSelected = selectedLanguage.equals(langCode);
+        boolean isActuallySaved = currentSavedLanguage.equals(langCode);
 
-        rb.setChecked(isSelected);
-        rb.setButtonTintList(android.content.res.ColorStateList.valueOf(isSelected ? activeColor : inactiveColor));
-        tv.setTextColor(isSelected ? activeColor : inactiveColor);
-        iv.setVisibility(isActuallySaved ? View.VISIBLE : View.GONE);
+        RadioButton rb = root.findViewById(getRadioButtonId(langCode));
+        TextView tv = root.findViewById(getTextViewId(langCode));
+        ImageView ivCheck = root.findViewById(getCheckIconId(langCode));
+
+        if (rb != null) {
+            rb.setChecked(isSelected);
+            rb.setButtonTintList(ColorStateList.valueOf(isSelected ? activeColor : inactiveColor));
+        }
+        if (tv != null) {
+            tv.setTextColor(isSelected ? activeColor : inactiveColor);
+        }
+        if (ivCheck != null) {
+            ivCheck.setVisibility(isActuallySaved ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private int getRadioButtonId(String langCode) {
+        if ("vi".equals(langCode)) return R.id.rbVi;
+        if ("en".equals(langCode)) return R.id.rbEn;
+        return R.id.rbFr;
+    }
+
+    private int getTextViewId(String langCode) {
+        if ("vi".equals(langCode)) return R.id.tvVi;
+        if ("en".equals(langCode)) return R.id.tvEn;
+        return R.id.tvFr;
+    }
+    
+    private int getCheckIconId(String langCode) {
+        if ("vi".equals(langCode)) return R.id.ivCheckVi;
+        if ("en".equals(langCode)) return R.id.ivCheckEn;
+        return R.id.ivCheckFr;
     }
 }

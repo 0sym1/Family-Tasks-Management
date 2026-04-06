@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nhập người dùng bạn muốn mời"
+        android:text="@string/dialog_invite_title"
         android:textColor="@color/white"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -30,7 +30,7 @@
             android:paddingEnd="4dp"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
-            android:text="Tên"
+            android:text="@string/label_name"
             android:textColor="#AAAAAA"
             android:textSize="14sp" />
 
@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@android:color/transparent"
-            android:hint="Nhập email..."
+            android:hint="@string/hint_enter_email"
             android:inputType="textEmailAddress"
             android:padding="12dp"
             android:textColor="@color/white"
@@ -68,7 +68,7 @@
             android:minWidth="70dp"
             android:padding="0dp"
             android:background="@drawable/bg_button_outline"
-            android:text="Cancel"
+            android:text="@string/btn_cancel"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="12sp" />
@@ -82,7 +82,7 @@
             android:padding="0dp"
             android:layout_marginStart="12dp"
             android:background="@drawable/bg_button_outline"
-            android:text="Invite"
+            android:text="@string/btn_send_invite"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="12sp" />

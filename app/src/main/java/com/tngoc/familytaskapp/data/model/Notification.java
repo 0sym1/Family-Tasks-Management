@@ -13,6 +13,8 @@ public class Notification {
     private String type;
     private String workspaceId;
     private String fromUserId;
+    private String targetName; // Dynamic part (e.g., task title)
+    private int points;        // Dynamic part (e.g., reward points)
     private boolean isRead;
     private Timestamp createdAt;
 
@@ -51,6 +53,12 @@ public class Notification {
 
     public String getFromUserId() { return fromUserId; }
     public void setFromUserId(String fromUserId) { this.fromUserId = fromUserId; }
+
+    public String getTargetName() { return targetName; }
+    public void setTargetName(String targetName) { this.targetName = targetName; }
+
+    public int getPoints() { return points; }
+    public void setPoints(int points) { this.points = points; }
 
     @PropertyName("isRead")
     public boolean isRead() { return isRead; }

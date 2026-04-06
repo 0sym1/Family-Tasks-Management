@@ -1,5 +1,6 @@
 package com.tngoc.familytaskapp.ui.home;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -15,12 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -36,6 +33,7 @@ import com.tngoc.familytaskapp.ui.BaseActivity;
 import com.tngoc.familytaskapp.ui.auth.LoginActivity;
 import com.tngoc.familytaskapp.ui.auth.WelcomeActivity;
 import com.tngoc.familytaskapp.ui.workspace.WorkspaceViewModel;
+import com.tngoc.familytaskapp.utils.LocaleHelper;
 import com.tngoc.familytaskapp.ui.chatbot.ChatBotViewModel;
 import com.tngoc.familytaskapp.ui.task.MyTasksFragment;
 
@@ -63,6 +61,11 @@ public class HomeActivity extends BaseActivity {
     private List<Workspace> allWorkspaces = new ArrayList<>();
     private NavController navController;
     private ChatBotViewModel chatBotViewModel;
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleHelper.onAttach(newBase));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +122,7 @@ public class HomeActivity extends BaseActivity {
         nameLiveData.observe(this, name -> {
             if (name != null) {
                 currentUserName = capitalizeAndFormat(name);
-                if (tvWelcome != null) tvWelcome.setText("Xin chào " + currentUserName);
+                if (tvWelcome != null) tvWelcome.setText(getString(R.string.home_welcome, currentUserName));
             }
         });
         userRepository.getUserName(currentUserId, nameLiveData);
@@ -301,7 +304,7 @@ public class HomeActivity extends BaseActivity {
     private void addWorkspaceCardToUI(Workspace workspace) {
         View workspaceView = LayoutInflater.from(this).inflate(R.layout.item_workspace, llWorkspaceContainer, false);
         ((TextView) workspaceView.findViewById(R.id.tvWorkspaceName)).setText(workspace.getName());
-        ((TextView) workspaceView.findViewById(R.id.tvOwnerName)).setText("Tạo bởi: " + (workspace.getOwnerName() != null ? workspace.getOwnerName() : "Unknown"));
+        ((TextView) workspaceView.findViewById(R.id.tvOwnerName)).setText(getString(R.string.label_created_by) + ": " + (workspace.getOwnerName() != null ? workspace.getOwnerName() : "Unknown"));
         
         int total = workspace.getTotalTasks();
         int completed = workspace.getCompletedTasks();
@@ -317,10 +320,10 @@ public class HomeActivity extends BaseActivity {
         tvOptions.setOnClickListener(v -> btnDelete.setVisibility(btnDelete.getVisibility() == View.GONE ? View.VISIBLE : View.GONE));
         btnDelete.setOnClickListener(v -> {
             new AlertDialog.Builder(this)
-                    .setTitle("Xóa Workspace")
-                    .setMessage("Bạn có chắc chắn muốn xóa \"" + workspace.getName() + "\"?")
-                    .setPositiveButton("Xóa", (dialog, which) -> workspaceViewModel.deleteWorkspace(workspace.getWorkspaceId()))
-                    .setNegativeButton("Hủy", null)
+                    .setTitle(R.string.btn_delete)
+                    .setMessage(getString(R.string.btn_delete) + " \"" + workspace.getName() + "\"?")
+                    .setPositiveButton(R.string.btn_delete, (dialog, which) -> workspaceViewModel.deleteWorkspace(workspace.getWorkspaceId()))
+                    .setNegativeButton(R.string.btn_cancel, null)
                     .show();
         });
 

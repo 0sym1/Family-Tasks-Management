@@ -17,14 +17,15 @@
         android:src="@drawable/ic_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/white" />
+        app:tint="@color/white"
+        android:contentDescription="@string/btn_cancel" />
 
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Danh sách thành viên"
+        android:text="@string/member_list"
         android:textColor="@color/white"
         android:textSize="32sp"
         android:textStyle="bold"
@@ -54,7 +55,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
-            android:hint="Tìm kiếm thành viên..."
+            android:hint="@string/hint_search_member"
             android:paddingStart="8dp"
             android:textColor="@color/white"
             android:textColorHint="@color/text_secondary"
@@ -67,7 +68,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="0 thành viên"
+        android:text="---"
         android:textColor="@color/text_secondary"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"

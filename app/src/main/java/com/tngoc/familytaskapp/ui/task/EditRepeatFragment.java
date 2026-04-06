@@ -1,6 +1,5 @@
 package com.tngoc.familytaskapp.ui.task;
 
-import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +19,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.DateValidatorPointForward;
+import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.firebase.Timestamp;
 import com.tngoc.familytaskapp.R;
 
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class EditRepeatFragment extends Fragment {
 
@@ -39,7 +42,7 @@ public class EditRepeatFragment extends Fragment {
     private RadioGroup rgRepeatType;
     private RadioButton rbDaily, rbWeekly;
     private RadioButton rbNever, rbAfterTimes, rbAfterDate;
-    private LinearLayout sectionDays;
+    private LinearLayout sectionDays, layoutAfterTimes;
 
     private CheckBox cbMon, cbTue, cbWed, cbThu, cbFri, cbSat, cbSun;
 
@@ -62,14 +65,12 @@ public class EditRepeatFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Share ViewModel với CreateTaskFragment
         taskViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
 
         initViews(view);
         setupClicks(view);
         loadCurrentSettings();
         
-        // Initial state visibility
         updateRepeatTypeVisibility(rgRepeatType.getCheckedRadioButtonId());
         updateEndOptionStyles();
     }
@@ -79,6 +80,7 @@ public class EditRepeatFragment extends Fragment {
         rbDaily = view.findViewById(R.id.rbDaily);
         rbWeekly = view.findViewById(R.id.rbWeekly);
         sectionDays = view.findViewById(R.id.sectionDays);
+        layoutAfterTimes = view.findViewById(R.id.layoutAfterTimes);
 
         rbNever = view.findViewById(R.id.rbNever);
         rbAfterTimes = view.findViewById(R.id.rbAfterTimes);
@@ -143,32 +145,40 @@ public class EditRepeatFragment extends Fragment {
         tvSelectedDate.setOnClickListener(v -> {
             if (!rbAfterDate.isChecked()) selectEndOption(rbAfterDate);
             
-            Calendar now = Calendar.getInstance();
-            new DatePickerDialog(requireContext(),
-                    (view1, year, month, dayOfMonth) -> {
-                        selectedDate.set(year, month, dayOfMonth);
-                        hasPickedDate = true;
+            CalendarConstraints constraints = new CalendarConstraints.Builder()
+                    .setValidator(DateValidatorPointForward.now())
+                    .build();
 
-                        tvSelectedDate.setText(
-                                String.format(Locale.getDefault(), "%02d/%02d/%04d",
-                                        dayOfMonth, month + 1, year)
-                        );
-                    },
-                    now.get(Calendar.YEAR),
-                    now.get(Calendar.MONTH),
-                    now.get(Calendar.DAY_OF_MONTH)
-            ).show();
+            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
+                    .setTitleText("Chọn ngày kết thúc lặp")
+                    .setSelection(selectedDate.getTimeInMillis())
+                    .setCalendarConstraints(constraints)
+                    .setTheme(R.style.CustomDatePickerTheme)
+                    .build();
+
+            datePicker.addOnPositiveButtonClickListener(selection -> {
+                Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+                calendar.setTimeInMillis(selection);
+                
+                // Đặt về 00:00:00 để chỉ lấy ngày
+                selectedDate.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+                selectedDate.set(Calendar.MILLISECOND, 0);
+                
+                hasPickedDate = true;
+                tvSelectedDate.setText(String.format(Locale.getDefault(), "%02d/%02d/%04d",
+                        selectedDate.get(Calendar.DAY_OF_MONTH), 
+                        selectedDate.get(Calendar.MONTH) + 1, 
+                        selectedDate.get(Calendar.YEAR)));
+            });
+            datePicker.show(getParentFragmentManager(), "REPEAT_DATE_PICKER");
         });
 
-        btnCancel.setOnClickListener(v ->
-                Navigation.findNavController(v).navigateUp()
-        );
+        btnCancel.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
 
         btnConfirm.setOnClickListener(v -> saveSettings());
     }
 
     private void loadCurrentSettings() {
-        // Load data from TaskViewModel if available
         Boolean isRep = taskViewModel.isRepeating.getValue();
         if (isRep != null && isRep) {
             String type = taskViewModel.repeatType.getValue();
@@ -230,7 +240,6 @@ public class EditRepeatFragment extends Fragment {
         if (rbAfterTimes.isChecked()) endType = "count";
         else if (rbAfterDate.isChecked()) endType = "date";
 
-        // Save to Shared ViewModel
         taskViewModel.isRepeating.setValue(true);
         taskViewModel.repeatType.setValue(frequency);
         taskViewModel.repeatDays.setValue(weekDays);
@@ -247,8 +256,16 @@ public class EditRepeatFragment extends Fragment {
     private void updateRepeatTypeVisibility(int checkedId) {
         if (checkedId == R.id.rbDaily) {
             sectionDays.setVisibility(View.GONE);
+            if (layoutAfterTimes != null) layoutAfterTimes.setVisibility(View.VISIBLE);
         } else {
             sectionDays.setVisibility(View.VISIBLE);
+            if (layoutAfterTimes != null) {
+                layoutAfterTimes.setVisibility(View.GONE);
+                // Nếu đang chọn "After X times" mà chuyển sang Weekly thì chọn lại "Never"
+                if (rbAfterTimes.isChecked()) {
+                    selectEndOption(rbNever);
+                }
+            }
         }
     }
 

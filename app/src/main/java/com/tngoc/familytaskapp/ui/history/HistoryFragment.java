@@ -1,11 +1,13 @@
 package com.tngoc.familytaskapp.ui.history;
 
 import android.os.Bundle;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,17 +21,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.tngoc.familytaskapp.R;
 
-import java.util.ArrayList;
-
 public class HistoryFragment extends Fragment {
 
-    private static final String TAG = "HistoryFragment";
     private HistoryViewModel historyViewModel;
     private RecyclerView recyclerView;
     private HistoryAdapter adapter;
     private String workspaceId;
 
     private Button btnTabAll, btnTabTask, btnTabPoint;
+    private EditText etSearchHistory;
 
     @Nullable
     @Override
@@ -45,16 +45,15 @@ public class HistoryFragment extends Fragment {
             workspaceId = getArguments().getString("workspaceId");
         }
         
-        // Nếu không có workspaceId từ args, có thể thử lấy cái mặc định hoặc báo lỗi
-        // Ở đây tạm thời để test nếu null
         if (workspaceId == null) {
-            workspaceId = "default_workspace"; // Thay bằng logic thực tế của bạn
+            workspaceId = "default_workspace"; 
         }
 
         initViews(view);
         setupRecyclerView();
         setupViewModel();
         setupTabs();
+        setupSearch();
 
         view.findViewById(R.id.btnBack).setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
     }
@@ -64,6 +63,7 @@ public class HistoryFragment extends Fragment {
         btnTabAll = view.findViewById(R.id.btnTabAll);
         btnTabTask = view.findViewById(R.id.btnTabTask);
         btnTabPoint = view.findViewById(R.id.btnTabPoint);
+        etSearchHistory = view.findViewById(R.id.etSearchHistory);
     }
 
     private void setupRecyclerView() {
@@ -106,17 +106,29 @@ public class HistoryFragment extends Fragment {
             historyViewModel.filterPoints();
         });
         
-        // Mặc định chọn Tab Tất cả
         updateTabUI(btnTabAll);
     }
 
+    private void setupSearch() {
+        etSearchHistory.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                historyViewModel.setSearchQuery(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+    }
+
     private void updateTabUI(Button selectedTab) {
-        // Reset tất cả tab về style chưa chọn
         resetTabStyle(btnTabAll);
         resetTabStyle(btnTabTask);
         resetTabStyle(btnTabPoint);
 
-        // Set style cho tab được chọn
         selectedTab.setBackgroundResource(R.drawable.bg_button_dark);
         selectedTab.setTextColor(ContextCompat.getColor(requireContext(), R.color.white));
     }

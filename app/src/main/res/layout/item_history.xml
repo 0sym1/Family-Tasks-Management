@@ -2,49 +2,67 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingVertical="12dp"
-    android:gravity="center_vertical">
+    android:orientation="vertical">
 
-    <View
-        android:id="@+id/dot"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:background="@drawable/bg_dot_green"/>
+    <TextView
+        android:id="@+id/tvHeaderDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:paddingBottom="8dp"
+        android:textColor="#888888"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        android:text="@string/history_today"/>
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:layout_marginStart="16dp">
+        android:orientation="horizontal"
+        android:paddingVertical="12dp"
+        android:gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/tvTitle"
-            android:textColor="#FFFFFF"
-            android:textSize="17sp"
-            android:textStyle="bold"
-            android:layout_width="wrap_content"
+        <View
+            android:id="@+id/dot"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:background="@drawable/bg_dot_green"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Phát nhận +5 điểm"/>
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp">
+
+            <TextView
+                android:id="@+id/tvTitle"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/history_placeholder_title"/>
+
+            <TextView
+                android:id="@+id/tvReason"
+                android:textColor="#888888"
+                android:textSize="14sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/history_placeholder_detail"/>
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/tvReason"
+            android:id="@+id/tvTime"
             android:textColor="#888888"
             android:textSize="14sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:text="Lý do: Đúng hạn"/>
+            android:layout_gravity="top"
+            android:layout_marginTop="4dp"
+            android:text="@string/placeholder_time"/>
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/tvTime"
-        android:textColor="#888888"
-        android:textSize="14sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:layout_marginTop="4dp"
-        android:text="13:22"/>
 </LinearLayout>

@@ -11,9 +11,9 @@ import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.tngoc.familytaskapp.data.model.Reward;
 import com.tngoc.familytaskapp.data.model.TaskHistory;
+import com.tngoc.familytaskapp.utils.Constants;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,6 +28,9 @@ public class HistoryViewModel extends ViewModel {
 
     private List<TaskHistory> cachedHistories = new ArrayList<>();
     private List<Reward> cachedRewards = new ArrayList<>();
+    
+    private String currentQuery = "";
+    private int currentFilter = 0; // 0: All, 1: Tasks, 2: Points
 
     private ListenerRegistration historyListener;
     private ListenerRegistration rewardListener;
@@ -45,7 +48,7 @@ public class HistoryViewModel extends ViewModel {
         Log.d(TAG, "startListening() workspaceId = " + workspaceId);
         stopListening();
 
-        historyListener = db.collection("workspaces")
+        historyListener = db.collection(Constants.COLLECTION_WORKSPACES)
                 .document(workspaceId)
                 .collection("histories")
                 .orderBy("createdAt", Query.Direction.DESCENDING)
@@ -58,14 +61,13 @@ public class HistoryViewModel extends ViewModel {
 
                     if (value != null) {
                         cachedHistories = value.toObjects(TaskHistory.class);
-                        Log.d(TAG, "Histories loaded: " + cachedHistories.size());
                         combineAndEmit();
                     }
                 });
 
-        rewardListener = db.collection("workspaces")
+        rewardListener = db.collection(Constants.COLLECTION_WORKSPACES)
                 .document(workspaceId)
-                .collection("rewards")
+                .collection(Constants.COLLECTION_REWARDS)
                 .orderBy("createdAt", Query.Direction.DESCENDING)
                 .addSnapshotListener((value, error) -> {
                     if (error != null) {
@@ -76,7 +78,6 @@ public class HistoryViewModel extends ViewModel {
 
                     if (value != null) {
                         cachedRewards = value.toObjects(Reward.class);
-                        Log.d(TAG, "Rewards loaded: " + cachedRewards.size());
                         combineAndEmit();
                     }
                 });
@@ -95,11 +96,38 @@ public class HistoryViewModel extends ViewModel {
     }
 
     private void combineAndEmit() {
-        List<Object> combined = new ArrayList<>();
-        combined.addAll(cachedHistories);
-        combined.addAll(cachedRewards);
+        List<Object> filtered = new ArrayList<>();
+        
+        if (currentFilter == 0) {
+            filtered.addAll(cachedHistories);
+            filtered.addAll(cachedRewards);
+        } else if (currentFilter == 1) {
+            filtered.addAll(cachedHistories);
+        } else if (currentFilter == 2) {
+            filtered.addAll(cachedRewards);
+        }
 
-        Collections.sort(combined, (o1, o2) -> {
+        // Apply search query
+        if (!currentQuery.isEmpty()) {
+            List<Object> searchResult = new ArrayList<>();
+            String queryLower = currentQuery.toLowerCase();
+            for (Object obj : filtered) {
+                if (obj instanceof TaskHistory) {
+                    TaskHistory h = (TaskHistory) obj;
+                    if (h.getTaskName() != null && h.getTaskName().toLowerCase().contains(queryLower)) {
+                        searchResult.add(obj);
+                    }
+                } else if (obj instanceof Reward) {
+                    Reward r = (Reward) obj;
+                    if (r.getNote() != null && r.getNote().toLowerCase().contains(queryLower)) {
+                        searchResult.add(obj);
+                    }
+                }
+            }
+            filtered = searchResult;
+        }
+
+        Collections.sort(filtered, (o1, o2) -> {
             Timestamp t1 = getCreatedAt(o1);
             Timestamp t2 = getCreatedAt(o2);
 
@@ -110,8 +138,7 @@ public class HistoryViewModel extends ViewModel {
             return t2.compareTo(t1);
         });
 
-        Log.d(TAG, "Combined list size: " + combined.size());
-        historyLiveData.setValue(combined);
+        historyLiveData.setValue(filtered);
     }
 
     private Timestamp getCreatedAt(Object item) {
@@ -123,77 +150,30 @@ public class HistoryViewModel extends ViewModel {
         return null;
     }
 
+    public void setSearchQuery(String query) {
+        this.currentQuery = query;
+        combineAndEmit();
+    }
+
     public void filterAll() {
-        Log.d(TAG, "filterAll()");
+        currentFilter = 0;
         combineAndEmit();
     }
 
     public void filterTasks() {
-        Log.d(TAG, "filterTasks(), size = " + cachedHistories.size());
-        historyLiveData.setValue(new ArrayList<>(cachedHistories));
+        currentFilter = 1;
+        combineAndEmit();
     }
 
     public void filterPoints() {
-        Log.d(TAG, "filterPoints(), size = " + cachedRewards.size());
-        historyLiveData.setValue(new ArrayList<>(cachedRewards));
+        currentFilter = 2;
+        combineAndEmit();
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
         stopListening();
-    }
-
-    public void createTestData(String workspaceId) {
-        if (workspaceId == null || workspaceId.trim().isEmpty()) {
-            errorLiveData.setValue("workspaceId không hợp lệ");
-            return;
-        }
-
-        Calendar cal = Calendar.getInstance();
-
-        Reward r1 = new Reward();
-        r1.setUserId("user_1");
-        r1.setPoints(10);
-        r1.setType("task_completed");
-        r1.setTaskId("task_A");
-        r1.setNote("Hoàn thành nhiệm vụ 'Quét nhà'");
-        r1.setCreatedAt(new Timestamp(cal.getTime()));
-
-        cal.add(Calendar.HOUR, -2);
-
-        TaskHistory h1 = new TaskHistory();
-        h1.setUserId("user_1");
-        h1.setUserName("Phát");
-        h1.setTaskId("task_A");
-        h1.setTaskName("Quét nhà");
-        h1.setAction("task_status_updated");
-        h1.setOldValue("Đang làm");
-        h1.setNewValue("Hoàn thành");
-        h1.setPoint(10);
-        h1.setCreatedAt(new Timestamp(cal.getTime()));
-
-        db.collection("workspaces")
-                .document(workspaceId)
-                .collection("rewards")
-                .add(r1)
-                .addOnSuccessListener(documentReference ->
-                        Log.d(TAG, "createTestData() reward added: " + documentReference.getId()))
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "createTestData() reward failed: " + e.getMessage(), e);
-                    errorLiveData.setValue(e.getMessage());
-                });
-
-        db.collection("workspaces")
-                .document(workspaceId)
-                .collection("histories")
-                .add(h1)
-                .addOnSuccessListener(documentReference ->
-                        Log.d(TAG, "createTestData() history added: " + documentReference.getId()))
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "createTestData() history failed: " + e.getMessage(), e);
-                    errorLiveData.setValue(e.getMessage());
-                });
     }
 
     public void loadAllData(String workspaceId) {

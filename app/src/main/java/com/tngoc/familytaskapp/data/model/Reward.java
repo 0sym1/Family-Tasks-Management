@@ -7,9 +7,11 @@ public class Reward {
     @DocumentId
     private String rewardId;
     private String userId;
+    private String userName;
     private int points;
-    private String type; // task_completed, bonus, penalty
+    private String type; // task_completed, task_completed_late, task_overdue
     private String taskId;
+    private String taskName;
     private String note;
     private Timestamp createdAt;
 
@@ -21,6 +23,9 @@ public class Reward {
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
 
+    public String getUserName() { return userName; }
+    public void setUserName(String userName) { this.userName = userName; }
+
     public int getPoints() { return points; }
     public void setPoints(int points) { this.points = points; }
 
@@ -29,6 +34,9 @@ public class Reward {
 
     public String getTaskId() { return taskId; }
     public void setTaskId(String taskId) { this.taskId = taskId; }
+
+    public String getTaskName() { return taskName; }
+    public void setTaskName(String taskName) { this.taskName = taskName; }
 
     public String getNote() { return note; }
     public void setNote(String note) { this.note = note; }

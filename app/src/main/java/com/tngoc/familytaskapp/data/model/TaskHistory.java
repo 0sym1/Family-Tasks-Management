@@ -6,6 +6,7 @@ import com.google.firebase.firestore.DocumentId;
 public class TaskHistory {
     @DocumentId
     private String historyId;
+    private String workspaceId;
     private String action;
     private String taskId;
     private String taskName;
@@ -20,6 +21,9 @@ public class TaskHistory {
 
     public String getHistoryId() { return historyId; }
     public void setHistoryId(String historyId) { this.historyId = historyId; }
+
+    public String getWorkspaceId() { return workspaceId; }
+    public void setWorkspaceId(String workspaceId) { this.workspaceId = workspaceId; }
 
     public String getAction() { return action; }
     public void setAction(String action) { this.action = action; }

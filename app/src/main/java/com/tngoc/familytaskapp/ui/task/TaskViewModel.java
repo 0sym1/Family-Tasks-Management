@@ -3,7 +3,6 @@ package com.tngoc.familytaskapp.ui.task;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.tngoc.familytaskapp.data.model.Notification;
 import com.google.firebase.Timestamp;
 import com.tngoc.familytaskapp.data.model.Task;
 import com.tngoc.familytaskapp.data.repository.NotificationRepository;
@@ -22,13 +21,14 @@ public class TaskViewModel extends ViewModel {
     public final MutableLiveData<Boolean>    successLiveData = new MutableLiveData<>();
     public final MutableLiveData<String>     errorLiveData  = new MutableLiveData<>();
 
-    // Temporary repeat settings for task creation
     public final MutableLiveData<Boolean> isRepeating = new MutableLiveData<>(false);
     public final MutableLiveData<String> repeatType = new MutableLiveData<>();
     public final MutableLiveData<List<String>> repeatDays = new MutableLiveData<>();
     public final MutableLiveData<String> repeatEndType = new MutableLiveData<>();
     public final MutableLiveData<Integer> repeatCount = new MutableLiveData<>(0);
     public final MutableLiveData<Timestamp> repeatUntil = new MutableLiveData<>();
+
+    public boolean isEditModeInitialized = false;
 
     public TaskViewModel() {
         this.taskRepository = new TaskRepository();
@@ -43,25 +43,51 @@ public class TaskViewModel extends ViewModel {
         taskRepository.getTask(workspaceId, taskId, taskLiveData, errorLiveData);
     }
 
-    public void createTask(String workspaceId, Task task) {
-        taskRepository.createTask(workspaceId, task, taskIdLiveData, errorLiveData);
-        
-        if (task.getAssignedToIds() != null) {
-            for (String userId : task.getAssignedToIds()) {
-                Notification notif = new Notification(
-                        userId,
-                        "Bạn có nhiệm vụ mới",
-                        "Bạn vừa được giao nhiệm vụ: " + task.getTitle(),
-                        "task_assigned",
-                        workspaceId
-                );
-                notificationRepository.sendNotification(notif);
-            }
-        }
+    public interface OnTaskActionListener {
+        void onSuccess(String taskId);
+        void onFailure(String error);
     }
 
-    public void updateTask(String workspaceId, Task task) {
-        taskRepository.updateTask(workspaceId, task, successLiveData, errorLiveData);
+    public void createTask(String workspaceId, Task task, OnTaskActionListener listener) {
+        MutableLiveData<String> tempId = new MutableLiveData<>();
+        MutableLiveData<String> tempError = new MutableLiveData<>();
+        
+        taskRepository.createTask(workspaceId, task, tempId, tempError);
+        
+        tempId.observeForever(id -> {
+            if (id != null) {
+                taskIdLiveData.setValue(id);
+                if (listener != null) listener.onSuccess(id);
+            }
+        });
+        
+        tempError.observeForever(err -> {
+            if (err != null) {
+                errorLiveData.setValue(err);
+                if (listener != null) listener.onFailure(err);
+            }
+        });
+    }
+
+    public void updateTask(String workspaceId, Task task, OnTaskActionListener listener) {
+        MutableLiveData<Boolean> tempSuccess = new MutableLiveData<>();
+        MutableLiveData<String> tempError = new MutableLiveData<>();
+        
+        taskRepository.updateTask(workspaceId, task, tempSuccess, tempError);
+        
+        tempSuccess.observeForever(success -> {
+            if (Boolean.TRUE.equals(success)) {
+                successLiveData.setValue(true);
+                if (listener != null) listener.onSuccess(task.getTaskId());
+            }
+        });
+        
+        tempError.observeForever(err -> {
+            if (err != null) {
+                errorLiveData.setValue(err);
+                if (listener != null) listener.onFailure(err);
+            }
+        });
     }
 
     public void updateTaskStatus(String workspaceId, String taskId, String newStatus) {
@@ -79,5 +105,10 @@ public class TaskViewModel extends ViewModel {
         repeatEndType.setValue(null);
         repeatCount.setValue(0);
         repeatUntil.setValue(null);
+        isEditModeInitialized = false;
+        
+        taskIdLiveData.setValue(null);
+        successLiveData.setValue(null);
+        errorLiveData.setValue(null);
     }
 }

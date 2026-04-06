@@ -1,5 +1,6 @@
 package com.tngoc.familytaskapp.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,12 +78,15 @@ public class WorkspaceAdapter extends RecyclerView.Adapter<WorkspaceAdapter.Work
         }
 
         public void bind(Workspace workspace, OnWorkspaceClickListener listener, OnDeleteClickListener deleteListener) {
+            Context context = itemView.getContext();
             tvWorkspaceName.setText(workspace.getName());
-            tvOwnerName.setText("Tạo bởi: " + (workspace.getOwnerName() != null ? workspace.getOwnerName() : "Unknown"));
+            
+            String ownerName = workspace.getOwnerName() != null ? workspace.getOwnerName() : "---";
+            tvOwnerName.setText(context.getString(R.string.created_by_format, ownerName));
             
             int total = workspace.getTotalTasks();
             int completed = workspace.getCompletedTasks();
-            tvTaskCount.setText(completed + "/" + total + " task");
+            tvTaskCount.setText(context.getString(R.string.task_count_format, completed, total));
             
             if (total > 0) {
                 pbWorkspace.setProgress((completed * 100) / total);
