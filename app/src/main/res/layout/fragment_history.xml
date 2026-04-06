@@ -8,74 +8,116 @@
     android:background="#000000"
     android:padding="20dp">
 
-    <!-- Back Button -->
-    <ImageButton
-        android:id="@+id/btnBack"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@drawable/bg_back_button"
-        android:src="@drawable/ic_back"
-        android:contentDescription="Back"
-        android:layout_marginBottom="20dp"/>
+    <!-- Header Row: Back Button -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp">
 
-    <!-- Title -->
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_back_button"
+            android:src="@drawable/ic_back"
+            android:contentDescription="Back"
+            android:layout_alignParentStart="true" />
+    </RelativeLayout>
+
+    <!-- Title Centered -->
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/history_title"
         android:textSize="36sp"
         android:textStyle="bold"
         android:textColor="#FFFFFF"
+        android:gravity="center"
         android:layout_marginBottom="24dp"/>
 
-    <!-- Filter Tabs (Using HorizontalScrollView + Buttons for custom style) -->
-    <HorizontalScrollView
+    <!-- Search Box -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/bg_input_field"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:layout_marginBottom="20dp">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@android:drawable/ic_menu_search"
+            app:tint="#888888" />
+
+        <EditText
+            android:id="@+id/etSearchHistory"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#888888"
+            android:textSize="14sp"
+            android:layout_marginStart="12dp"
+            android:singleLine="true"
+            android:imeOptions="actionSearch" />
+    </LinearLayout>
+
+    <!-- Filter Tabs (Centered) -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="none"
+        android:gravity="center"
         android:layout_marginBottom="24dp">
 
-        <LinearLayout
+        <HorizontalScrollView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:scrollbars="none">
 
-            <Button
-                android:id="@+id/btnTabAll"
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="45dp"
-                android:text="@string/tab_all"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF"
-                android:background="@drawable/bg_button_dark"
-                android:paddingHorizontal="24dp"
-                android:layout_marginEnd="12dp"
-                style="?android:attr/borderlessButtonStyle"/>
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btnTabTask"
-                android:layout_width="wrap_content"
-                android:layout_height="45dp"
-                android:text="@string/tab_task"
-                android:textAllCaps="false"
-                android:textColor="#888888"
-                android:background="@android:color/transparent"
-                android:paddingHorizontal="24dp"
-                android:layout_marginEnd="12dp"
-                style="?android:attr/borderlessButtonStyle"/>
+                <Button
+                    android:id="@+id/btnTabAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:text="@string/tab_all"
+                    android:textAllCaps="false"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/bg_button_dark"
+                    android:paddingHorizontal="24dp"
+                    android:layout_marginEnd="8dp"
+                    style="?android:attr/borderlessButtonStyle"/>
 
-            <Button
-                android:id="@+id/btnTabPoint"
-                android:layout_width="wrap_content"
-                android:layout_height="45dp"
-                android:text="@string/tab_point"
-                android:textAllCaps="false"
-                android:textColor="#888888"
-                android:background="@android:color/transparent"
-                android:paddingHorizontal="24dp"
-                style="?android:attr/borderlessButtonStyle"/>
-        </LinearLayout>
-    </HorizontalScrollView>
+                <Button
+                    android:id="@+id/btnTabTask"
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:text="@string/tab_task"
+                    android:textAllCaps="false"
+                    android:textColor="#888888"
+                    android:background="@android:color/transparent"
+                    android:paddingHorizontal="24dp"
+                    android:layout_marginEnd="8dp"
+                    style="?android:attr/borderlessButtonStyle"/>
+
+                <Button
+                    android:id="@+id/btnTabPoint"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:background="@android:color/transparent"
+                    android:paddingHorizontal="24dp"
+                    android:text="@string/tab_point"
+                    android:textAllCaps="false"
+                    android:textColor="#888888" />
+            </LinearLayout>
+        </HorizontalScrollView>
+    </LinearLayout>
 
     <!-- History List -->
     <androidx.recyclerview.widget.RecyclerView

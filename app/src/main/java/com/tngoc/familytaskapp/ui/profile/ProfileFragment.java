@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.tngoc.familytaskapp.R;
 import com.tngoc.familytaskapp.data.model.User;
 import com.tngoc.familytaskapp.ui.home.HomeActivity;
+import com.tngoc.familytaskapp.ui.settings.ChangeLanguageFragment;
 import com.tngoc.familytaskapp.utils.LocaleHelper;
 import com.tngoc.familytaskapp.utils.SharedPrefManager;
 
@@ -31,9 +33,10 @@ public class ProfileFragment extends Fragment {
     private FirebaseAuth firebaseAuth;
 
     private ImageView ivAvatar;
-    private TextView tvName, tvUsername, tvPoints, tvEmail;
+    private TextView tvName, tvUsername, tvPoints, tvEmail, tvCurrentLanguage;
     private EditText etOldPassword, etNewPassword, etConfirmPassword;
-    private Button btnLanguageVi, btnLanguageEn, btnSave, btnLogout;
+    private Button btnSave, btnLogout;
+    private View llChangeLanguage;
 
     @Nullable
     @Override
@@ -57,6 +60,7 @@ public class ProfileFragment extends Fragment {
 
         setupListeners();
         observeViewModel();
+        updateLanguageDisplay();
     }
 
     private void initViews(View view) {
@@ -71,10 +75,11 @@ public class ProfileFragment extends Fragment {
             etNewPassword = view.findViewById(R.id.etNewPassword);
             etConfirmPassword = view.findViewById(R.id.etConfirmPassword);
 
-            btnLanguageVi = view.findViewById(R.id.btnLanguageVi);
-            btnLanguageEn = view.findViewById(R.id.btnLanguageEn);
             btnSave = view.findViewById(R.id.btnSave);
             btnLogout = view.findViewById(R.id.btnLogout);
+            
+            llChangeLanguage = view.findViewById(R.id.llChangeLanguage);
+            tvCurrentLanguage = view.findViewById(R.id.tvCurrentLanguage);
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(requireContext(), "Error initializing views: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -82,12 +87,22 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setupListeners() {
-        if (btnLanguageVi != null) {
-            btnLanguageVi.setOnClickListener(v -> changeLanguage("vi"));
+        if (llChangeLanguage != null) {
+            llChangeLanguage.setOnClickListener(v -> {
+                try {
+                    Navigation.findNavController(v).navigate(R.id.action_profile_to_changeLanguage);
+                } catch (Exception e) {
+                    // Fallback for manual transaction in HomeActivity
+                    if (isAdded()) {
+                        getParentFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, new ChangeLanguageFragment())
+                                .addToBackStack(null)
+                                .commit();
+                    }
+                }
+            });
         }
-        if (btnLanguageEn != null) {
-            btnLanguageEn.setOnClickListener(v -> changeLanguage("en"));
-        }
+        
         if (btnSave != null) {
             btnSave.setOnClickListener(v -> saveProfile());
         }
@@ -97,6 +112,19 @@ public class ProfileFragment extends Fragment {
                     ((HomeActivity) requireActivity()).logout();
                 }
             });
+        }
+    }
+
+    private void updateLanguageDisplay() {
+        String langCode = sharedPrefManager.getLanguage();
+        if (tvCurrentLanguage != null) {
+            if ("vi".equals(langCode)) {
+                tvCurrentLanguage.setText("Tiếng Việt");
+            } else if ("en".equals(langCode)) {
+                tvCurrentLanguage.setText("English");
+            } else if ("fr".equals(langCode)) {
+                tvCurrentLanguage.setText("Français");
+            }
         }
     }
 
@@ -196,11 +224,4 @@ public class ProfileFragment extends Fragment {
             e.printStackTrace();
         }
     }
-
-    private void changeLanguage(String languageCode) {
-        sharedPrefManager.saveLanguage(languageCode);
-        LocaleHelper.setLocale(requireContext(), languageCode);
-        requireActivity().recreate();
-    }
 }
-

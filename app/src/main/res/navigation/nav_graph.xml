@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/rankingFragment">
+    app:startDestination="@id/workspaceListFragment">
 
     <fragment
         android:id="@+id/workspaceListFragment"
@@ -67,6 +67,12 @@
         <action
             android:id="@+id/action_taskList_to_inviteMember"
             app:destination="@id/inviteMemberFragment" />
+        <action
+            android:id="@+id/action_taskList_to_history"
+            app:destination="@id/historyFragment" />
+        <action
+            android:id="@+id/action_taskList_to_ranking"
+            app:destination="@id/rankingFragment" />
     </fragment>
 
     <fragment
@@ -98,6 +104,12 @@
             app:argType="string"
             app:nullable="true"
             android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_createTask_to_editRepeat"
+            app:destination="@id/editRepeatFragment" />
+        <action
+            android:id="@+id/action_createTask_to_taskDetail"
+            app:destination="@id/taskDetailFragment" />
     </fragment>
 
     <fragment
@@ -113,7 +125,11 @@
     <fragment
         android:id="@+id/historyFragment"
         android:name="com.tngoc.familytaskapp.ui.history.HistoryFragment"
-        android:label="Lịch sử" />
+        android:label="Lịch sử">
+        <argument
+            android:name="workspaceId"
+            app:argType="string" />
+    </fragment>
 
     <fragment
         android:id="@+id/chatBotFragment"
@@ -123,6 +139,29 @@
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.tngoc.familytaskapp.ui.profile.ProfileFragment"
-        android:label="@string/profile" />
+        android:label="@string/profile">
+        <action
+            android:id="@+id/action_profile_to_changeLanguage"
+            app:destination="@id/changeLanguageFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/rankingFragment"
+        android:name="com.tngoc.familytaskapp.ui.ranking.RankingFragment"
+        android:label="Xếp hạng">
+        <argument
+            android:name="workspaceId"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/editRepeatFragment"
+        android:name="com.tngoc.familytaskapp.ui.task.EditRepeatFragment"
+        android:label="Sửa lặp lại" />
+
+    <fragment
+        android:id="@+id/changeLanguageFragment"
+        android:name="com.tngoc.familytaskapp.ui.settings.ChangeLanguageFragment"
+        android:label="Chọn ngôn ngữ" />
 
 </navigation>

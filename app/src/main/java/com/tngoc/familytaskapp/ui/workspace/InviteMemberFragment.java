@@ -96,7 +96,13 @@ public class InviteMemberFragment extends Fragment {
             }
         }
         adapter.setMembers(filteredList);
-        tvMemberCount.setText(filteredList.size() + " thành viên");
+        updateMemberCountText(filteredList.size());
+    }
+
+    private void updateMemberCountText(int count) {
+        if (isAdded()) {
+            tvMemberCount.setText(getString(R.string.member_count_format, count));
+        }
     }
 
     private void observeViewModel() {

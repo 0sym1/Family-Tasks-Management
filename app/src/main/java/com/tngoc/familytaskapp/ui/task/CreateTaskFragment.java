@@ -4,14 +4,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,11 +18,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.tngoc.familytaskapp.R;
@@ -46,22 +47,19 @@ public class CreateTaskFragment extends Fragment {
     private WorkspaceViewModel workspaceViewModel;
     
     private EditText etTaskName, etTaskDescription;
-    private Spinner spinnerStatus;
-    private TextView tvStartDate, tvEndDate, tvTitle, tvAssignedTo;
+    private TextView tvStartDate, tvEndDate, tvEndTime, tvTitle, tvAssignedTo;
     private RadioGroup rgRepeat;
     private RadioButton rbRepeatOn, rbRepeatOff;
     private ImageView ivEditRepeat;
     private Button btnSave, btnCancel;
     private ImageButton btnBack;
-    private View llAssignedTo;
+    private View llAssignedTo, llEndDate, llEndTime;
     
-    private EditText etTitle, etDescription, etRewardPoints;
-    private TextView tvRepeatSummary;
-    private Button btnCreate;
     private String workspaceId;
     private String taskId;
-    private Calendar startCalendar, endCalendar;
+    private Calendar startCalendar, endCalendar, endTimeCalendar;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+    private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
     private List<User> workspaceMembers = new ArrayList<>();
     private List<String> selectedMemberIds = new ArrayList<>();
     private boolean[] checkedItems;
@@ -77,8 +75,12 @@ public class CreateTaskFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
+        taskViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
         workspaceViewModel = new ViewModelProvider(this).get(WorkspaceViewModel.class);
+
+        if (savedInstanceState == null && !taskViewModel.isEditModeInitialized) {
+            taskViewModel.resetRepeatSettings();
+        }
 
         if (getArguments() != null) {
             workspaceId = getArguments().getString("workspaceId");
@@ -86,7 +88,6 @@ public class CreateTaskFragment extends Fragment {
         }
 
         initViews(view);
-        setupSpinners();
         setupDatePickers();
         setupListeners();
 
@@ -95,11 +96,14 @@ public class CreateTaskFragment extends Fragment {
         }
 
         if (taskId != null) {
-            tvTitle.setText("Edit Task");
-            taskViewModel.loadTask(workspaceId, taskId);
+            tvTitle.setText(R.string.edit_task);
+            if (!taskViewModel.isEditModeInitialized) {
+                taskViewModel.loadTask(workspaceId, taskId);
+            }
         }
 
         observeViewModel();
+        updateRepeatUIFromViewModel();
     }
 
     private void initViews(View view) {
@@ -107,11 +111,13 @@ public class CreateTaskFragment extends Fragment {
         btnBack = view.findViewById(R.id.btnBack);
         etTaskName = view.findViewById(R.id.etTaskName);
         etTaskDescription = view.findViewById(R.id.etTaskDescription);
-        spinnerStatus = view.findViewById(R.id.spinnerStatus);
         llAssignedTo = view.findViewById(R.id.llAssignedTo);
+        llEndDate = view.findViewById(R.id.llEndDate);
+        llEndTime = view.findViewById(R.id.llEndTime);
         tvAssignedTo = view.findViewById(R.id.tvAssignedTo);
         tvStartDate = view.findViewById(R.id.tvStartDate);
         tvEndDate = view.findViewById(R.id.tvEndDate);
+        tvEndTime = view.findViewById(R.id.tvEndTime);
         rgRepeat = view.findViewById(R.id.rgRepeat);
         rbRepeatOn = view.findViewById(R.id.rbRepeatOn);
         rbRepeatOff = view.findViewById(R.id.rbRepeatOff);
@@ -120,16 +126,27 @@ public class CreateTaskFragment extends Fragment {
         btnCancel = view.findViewById(R.id.btnCancel);
 
         startCalendar = Calendar.getInstance();
+        normalizeCalendar(startCalendar);
+        
         endCalendar = Calendar.getInstance();
+        normalizeCalendar(endCalendar);
+
+        endTimeCalendar = Calendar.getInstance();
+        endTimeCalendar.set(Calendar.HOUR_OF_DAY, 12);
+        endTimeCalendar.set(Calendar.MINUTE, 0);
+        
+        tvStartDate.setText(dateFormat.format(startCalendar.getTime()));
+        tvEndDate.setText(dateFormat.format(endCalendar.getTime()));
+        tvEndTime.setText(timeFormat.format(endTimeCalendar.getTime()));
         
         updateRepeatIconVisibility();
     }
 
-    private void setupSpinners() {
-        String[] statuses = {getString(R.string.status_doing), "Done", "Pending"};
-        ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(requireContext(), R.layout.spinner_item, statuses);
-        statusAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item);
-        spinnerStatus.setAdapter(statusAdapter);
+    private void normalizeCalendar(Calendar cal) {
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
     }
 
     private void setupDatePickers() {
@@ -149,8 +166,8 @@ public class CreateTaskFragment extends Fragment {
                 Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
                 calendar.setTimeInMillis(selection);
                 startCalendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+                normalizeCalendar(startCalendar);
                 tvStartDate.setText(dateFormat.format(startCalendar.getTime()));
-                tvStartDate.setTextColor(getResources().getColor(R.color.white));
             });
             datePicker.show(getParentFragmentManager(), "START_DATE_PICKER");
         };
@@ -167,14 +184,32 @@ public class CreateTaskFragment extends Fragment {
                 Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
                 calendar.setTimeInMillis(selection);
                 endCalendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+                normalizeCalendar(endCalendar);
                 tvEndDate.setText(dateFormat.format(endCalendar.getTime()));
-                tvEndDate.setTextColor(getResources().getColor(R.color.white));
             });
             datePicker.show(getParentFragmentManager(), "END_DATE_PICKER");
         };
 
-        requireView().findViewById(R.id.llStartDate).setOnClickListener(startPickerListener);
-        requireView().findViewById(R.id.llEndDate).setOnClickListener(endPickerListener);
+        View.OnClickListener timePickerListener = v -> {
+            MaterialTimePicker timePicker = new MaterialTimePicker.Builder()
+                    .setTimeFormat(TimeFormat.CLOCK_24H)
+                    .setHour(endTimeCalendar.get(Calendar.HOUR_OF_DAY))
+                    .setMinute(endTimeCalendar.get(Calendar.MINUTE))
+                    .setTitleText("Chọn giờ kết thúc")
+                    .build();
+
+            timePicker.addOnPositiveButtonClickListener(v1 -> {
+                endTimeCalendar.set(Calendar.HOUR_OF_DAY, timePicker.getHour());
+                endTimeCalendar.set(Calendar.MINUTE, timePicker.getMinute());
+                tvEndTime.setText(timeFormat.format(endTimeCalendar.getTime()));
+            });
+            timePicker.show(getParentFragmentManager(), "END_TIME_PICKER");
+        };
+
+        View llStartDateContainer = requireView().findViewById(R.id.llStartDate);
+        if (llStartDateContainer != null) llStartDateContainer.setOnClickListener(startPickerListener);
+        if (llEndDate != null) llEndDate.setOnClickListener(endPickerListener);
+        if (llEndTime != null) llEndTime.setOnClickListener(timePickerListener);
     }
 
     private void setupListeners() {
@@ -182,7 +217,19 @@ public class CreateTaskFragment extends Fragment {
         btnCancel.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
         
         rgRepeat.setOnCheckedChangeListener((group, checkedId) -> {
+            boolean isRepeat = (checkedId == R.id.rbRepeatOn);
+            taskViewModel.isRepeating.setValue(isRepeat);
+            
+            if (isRepeat && taskViewModel.repeatType.getValue() == null) {
+                taskViewModel.repeatType.setValue("Daily");
+                taskViewModel.repeatEndType.setValue("never");
+            }
+            
             updateRepeatIconVisibility();
+        });
+
+        ivEditRepeat.setOnClickListener(v -> {
+            Navigation.findNavController(v).navigate(R.id.action_createTask_to_editRepeat);
         });
 
         llAssignedTo.setOnClickListener(v -> showMultiSelectDialog());
@@ -201,42 +248,86 @@ public class CreateTaskFragment extends Fragment {
                 return;
             }
 
-            String statusValue;
-            int pos = spinnerStatus.getSelectedItemPosition();
-            if (pos == 0) statusValue = Constants.TASK_STATUS_IN_PROGRESS;
-            else if (pos == 1) statusValue = Constants.TASK_STATUS_DONE;
-            else statusValue = Constants.TASK_STATUS_PENDING;
+            btnSave.setEnabled(false);
 
+            String statusValue = (taskId == null) ? Constants.TASK_STATUS_IN_PROGRESS : mTask.getStatus();
             boolean isRepeat = rbRepeatOn.isChecked();
+            String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            Task task = (taskId == null) ? new Task() : mTask;
+            
+            task.setWorkspaceId(workspaceId);
+            task.setTitle(name);
+            task.setDescription(description);
+            task.setAssignedToIds(selectedMemberIds);
+            task.setStatus(statusValue);
+            
+            normalizeCalendar(startCalendar);
+            task.setStartDate(new Timestamp(startCalendar.getTime()));
+            task.setEndTime(tvEndTime.getText().toString());
+            
+            if (isRepeat) {
+                task.setRepeat(true);
+                task.setRepeating(true);
+                task.setRepeatType(taskViewModel.repeatType.getValue());
+                task.setRepeatDays(taskViewModel.repeatDays.getValue());
+                task.setRepeatEndType(taskViewModel.repeatEndType.getValue());
+                task.setRepeatCount(taskViewModel.repeatCount.getValue() != null ? taskViewModel.repeatCount.getValue() : 0);
+                task.setRepeatUntil(taskViewModel.repeatUntil.getValue());
+
+                String endType = taskViewModel.repeatEndType.getValue();
+                if ("date".equals(endType)) {
+                    Timestamp repeatUntil = taskViewModel.repeatUntil.getValue();
+                    if (repeatUntil != null) {
+                        Calendar cal = Calendar.getInstance();
+                        cal.setTime(repeatUntil.toDate());
+                        normalizeCalendar(cal);
+                        task.setEndDate(new Timestamp(cal.getTime()));
+                    } else {
+                        task.setEndDate(null);
+                    }
+                } else {
+                    task.setEndDate(null);
+                }
+            } else {
+                task.setRepeat(false);
+                task.setRepeating(false);
+                normalizeCalendar(endCalendar);
+                task.setEndDate(new Timestamp(endCalendar.getTime()));
+                task.setRepeatUntil(null);
+                task.setRepeatType(null);
+                task.setRepeatDays(null);
+                task.setRepeatEndType(null);
+                task.setRepeatCount(0);
+            }
+            
+            TaskViewModel.OnTaskActionListener actionListener = new TaskViewModel.OnTaskActionListener() {
+                @Override
+                public void onSuccess(String newId) {
+                    if (isAdded()) {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("workspaceId", workspaceId);
+                        bundle.putString("taskId", newId);
+                        taskViewModel.resetRepeatSettings();
+                        NavHostFragment.findNavController(CreateTaskFragment.this)
+                                .navigate(R.id.action_createTask_to_taskDetail, bundle);
+                    }
+                }
+
+                @Override
+                public void onFailure(String error) {
+                    if (isAdded()) {
+                        btnSave.setEnabled(true);
+                        Toast.makeText(requireContext(), "Lỗi: " + error, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            };
 
             if (taskId == null) {
-                // Create
-                String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                Task task = new Task(
-                        workspaceId,
-                        name,
-                        description,
-                        selectedMemberIds,
-                        currentUserId,
-                        statusValue,
-                        0,
-                        new Timestamp(startCalendar.getTime()),
-                        new Timestamp(endCalendar.getTime()),
-                        isRepeat
-                );
-                taskViewModel.createTask(workspaceId, task);
+                task.setCreatedBy(currentUserId);
+                task.setCreatedAt(Timestamp.now());
+                taskViewModel.createTask(workspaceId, task, actionListener);
             } else {
-                // Update
-                if (mTask != null) {
-                    mTask.setTitle(name);
-                    mTask.setDescription(description);
-                    mTask.setAssignedToIds(selectedMemberIds);
-                    mTask.setStatus(statusValue);
-                    mTask.setStartDate(new Timestamp(startCalendar.getTime()));
-                    mTask.setEndDate(new Timestamp(endCalendar.getTime()));
-                    mTask.setRepeat(isRepeat);
-                    taskViewModel.updateTask(workspaceId, mTask);
-                }
+                taskViewModel.updateTask(workspaceId, task, actionListener);
             }
         });
     }
@@ -277,8 +368,17 @@ public class CreateTaskFragment extends Fragment {
     }
     
     private void updateRepeatIconVisibility() {
-        if (ivEditRepeat != null) {
-            ivEditRepeat.setVisibility(rbRepeatOn.isChecked() ? View.VISIBLE : View.GONE);
+        boolean isRepeat = rbRepeatOn.isChecked();
+        if (ivEditRepeat != null) ivEditRepeat.setVisibility(isRepeat ? View.VISIBLE : View.GONE);
+        if (llEndDate != null) llEndDate.setVisibility(isRepeat ? View.GONE : View.VISIBLE);
+    }
+
+    private void updateRepeatUIFromViewModel() {
+        Boolean isRepeating = taskViewModel.isRepeating.getValue();
+        if (isRepeating != null) {
+            if (isRepeating) rbRepeatOn.setChecked(true);
+            else rbRepeatOff.setChecked(true);
+            updateRepeatIconVisibility();
         }
     }
 
@@ -292,80 +392,57 @@ public class CreateTaskFragment extends Fragment {
         workspaceViewModel.membersLiveData.observe(getViewLifecycleOwner(), members -> {
             if (members != null) {
                 this.workspaceMembers = members;
-                if (taskId != null && mTask != null) {
-                    updateAssignedToUI();
-                } else {
-                    this.checkedItems = new boolean[members.size()];
-                }
+                if (taskId != null && mTask != null) updateAssignedToUI();
+                else this.checkedItems = new boolean[members.size()];
             }
         });
 
         taskViewModel.taskLiveData.observe(getViewLifecycleOwner(), task -> {
-            if (task != null && taskId != null) {
+            if (task != null && taskId != null && !taskViewModel.isEditModeInitialized) {
                 this.mTask = task;
                 etTaskName.setText(task.getTitle());
                 etTaskDescription.setText(task.getDescription());
-                
-                if (Constants.TASK_STATUS_IN_PROGRESS.equals(task.getStatus())) spinnerStatus.setSelection(0);
-                else if (Constants.TASK_STATUS_DONE.equals(task.getStatus())) spinnerStatus.setSelection(1);
-                else spinnerStatus.setSelection(2);
 
                 if (task.getStartDate() != null) {
                     startCalendar.setTime(task.getStartDate().toDate());
+                    normalizeCalendar(startCalendar);
                     tvStartDate.setText(dateFormat.format(startCalendar.getTime()));
-                    tvStartDate.setTextColor(getResources().getColor(R.color.white));
                 }
+                
+                if (task.getEndTime() != null) {
+                    tvEndTime.setText(task.getEndTime());
+                    try {
+                        String[] parts = task.getEndTime().split(":");
+                        endTimeCalendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(parts[0]));
+                        endTimeCalendar.set(Calendar.MINUTE, Integer.parseInt(parts[1]));
+                    } catch (Exception e) {}
+                }
+
                 if (task.getEndDate() != null) {
                     endCalendar.setTime(task.getEndDate().toDate());
+                    normalizeCalendar(endCalendar);
                     tvEndDate.setText(dateFormat.format(endCalendar.getTime()));
-                    tvEndDate.setTextColor(getResources().getColor(R.color.white));
                 }
 
-                if (task.isRepeat()) rbRepeatOn.setChecked(true);
+                boolean repeatState = task.isRepeat() || task.isRepeating();
+                if (repeatState) rbRepeatOn.setChecked(true);
                 else rbRepeatOff.setChecked(true);
+                
+                updateRepeatIconVisibility();
 
                 selectedMemberIds = new ArrayList<>(task.getAssignedToIds());
-                if (!workspaceMembers.isEmpty()) {
-                    updateAssignedToUI();
-                }
+                if (!workspaceMembers.isEmpty()) updateAssignedToUI();
+
+                taskViewModel.isRepeating.setValue(repeatState);
+                taskViewModel.repeatType.setValue(task.getRepeatType());
+                taskViewModel.repeatDays.setValue(task.getRepeatDays());
+                taskViewModel.repeatEndType.setValue(task.getRepeatEndType());
+                taskViewModel.repeatCount.setValue(task.getRepeatCount());
+                taskViewModel.repeatUntil.setValue(task.getRepeatUntil());
+                
+                taskViewModel.isEditModeInitialized = true;
             }
         });
-
-        taskViewModel.taskIdLiveData.observe(getViewLifecycleOwner(), id -> {
-            if (id != null) {
-                Toast.makeText(requireContext(), getString(R.string.task_created), Toast.LENGTH_SHORT).show();
-                taskViewModel.resetRepeatSettings(); // Reset sau khi tạo thành công
-                Navigation.findNavController(requireView()).navigateUp();
-            }
-        });
-
-        taskViewModel.successLiveData.observe(getViewLifecycleOwner(), success -> {
-            if (Boolean.TRUE.equals(success)) {
-                Toast.makeText(requireContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
-                Navigation.findNavController(requireView()).navigateUp();
-            }
-        });
-
-        taskViewModel.errorLiveData.observe(getViewLifecycleOwner(), error -> {
-            if (error != null) Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
-        });
-
-        // Quan sát thiết lập lặp lại để cập nhật giao diện
-        taskViewModel.isRepeating.observe(getViewLifecycleOwner(), repeating -> {
-            if (repeating) {
-                String type = taskViewModel.repeatType.getValue();
-                String summary = (type != null && type.equals("Daily")) ? "Hàng ngày" : "Hàng tuần";
-                tvRepeatSummary.setText(summary);
-            } else {
-                tvRepeatSummary.setText("Không lặp lại");
-            }
-        });
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        // Không reset ở đây vì khi navigate sang EditRepeatFragment, view bị destroy nhưng ViewModel vẫn giữ data
     }
 
     private void updateAssignedToUI() {

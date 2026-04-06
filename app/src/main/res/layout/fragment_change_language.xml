@@ -45,6 +45,7 @@
             android:background="#3A3A3A" />
 
         <TextView
+            android:id="@+id/tvVi"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -86,6 +87,7 @@
             android:background="#3A3A3A" />
 
         <TextView
+            android:id="@+id/tvEn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -127,6 +129,7 @@
             android:background="#3A3A3A" />
 
         <TextView
+            android:id="@+id/tvFr"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

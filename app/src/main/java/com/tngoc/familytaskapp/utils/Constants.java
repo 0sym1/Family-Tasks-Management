@@ -28,6 +28,9 @@ public class Constants {
     public static final String NOTIF_TASK_DONE     = "task_done";
     public static final String NOTIF_INVITATION    = "invitation";
     public static final String NOTIF_REWARD        = "reward";
+    public static final String NOTIF_REWARD_ADD    = "reward_add";
+    public static final String NOTIF_REWARD_PENALTY = "reward_penalty";
+    public static final String NOTIF_TASK_ALMOST_OVERDUE = "task_almost_overdue";
 
     // SharedPreferences
     public static final String PREF_NAME     = "FamilyTaskPrefs";

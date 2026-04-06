@@ -89,7 +89,7 @@
             <TextView
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="Mô tả"
+                android:text="@string/label_task_description"
                 android:textColor="@color/white"
                 android:textSize="14sp"
                 android:layout_marginTop="4dp" />
@@ -105,7 +105,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Nhập mô tả chi tiết..."
+                android:hint="@string/hint_task_description"
                 android:textColor="@color/white"
                 android:textColorHint="@color/text_secondary"
                 android:background="@android:color/transparent"
@@ -114,39 +114,6 @@
                 android:inputType="textMultiLine"
                 android:scrollbars="vertical"
                 android:maxLines="5" />
-        </LinearLayout>
-
-        <!-- Tình trạng -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:orientation="horizontal"
-            android:background="@drawable/bg_input_field"
-            android:gravity="center_vertical"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:layout_marginBottom="14dp">
-
-            <TextView
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:text="@string/label_status"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
-
-            <View
-                android:layout_width="1dp"
-                android:layout_height="24dp"
-                android:background="@color/divider"
-                android:layout_marginEnd="12dp" />
-
-            <Spinner
-                android:id="@+id/spinnerStatus"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:spinnerMode="dropdown" />
         </LinearLayout>
 
         <!-- Ngày bắt đầu -->
@@ -221,6 +188,48 @@
                 android:text="@string/hint_date_format"
                 android:textColor="@color/text_secondary"
                 android:textSize="14sp" />
+        </LinearLayout>
+
+        <!-- Giờ kết thúc -->
+        <LinearLayout
+            android:id="@+id/llEndTime"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_input_field"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:layout_marginBottom="14dp"
+            android:clickable="true"
+            android:focusable="true">
+
+            <TextView
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="@string/label_end_time"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="24dp"
+                android:background="@color/divider"
+                android:layout_marginEnd="12dp" />
+
+            <EditText
+                android:id="@+id/tvEndTime"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/hint_time_format"
+                android:textColor="@color/white"
+                android:textColorHint="@color/text_secondary"
+                android:background="@android:color/transparent"
+                android:textSize="14sp"
+                android:focusable="false"
+                android:clickable="false"
+                android:longClickable="false" />
         </LinearLayout>
 
         <!-- Lặp lại -->
@@ -314,7 +323,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="Chọn người làm..."
+                android:hint="@string/hint_assigned_to"
                 android:textColor="@color/white"
                 android:textColorHint="@color/text_secondary"
                 android:textSize="14sp"

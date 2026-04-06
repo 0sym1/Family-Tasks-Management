@@ -34,7 +34,7 @@
                 android:paddingTop="4dp"
                 android:paddingEnd="8dp"
                 android:paddingBottom="4dp"
-                android:text="14h T7 05/02"
+                android:text="---"
                 android:textColor="@color/white"
                 android:textSize="11sp" />
 
@@ -49,7 +49,7 @@
                 android:paddingTop="4dp"
                 android:paddingEnd="8dp"
                 android:paddingBottom="4dp"
-                android:text="Hạn: 15h CN 06/02"
+                android:text="---"
                 android:textColor="@color/white"
                 android:textSize="11sp" />
         </LinearLayout>
@@ -65,7 +65,7 @@
             android:paddingTop="4dp"
             android:paddingEnd="12dp"
             android:paddingBottom="4dp"
-            android:text="XONG"
+            android:text="@string/status_done"
             android:textColor="#59D595"
             android:textSize="10sp"
             android:textStyle="bold"
@@ -89,7 +89,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
-            android:text="Sweeping the floor"
+            android:text="---"
             android:textColor="@color/white"
             android:textSize="18sp"
             app:layout_constraintEnd_toStartOf="@+id/ivRepeat"

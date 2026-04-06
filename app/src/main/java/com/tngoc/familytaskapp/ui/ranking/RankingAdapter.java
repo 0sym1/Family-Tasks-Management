@@ -44,7 +44,8 @@ public class RankingAdapter extends RecyclerView.Adapter<RankingAdapter.ViewHold
         User user = users.get(position);
         holder.tvRank.setText(String.valueOf(position + 1));
         holder.tvName.setText(user.getDisplayName());
-        holder.tvPoints.setText(user.getPoints() + " điểm");
+        String pointsText = user.getPoints() + " " + holder.itemView.getContext().getString(R.string.tab_point).toLowerCase();
+        holder.tvPoints.setText(pointsText);
     }
 
     @Override

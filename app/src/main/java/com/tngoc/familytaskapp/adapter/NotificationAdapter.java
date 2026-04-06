@@ -1,5 +1,6 @@
 package com.tngoc.familytaskapp.adapter;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.tngoc.familytaskapp.R;
 import com.tngoc.familytaskapp.data.model.Notification;
+import com.tngoc.familytaskapp.utils.Constants;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -81,65 +83,85 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         }
 
         public void bind(Notification n, Notification previous, OnNotificationActionListener listener) {
-            tvNotificationMessage.setText(n.getMessage());
+            Context context = itemView.getContext();
+            
+            // Localized Message Logic
+            String displayMessage = n.getMessage();
+            String type = n.getType() != null ? n.getType() : "";
+            String target = n.getTargetName() != null ? n.getTargetName() : "---";
+
+            switch (type) {
+                case Constants.NOTIF_TASK_ASSIGNED:
+                    displayMessage = context.getString(R.string.notif_msg_new_task, target);
+                    break;
+                case Constants.NOTIF_REWARD_ADD:
+                    displayMessage = context.getString(R.string.notif_msg_task_done, target, n.getPoints());
+                    break;
+                case Constants.NOTIF_REWARD_PENALTY:
+                    displayMessage = context.getString(R.string.notif_msg_task_overdue, target, Math.abs(n.getPoints()));
+                    break;
+                case Constants.NOTIF_TASK_DONE: // Used for review request
+                    displayMessage = context.getString(R.string.notif_msg_task_review, target);
+                    break;
+                case Constants.NOTIF_TASK_ALMOST_OVERDUE:
+                    displayMessage = context.getString(R.string.notif_msg_task_almost_overdue, target);
+                    break;
+                case "invitation":
+                    // Invitation messages usually handled separately or keep database value if complex
+                    break;
+            }
+            tvNotificationMessage.setText(displayMessage);
             
             if (n.getCreatedAt() != null) {
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
                 tvNotificationTime.setText(sdf.format(n.getCreatedAt().toDate()));
                 
-                String currentDateStr = getHeaderDate(n.getCreatedAt().toDate());
-                if (previous == null || !currentDateStr.equals(getHeaderDate(previous.getCreatedAt().toDate()))) {
+                String currentHeader = getHeaderDate(context, n.getCreatedAt().toDate());
+                String previousHeader = previous != null && previous.getCreatedAt() != null 
+                        ? getHeaderDate(context, previous.getCreatedAt().toDate()) : null;
+                
+                if (previousHeader == null || !currentHeader.equals(previousHeader)) {
                     tvHeaderDate.setVisibility(View.VISIBLE);
-                    tvHeaderDate.setText(currentDateStr);
+                    tvHeaderDate.setText(currentHeader);
                 } else {
                     tvHeaderDate.setVisibility(View.GONE);
                 }
             }
 
             int color = Color.parseColor("#FFCC00");
-            String type = n.getType() != null ? n.getType() : "";
-            
-            switch (type) {
-                case "invitation":
-                case "invitation_accepted":
-                case "task_done":
-                    color = Color.parseColor("#2DD36F");
-                    break;
-                case "invitation_declined":
-                    color = Color.parseColor("#FF3B30");
-                    break;
+            if (Constants.NOTIF_REWARD_ADD.equals(type)) color = Color.parseColor("#2DD36F");
+            else if (Constants.NOTIF_REWARD_PENALTY.equals(type) || Constants.NOTIF_TASK_ALMOST_OVERDUE.equals(type)) color = Color.parseColor("#FF3B30");
+            else {
+                switch (type) {
+                    case "invitation": case "invitation_accepted": case "task_done": case Constants.NOTIF_TASK_ASSIGNED:
+                        color = Color.parseColor("#2DD36F"); break;
+                    case "invitation_declined": color = Color.parseColor("#FF3B30"); break;
+                }
             }
-            
-            GradientDrawable background = (GradientDrawable) vStatusIndicator.getBackground();
-            background.setColor(color);
+            ((GradientDrawable) vStatusIndicator.getBackground()).setColor(color);
 
-            tvOptions.setOnClickListener(v -> {
-                btnDeleteNotification.setVisibility(btnDeleteNotification.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
-            });
-
-            btnDeleteNotification.setOnClickListener(v -> {
-                if (listener != null) listener.onDelete(n);
-                btnDeleteNotification.setVisibility(View.GONE);
-            });
+            tvOptions.setOnClickListener(v -> btnDeleteNotification.setVisibility(btnDeleteNotification.getVisibility() == View.GONE ? View.VISIBLE : View.GONE));
+            btnDeleteNotification.setOnClickListener(v -> { if (listener != null) listener.onDelete(n); btnDeleteNotification.setVisibility(View.GONE); });
 
             if ("invitation".equals(type)) {
                 llActionButtons.setVisibility(View.VISIBLE);
                 btnAccept.setOnClickListener(v -> { if (listener != null) listener.onAccept(n); });
                 btnDecline.setOnClickListener(v -> { if (listener != null) listener.onDecline(n); });
-            } else {
-                llActionButtons.setVisibility(View.GONE);
-            }
+            } else llActionButtons.setVisibility(View.GONE);
         }
 
-        private String getHeaderDate(Date date) {
+        private String getHeaderDate(Context context, Date date) {
             Calendar cal = Calendar.getInstance();
             cal.set(Calendar.HOUR_OF_DAY, 0); cal.set(Calendar.MINUTE, 0); cal.set(Calendar.SECOND, 0); cal.set(Calendar.MILLISECOND, 0);
             Date today = cal.getTime();
             cal.add(Calendar.DATE, -1);
             Date yesterday = cal.getTime();
-
-            if (date.after(today)) return "Hôm nay";
-            if (date.after(yesterday)) return "Hôm qua";
+            Calendar itemCal = Calendar.getInstance();
+            itemCal.setTime(date);
+            itemCal.set(Calendar.HOUR_OF_DAY, 0); itemCal.set(Calendar.MINUTE, 0); itemCal.set(Calendar.SECOND, 0); itemCal.set(Calendar.MILLISECOND, 0);
+            Date itemDate = itemCal.getTime();
+            if (itemDate.equals(today)) return context.getString(R.string.history_today);
+            if (itemDate.equals(yesterday)) return context.getString(R.string.history_yesterday);
             return new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(date);
         }
     }

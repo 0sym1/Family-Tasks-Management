@@ -91,6 +91,20 @@ public class TaskListFragment extends Fragment {
         btnInvite = view.findViewById(R.id.btnInvite);
         btnInvite.setOnClickListener(v -> showInviteDialog());
 
+        // Navigation to History
+        view.findViewById(R.id.btnHistory).setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putString("workspaceId", workspaceId);
+            Navigation.findNavController(v).navigate(R.id.action_taskList_to_history, bundle);
+        });
+
+        // Navigation to Ranking
+        view.findViewById(R.id.btnRanking).setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putString("workspaceId", workspaceId);
+            Navigation.findNavController(v).navigate(R.id.action_taskList_to_ranking, bundle);
+        });
+
         recyclerView = view.findViewById(R.id.recyclerViewTasks);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new TaskAdapter();
@@ -101,15 +115,14 @@ public class TaskListFragment extends Fragment {
             Navigation.findNavController(view).navigate(R.id.action_taskList_to_taskDetail, bundle);
         });
         
-        // Thêm listener cho nút More (3 chấm)
         adapter.setOnTaskMoreActionsListener(task -> {
             new AlertDialog.Builder(requireContext(), R.style.CustomDialogTheme)
-                    .setTitle("Xóa nhiệm vụ")
-                    .setMessage("Bạn có chắc chắn muốn xóa nhiệm vụ này không?")
-                    .setPositiveButton("Xóa", (dialog, which) -> {
+                    .setTitle(R.string.delete_task_title)
+                    .setMessage(R.string.delete_task_confirm)
+                    .setPositiveButton(R.string.btn_delete, (dialog, which) -> {
                         taskViewModel.deleteTask(workspaceId, task.getTaskId());
                     })
-                    .setNegativeButton("Hủy", null)
+                    .setNegativeButton(R.string.btn_cancel, null)
                     .show();
         });
         
@@ -156,7 +169,7 @@ public class TaskListFragment extends Fragment {
         btnSend.setOnClickListener(v -> {
             String email = etInviteEmail.getText().toString().trim();
             if (email.isEmpty()) {
-                Toast.makeText(requireContext(), "Vui lòng nhập email", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.enter_email_hint, Toast.LENGTH_SHORT).show();
                 return;
             }
             sendInvitation(email, dialog);
@@ -177,19 +190,19 @@ public class TaskListFragment extends Fragment {
                         Notification invitation = new Notification();
                         invitation.setUserId(targetUserId);
                         invitation.setType("invitation");
-                        invitation.setMessage("Bạn nhận được lời mời tham gia workspace: " + workspaceName);
+                        invitation.setMessage(getString(R.string.invitation_msg, workspaceName));
                         invitation.setWorkspaceId(workspaceId);
                         invitation.setFromUserId(currentUserId);
                         invitation.setRead(false);
                         
                         notificationRepository.sendNotification(invitation);
-                        Toast.makeText(requireContext(), "Đã gửi lời mời tới " + email, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), getString(R.string.invitation_sent_to, email), Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
                     } else {
-                        Toast.makeText(requireContext(), "Email này chưa đăng ký tài khoản", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(), R.string.email_not_registered, Toast.LENGTH_SHORT).show();
                     }
                 })
-                .addOnFailureListener(e -> Toast.makeText(requireContext(), "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> Toast.makeText(requireContext(), "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     private void setupSearch() {
@@ -218,7 +231,6 @@ public class TaskListFragment extends Fragment {
         CheckBox cbReview = popupView.findViewById(R.id.cbReview);
         Button btnApply = popupView.findViewById(R.id.btnApplyFilter);
 
-        // Restore previous selection
         cbDoing.setChecked(selectedStatuses.contains("doing"));
         cbDone.setChecked(selectedStatuses.contains("done"));
         cbTodo.setChecked(selectedStatuses.contains("todo"));
@@ -247,7 +259,6 @@ public class TaskListFragment extends Fragment {
             boolean matchesSearch = task.getTitle().toLowerCase().contains(query);
             boolean matchesStatus = selectedStatuses.isEmpty() || selectedStatuses.contains(task.getStatus());
             
-            // Logic lọc quyền xem: Chủ sở hữu HOẶC người được giao
             boolean isOwner = currentWorkspace != null && currentUserId != null && currentUserId.equals(currentWorkspace.getOwnerId());
             boolean isAssigned = currentUserId != null && task.getAssignedToIds() != null && task.getAssignedToIds().contains(currentUserId);
             
@@ -268,13 +279,13 @@ public class TaskListFragment extends Fragment {
 
         taskViewModel.errorLiveData.observe(getViewLifecycleOwner(), error -> {
             if (error != null) {
-                Toast.makeText(requireContext(), "Lỗi: " + error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Error: " + error, Toast.LENGTH_SHORT).show();
             }
         });
         
         taskViewModel.successLiveData.observe(getViewLifecycleOwner(), success -> {
             if (Boolean.TRUE.equals(success)) {
-                Toast.makeText(requireContext(), "Đã xóa nhiệm vụ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.task_deleted, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -293,7 +304,6 @@ public class TaskListFragment extends Fragment {
                     View divider = getView().findViewById(R.id.dividerInvite);
                     if (divider != null) divider.setVisibility(View.VISIBLE);
                 }
-                // Re-apply filters because currentWorkspace might have changed (for ownership check)
                 applyFilters();
             }
         });

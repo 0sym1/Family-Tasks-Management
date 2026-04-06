@@ -28,7 +28,7 @@
 
     <!-- Home -->
     <string name="home_title">Trang chủ</string>
-    <string name="home_welcome">Xin chào</string>
+    <string name="home_welcome">Xin chào %s</string>
     <string name="home_workspace_description">Đây là những không gian làm việc bạn quản lý</string>
     <string name="hint_search_workspace">Tìm kiếm không gian làm việc...</string>
     <string name="btn_delete">Xóa</string>
@@ -44,6 +44,18 @@
     <string name="create_workspace">Tạo workspace</string>
     <string name="invite_member">Mời thành viên</string>
     <string name="workspace_created">Tạo không gian làm việc thành công!</string>
+    <string name="ranking">Bảng xếp hạng</string>
+    <string name="member_list">Danh sách thành viên</string>
+    <string name="filter">Lọc</string>
+    <string name="search_task_hint">Nhập tên nhiệm vụ...</string>
+    <string name="label_name_simple">Tên</string>
+    <string name="label_description_simple">Mô tả</string>
+    <string name="hint_enter_workspace_description">Nhập mô tả (tùy chọn)</string>
+    <string name="hint_search_member">Tìm kiếm thành viên...</string>
+    <string name="member_count_format">%d thành viên</string>
+    <string name="created_by_format">Tạo bởi: %s</string>
+    <string name="task_count_format">%1$d/%2$d nhiệm vụ</string>
+    <string name="label_me">Tôi</string>
 
     <!-- Task -->
     <string name="tasks">Nhiệm vụ</string>
@@ -54,19 +66,25 @@
     <string name="task_completed">Hoàn thành nhiệm vụ!</string>
     <string name="label_task_name">Tên nhiệm vụ</string>
     <string name="hint_task_name">Nhập tại đây...</string>
+    <string name="label_task_description">Mô tả</string>
+    <string name="hint_task_description">Nhập mô tả chi tiết...</string>
     <string name="label_status">Tình trạng</string>
     <string name="label_start_date">Ngày bắt đầu</string>
-    <string name="label_end_date">Ngày kết thúc</string>
+    <string name="label_end_date">Hạn</string>
+    <string name="label_end_time">Giờ kết thúc</string>
     <string name="label_repeat">Lặp lại</string>
     <string name="label_created_by">Tạo bởi</string>
     <string name="label_assigned_to">Được giao</string>
-    <string name="status_doing">Đang làm</string>
-    <string name="status_done">Xong</string>
-    <string name="status_todo">Chưa làm</string>
-    <string name="status_review">Kiểm tra</string>
+    <string name="status_doing">ĐANG LÀM</string>
+    <string name="status_done">XONG</string>
+    <string name="status_todo">CHƯA LÀM</string>
+    <string name="status_review">KIỂM TRA</string>
+    <string name="status_pending">CHỜ DUYỆT</string>
+    <string name="status_overdue">QUÁ HẠN</string>
     <string name="btn_save">Lưu</string>
     <string name="btn_apply">Áp dụng</string>
     <string name="hint_date_format">dd/mm/yyyy</string>
+    <string name="hint_time_format">hh:mm</string>
     <string name="repeat_on">Bật</string>
     <string name="repeat_off">Tắt</string>
     <string name="repeat_daily">Hàng ngày</string>
@@ -78,6 +96,21 @@
     <string name="repeat_times">lần</string>
     <string name="repeat_after_date">Sau ngày</string>
     <string name="btn_confirm">Xác nhận</string>
+    <string name="task_deadline_label">Hạn: %s</string>
+    <string name="task_repeat_finish">Kết thúc: %s</string>
+    <string name="hint_assigned_to">Chọn người được giao...</string>
+    <string name="delete_task_title">Xóa nhiệm vụ</string>
+    <string name="delete_task_confirm">Bạn có chắc chắn muốn xóa nhiệm vụ này không?</string>
+    <string name="task_deleted">Đã xóa nhiệm vụ</string>
+    <string name="invitation_sent_to">Đã gửi lời mời tới %s</string>
+    <string name="email_not_registered">Email này chưa đăng ký tài khoản</string>
+    <string name="enter_email_hint">Vui lòng nhập email</string>
+    <string name="invitation_msg">Bạn đã được mời tham gia không gian làm việc %s</string>
+
+    <!-- Invite Dialog -->
+    <string name="dialog_invite_title">Nhập người dùng bạn muốn mời</string>
+    <string name="hint_enter_email">Nhập email...</string>
+    <string name="btn_send_invite">Mời</string>
 
     <!-- Edit Repeat -->
     <string name="edit_repeat_title">Sửa lặp lại</string>
@@ -106,7 +139,6 @@
     <string name="lang_vietnamese">Tiếng Việt</string>
     <string name="lang_english">English</string>
     <string name="lang_french">Français</string>
-    <string name="btn_save">Lưu</string>
 
     <!-- Others -->
     <string name="home">Trang chủ</string>
@@ -118,9 +150,15 @@
     <string name="settings">Cài đặt</string>
     <string name="profile">Cá nhân</string>
     <string name="invitation_sent">Đã gửi lời mời!</string>
+    <string name="history_title">Lịch sử làm việc</string>
+    <string name="tab_all">Tất cả</string>
+    <string name="tab_task">Nhiệm vụ</string>
+    <string name="tab_point">Điểm</string>
+    <string name="sample_task">Đã nhận +5 điểm</string>
+    <string name="sample_reason">Lý do: Đúng hạn</string>
 
     <!-- Profile -->
-    <string name="profile_title">Hộ số</string>
+    <string name="profile_title">Hồ sơ</string>
     <string name="profile_avatar">Avatar</string>
     <string name="profile_edit_avatar">Chỉnh sửa avatar</string>
     <string name="profile_points">Điểm: %d</string>
@@ -134,4 +172,45 @@
     <string name="profile_save">Lưu</string>
     <string name="profile_logout">Đăng xuất</string>
     <string name="btn_logout">Đăng xuất</string>
+
+    <!-- Reward -->
+    <string name="reward_points">Điểm: %d</string>
+    <string name="reward_history">Lịch sử nhận thưởng</string>
+    <string name="overdue_penalty">Trừ điểm do quá hạn: %s</string>
+
+    <!-- History Dynamic Text -->
+    <string name="history_today">Hôm nay</string>
+    <string name="history_yesterday">Hôm qua</string>
+    <string name="history_created_task"> đã tạo nhiệm vụ</string>
+    <string name="history_overdue_task"> đã quá hạn nhiệm vụ</string>
+    <string name="history_done_task"> đã hoàn thành nhiệm vụ</string>
+    <string name="history_pending_task"> đã nộp nhiệm vụ</string>
+    <string name="history_in_progress_task"> đã bắt đầu thực hiện nhiệm vụ</string>
+    <string name="history_updated_task"> đã cập nhật nhiệm vụ</string>
+    <string name="history_label_task">Nhiệm vụ: %s</string>
+    <string name="history_label_variation">Biến động: %s</string>
+    <string name="history_done_task_reward">Đã hoàn thành nhiệm vụ</string>
+    <string name="history_overdue_task_reward">Nhiệm vụ quá hạn</string>
+    <string name="history_done_task_late_reward">Đã hoàn thành nhiệm vụ (Trễ hạn)</string>
+
+    <!-- Notification Action Buttons -->
+    <string name="btn_accept">Chấp nhận</string>
+    <string name="btn_decline">Từ chối</string>
+    <string name="notification_placeholder">Nội dung thông báo</string>
+
+    <!-- Placeholders and Misc -->
+    <string name="history_placeholder_title">Tiêu đề</string>
+    <string name="history_placeholder_detail">Chi tiết</string>
+    <string name="placeholder_time">13:22</string>
+
+    <!-- New Notification Strings -->
+    <string name="notif_title_new_task">Nhiệm vụ mới</string>
+    <string name="notif_msg_new_task">Bạn vừa được giao nhiệm vụ: %s</string>
+    <string name="notif_title_task_done">Nhiệm vụ hoàn thành</string>
+    <string name="notif_msg_task_done">Nhiệm vụ \'%1$s\' đã được duyệt. Bạn được cộng %2$d điểm.</string>
+    <string name="notif_title_task_overdue">Nhiệm vụ quá hạn</string>
+    <string name="notif_msg_task_overdue">Nhiệm vụ \'%1$s\' đã quá hạn. Bạn bị trừ %2$d điểm.</string>
+    <string name="notif_title_task_review">Yêu cầu duyệt nhiệm vụ</string>
+    <string name="notif_msg_task_review">Thành viên đã nộp nhiệm vụ: %s</string>
+    <string name="notif_msg_task_almost_overdue">Nhiệm vụ \'%s\' sắp quá hạn. Hãy hoàn thành sớm!</string>
 </resources>

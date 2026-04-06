@@ -16,6 +16,7 @@ public class Task {
     private int rewardPoints;
     private Timestamp startDate;
     private Timestamp endDate;
+    private String endTime;      // Trường mới: lưu "HH:mm"
     private boolean isRepeat;
     private Timestamp createdAt;
 
@@ -23,25 +24,12 @@ public class Task {
     private boolean repeating = false;
     private String repeatType; // "Daily", "Weekly"
     private List<String> repeatDays; // ["Mon", "Tue", ...]
-    private String repeatEndType; // "Never", "AfterTimes", "AfterDate"
+    private String repeatEndType; // "never", "count", "date"
     private int repeatCount;
     private Timestamp repeatUntil;
+    private Timestamp lastResetDate; // Trường mới theo dõi ngày reset cuối cùng
 
     public Task() {}
-
-    public Task(String workspaceId, String title, String description, List<String> assignedToIds, String createdBy, String status, int rewardPoints, Timestamp startDate, Timestamp endDate, boolean isRepeat) {
-        this.workspaceId = workspaceId;
-        this.title = title;
-        this.description = description;
-        this.assignedToIds = assignedToIds;
-        this.createdBy = createdBy;
-        this.status = status;
-        this.rewardPoints = rewardPoints;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.isRepeat = isRepeat;
-        this.createdAt = Timestamp.now();
-    }
 
     public String getTaskId() { return taskId; }
     public void setTaskId(String taskId) { this.taskId = taskId; }
@@ -73,6 +61,9 @@ public class Task {
     public Timestamp getEndDate() { return endDate; }
     public void setEndDate(Timestamp endDate) { this.endDate = endDate; }
 
+    public String getEndTime() { return endTime; }
+    public void setEndTime(String endTime) { this.endTime = endTime; }
+
     public boolean isRepeat() { return isRepeat; }
     public void setRepeat(boolean repeat) { isRepeat = repeat; }
 
@@ -96,4 +87,7 @@ public class Task {
 
     public Timestamp getRepeatUntil() { return repeatUntil; }
     public void setRepeatUntil(Timestamp repeatUntil) { this.repeatUntil = repeatUntil; }
+
+    public Timestamp getLastResetDate() { return lastResetDate; }
+    public void setLastResetDate(Timestamp lastResetDate) { this.lastResetDate = lastResetDate; }
 }

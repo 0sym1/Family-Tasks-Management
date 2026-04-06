@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -26,12 +25,12 @@ import java.util.Locale;
 
 public class RepeatTaskFragment extends Fragment {
 
-    private RadioGroup rgRepeatType, rgEndRepeat;
+    private RadioGroup rgRepeatType;
     private RadioButton rbDaily, rbWeekly, rbNever, rbAfterTimes, rbAfterDate;
     private LinearLayout llSelectDays;
     private TextView tvTimesCount, tvEndRepeatDate;
     private Button btnConfirm, btnCancelRepeat;
-    private ImageButton btnBack;
+    private View btnBack;
     private int timesCount = 1;
     private Calendar endRepeatCalendar = Calendar.getInstance();
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
@@ -39,7 +38,7 @@ public class RepeatTaskFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_repeat_task, container, false);
+        return inflater.inflate(R.layout.fragment_edit_repeat, container, false);
     }
 
     @Override
@@ -53,62 +52,74 @@ public class RepeatTaskFragment extends Fragment {
         rgRepeatType = view.findViewById(R.id.rgRepeatType);
         rbDaily = view.findViewById(R.id.rbDaily);
         rbWeekly = view.findViewById(R.id.rbWeekly);
-        llSelectDays = view.findViewById(R.id.llSelectDays);
-        rgEndRepeat = view.findViewById(R.id.rgEndRepeat);
+        llSelectDays = view.findViewById(R.id.sectionDays);
+        
         rbNever = view.findViewById(R.id.rbNever);
         rbAfterTimes = view.findViewById(R.id.rbAfterTimes);
         rbAfterDate = view.findViewById(R.id.rbAfterDate);
-        tvTimesCount = view.findViewById(R.id.tvTimesCount);
-        tvEndRepeatDate = view.findViewById(R.id.tvEndRepeatDate);
+        
+        tvTimesCount = view.findViewById(R.id.tvRepeatCount);
+        tvEndRepeatDate = view.findViewById(R.id.tvSelectedDate);
         btnConfirm = view.findViewById(R.id.btnConfirm);
-        btnCancelRepeat = view.findViewById(R.id.btnCancelRepeat);
+        btnCancelRepeat = view.findViewById(R.id.btnCancel);
         btnBack = view.findViewById(R.id.btnBack);
 
         // Default states
-        rbDaily.setChecked(true);
-        llSelectDays.setVisibility(View.GONE);
-        rbNever.setChecked(true);
+        if (rbDaily != null) rbDaily.setChecked(true);
+        if (llSelectDays != null) llSelectDays.setVisibility(View.GONE);
+        if (rbNever != null) rbNever.setChecked(true);
     }
 
     private void setupListeners(View view) {
-        btnBack.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
-        btnCancelRepeat.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
+        if (btnBack != null) btnBack.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
+        if (btnCancelRepeat != null) btnCancelRepeat.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
 
-        rgRepeatType.setOnCheckedChangeListener((group, checkedId) -> {
-            if (checkedId == R.id.rbWeekly) {
-                llSelectDays.setVisibility(View.VISIBLE);
-            } else {
-                llSelectDays.setVisibility(View.GONE);
-            }
-        });
+        if (rgRepeatType != null) {
+            rgRepeatType.setOnCheckedChangeListener((group, checkedId) -> {
+                if (checkedId == R.id.rbWeekly) {
+                    if (llSelectDays != null) llSelectDays.setVisibility(View.VISIBLE);
+                } else {
+                    if (llSelectDays != null) llSelectDays.setVisibility(View.GONE);
+                }
+            });
+        }
 
-        view.findViewById(R.id.btnPlus).setOnClickListener(v -> {
-            timesCount++;
-            tvTimesCount.setText(String.valueOf(timesCount));
-            rbAfterTimes.setChecked(true);
-        });
+        View btnPlus = view.findViewById(R.id.btnPlus);
+        if (btnPlus != null) {
+            btnPlus.setOnClickListener(v -> {
+                timesCount++;
+                if (tvTimesCount != null) tvTimesCount.setText(String.valueOf(timesCount));
+                if (rbAfterTimes != null) rbAfterTimes.setChecked(true);
+            });
+        }
 
-        view.findViewById(R.id.btnMinus).setOnClickListener(v -> {
-            if (timesCount > 1) {
-                timesCount--;
-                tvTimesCount.setText(String.valueOf(timesCount));
-                rbAfterTimes.setChecked(true);
-            }
-        });
+        View btnMinus = view.findViewById(R.id.btnMinus);
+        if (btnMinus != null) {
+            btnMinus.setOnClickListener(v -> {
+                if (timesCount > 1) {
+                    timesCount--;
+                    if (tvTimesCount != null) tvTimesCount.setText(String.valueOf(timesCount));
+                    if (rbAfterTimes != null) rbAfterTimes.setChecked(true);
+                }
+            });
+        }
 
-        tvEndRepeatDate.setOnClickListener(v -> {
-            new DatePickerDialog(requireContext(), (view1, year, month, dayOfMonth) -> {
-                endRepeatCalendar.set(Calendar.YEAR, year);
-                endRepeatCalendar.set(Calendar.MONTH, month);
-                endRepeatCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                tvEndRepeatDate.setText(dateFormat.format(endRepeatCalendar.getTime()));
-                rbAfterDate.setChecked(true);
-            }, endRepeatCalendar.get(Calendar.YEAR), endRepeatCalendar.get(Calendar.MONTH), endRepeatCalendar.get(Calendar.DAY_OF_MONTH)).show();
-        });
+        if (tvEndRepeatDate != null) {
+            tvEndRepeatDate.setOnClickListener(v -> {
+                new DatePickerDialog(requireContext(), (view1, year, month, dayOfMonth) -> {
+                    endRepeatCalendar.set(Calendar.YEAR, year);
+                    endRepeatCalendar.set(Calendar.MONTH, month);
+                    endRepeatCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                    tvEndRepeatDate.setText(dateFormat.format(endRepeatCalendar.getTime()));
+                    if (rbAfterDate != null) rbAfterDate.setChecked(true);
+                }, endRepeatCalendar.get(Calendar.YEAR), endRepeatCalendar.get(Calendar.MONTH), endRepeatCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            });
+        }
 
-        btnConfirm.setOnClickListener(v -> {
-            // Logic to save repeat settings can be added here
-            Navigation.findNavController(v).navigateUp();
-        });
+        if (btnConfirm != null) {
+            btnConfirm.setOnClickListener(v -> {
+                Navigation.findNavController(v).navigateUp();
+            });
+        }
     }
 }

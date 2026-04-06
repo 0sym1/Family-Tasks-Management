@@ -1,6 +1,8 @@
 package com.tngoc.familytaskapp.ui.task;
 
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +29,10 @@ import com.tngoc.familytaskapp.ui.workspace.WorkspaceViewModel;
 import com.tngoc.familytaskapp.utils.Constants;
 
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class TaskDetailFragment extends Fragment {
 
@@ -42,10 +47,10 @@ public class TaskDetailFragment extends Fragment {
     private Task currentTask;
     private boolean isOwner = false;
 
-    private TextView tvTitle, tvDesc, tvStatus, tvCreatorName, tvAssigneeName, tvStartDate, tvEndDate, tvPoints;
-    private ImageView ivEdit, ivConfirm, ivCreatorAvatar, ivAssigneeAvatar, ivBack;
-    private LinearLayout llPointsSelector;
-    private TableRow trPoints;
+    private TextView tvTitle, tvDesc, tvStatus, tvCreatorName, tvStartDate, tvEndDate, tvPoints, tvRepeatDays;
+    private ImageView ivEdit, ivConfirm, ivCreatorAvatar, ivBack, ivRepeatIcon;
+    private LinearLayout llPointsSelector, llAssigneesContainer;
+    private TableRow trPoints, trRepeatDays;
     private TextView tvPointsStatic;
     private View btnPlus, btnMinus;
 
@@ -61,7 +66,7 @@ public class TaskDetailFragment extends Fragment {
 
         initViews(view);
         
-        taskViewModel = new ViewModelProvider(this).get(TaskViewModel.class);
+        taskViewModel = new ViewModelProvider(requireActivity()).get(TaskViewModel.class);
         workspaceViewModel = new ViewModelProvider(this).get(WorkspaceViewModel.class);
         userRepository = new UserRepository();
         notificationRepository = new NotificationRepository();
@@ -86,19 +91,21 @@ public class TaskDetailFragment extends Fragment {
         tvDesc = v.findViewById(R.id.tvTaskDescription);
         tvStatus = v.findViewById(R.id.tvTaskStatus);
         tvCreatorName = v.findViewById(R.id.tvCreatorName);
-        tvAssigneeName = v.findViewById(R.id.tvAssigneeName);
         tvStartDate = v.findViewById(R.id.tvStartDate);
         tvEndDate = v.findViewById(R.id.tvEndDate);
         tvPoints = v.findViewById(R.id.tvRewardPoints);
         tvPointsStatic = v.findViewById(R.id.tvRewardPointsStatic);
+        tvRepeatDays = v.findViewById(R.id.tvRepeatDays);
         trPoints = v.findViewById(R.id.trPoints);
+        trRepeatDays = v.findViewById(R.id.trRepeatDays);
         
         ivEdit = v.findViewById(R.id.ivEditTask);
         ivConfirm = v.findViewById(R.id.ivConfirmStatus);
         ivCreatorAvatar = v.findViewById(R.id.ivCreatorAvatar);
-        ivAssigneeAvatar = v.findViewById(R.id.ivAssigneeAvatar);
         ivBack = v.findViewById(R.id.ivBack);
+        ivRepeatIcon = v.findViewById(R.id.ivRepeatDetail);
         
+        llAssigneesContainer = v.findViewById(R.id.llAssigneesContainer);
         llPointsSelector = v.findViewById(R.id.llPointsSelector);
         btnPlus = v.findViewById(R.id.btnPlusPoint);
         btnMinus = v.findViewById(R.id.btnMinusPoint);
@@ -107,7 +114,6 @@ public class TaskDetailFragment extends Fragment {
     private void setupClickListeners() {
         ivBack.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
 
-        // Xử lý nút Sửa
         ivEdit.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
             bundle.putString("workspaceId", workspaceId);
@@ -116,28 +122,50 @@ public class TaskDetailFragment extends Fragment {
         });
 
         ivConfirm.setOnClickListener(v -> {
-            if (currentTask == null) return;
+            Log.d("TaskDetail", "Confirm clicked. currentTask: " + (currentTask != null));
+            if (currentTask == null) {
+                Toast.makeText(getContext(), "Đang tải dữ liệu...", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
+            String currentStatus = currentTask.getStatus();
+            Log.d("TaskDetail", "Current status: " + currentStatus + ", isOwner: " + isOwner);
+            
             if (isOwner) {
-                if (!Constants.TASK_STATUS_DONE.equals(currentTask.getStatus())) {
-                    currentTask.setStatus(Constants.TASK_STATUS_DONE);
-                    taskViewModel.updateTask(workspaceId, currentTask);
-                    
-                    if (currentTask.getAssignedToIds() != null && !currentTask.getAssignedToIds().isEmpty()) {
-                        sendNotification(currentTask.getAssignedToIds().get(0), 
-                                "Nhiệm vụ đã hoàn thành", 
-                                "Chủ phòng đã duyệt nhiệm vụ: " + currentTask.getTitle());
+                // CHỦ PHÒNG DUYỆT
+                if (Constants.TASK_STATUS_PENDING.equals(currentStatus) || "review".equals(currentStatus)) {
+                    Toast.makeText(getContext(), "Đang duyệt nhiệm vụ...", Toast.LENGTH_SHORT).show();
+                    taskViewModel.updateTaskStatus(workspaceId, taskId, Constants.TASK_STATUS_DONE);
+                    if (currentTask.getAssignedToIds() != null) {
+                        for (String userId : currentTask.getAssignedToIds()) {
+                            sendNotification(userId, 
+                                    "Nhiệm vụ đã được duyệt", 
+                                    "Chủ phòng đã duyệt nhiệm vụ: " + currentTask.getTitle());
+                        }
                     }
+                } else if (!Constants.TASK_STATUS_DONE.equals(currentStatus)) {
+                    Toast.makeText(getContext(), "Đang hoàn thành nhiệm vụ...", Toast.LENGTH_SHORT).show();
+                    taskViewModel.updateTaskStatus(workspaceId, taskId, Constants.TASK_STATUS_DONE);
+                } else {
+                    Toast.makeText(getContext(), "Nhiệm vụ này đã hoàn thành rồi", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                if (currentTask.getAssignedToIds() != null && currentTask.getAssignedToIds().contains(currentUserId)) {
-                    if (!Constants.TASK_STATUS_DONE.equals(currentTask.getStatus()) && !Constants.TASK_STATUS_PENDING.equals(currentTask.getStatus())) {
+                // THÀNH VIÊN NỘP
+                boolean isAssigned = currentTask.getAssignedToIds() != null && currentTask.getAssignedToIds().contains(currentUserId);
+                if (isAssigned) {
+                    if (Constants.TASK_STATUS_DONE.equals(currentStatus)) {
+                        Toast.makeText(getContext(), "Nhiệm vụ đã hoàn thành", Toast.LENGTH_SHORT).show();
+                    } else if (Constants.TASK_STATUS_PENDING.equals(currentStatus) || "review".equals(currentStatus)) {
+                        Toast.makeText(getContext(), "Đang chờ chủ phòng duyệt", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "Đang nộp nhiệm vụ...", Toast.LENGTH_SHORT).show();
                         taskViewModel.updateTaskStatus(workspaceId, taskId, Constants.TASK_STATUS_PENDING);
-                        
                         sendNotification(currentTask.getCreatedBy(), 
                                 "Yêu cầu duyệt nhiệm vụ", 
-                                "Thành viên đã hoàn thành và chờ bạn duyệt: " + currentTask.getTitle());
+                                "Thành viên đã nộp nhiệm vụ: " + currentTask.getTitle());
                     }
+                } else {
+                    Toast.makeText(getContext(), "Bạn không có quyền nộp nhiệm vụ này", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -145,7 +173,7 @@ public class TaskDetailFragment extends Fragment {
         btnPlus.setOnClickListener(v -> {
             if (currentTask != null && !Constants.TASK_STATUS_DONE.equals(currentTask.getStatus())) {
                 currentTask.setRewardPoints(currentTask.getRewardPoints() + 1);
-                taskViewModel.updateTask(workspaceId, currentTask);
+                taskViewModel.updateTask(workspaceId, currentTask, null);
             }
         });
 
@@ -153,7 +181,7 @@ public class TaskDetailFragment extends Fragment {
             if (currentTask != null && currentTask.getRewardPoints() > 0 
                 && !Constants.TASK_STATUS_DONE.equals(currentTask.getStatus())) {
                 currentTask.setRewardPoints(currentTask.getRewardPoints() - 1);
-                taskViewModel.updateTask(workspaceId, currentTask);
+                taskViewModel.updateTask(workspaceId, currentTask, null);
             }
         });
     }
@@ -188,13 +216,27 @@ public class TaskDetailFragment extends Fragment {
         taskViewModel.successLiveData.observe(getViewLifecycleOwner(), success -> {
             if (Boolean.TRUE.equals(success)) {
                 Toast.makeText(getContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                taskViewModel.successLiveData.setValue(null);
+            }
+        });
+        
+        taskViewModel.errorLiveData.observe(getViewLifecycleOwner(), error -> {
+            if (error != null) {
+                Toast.makeText(getContext(), "Lỗi: " + error, Toast.LENGTH_SHORT).show();
+                taskViewModel.errorLiveData.setValue(null);
             }
         });
     }
 
     private void updateUIForRole() {
         if (currentTask == null) return;
-        boolean isDone = Constants.TASK_STATUS_DONE.equals(currentTask.getStatus());
+        String status = currentTask.getStatus();
+        boolean isDone = Constants.TASK_STATUS_DONE.equals(status);
+        boolean isPending = Constants.TASK_STATUS_PENDING.equals(status) || "review".equals(status);
+
+        // Reset visual states
+        ivConfirm.setAlpha(1.0f);
+        ivConfirm.clearColorFilter();
 
         if (isOwner) {
             ivEdit.setVisibility(isDone ? View.GONE : View.VISIBLE);
@@ -208,6 +250,10 @@ public class TaskDetailFragment extends Fragment {
                 llPointsSelector.setVisibility(View.VISIBLE);
                 tvPointsStatic.setVisibility(View.GONE);
                 ivConfirm.setVisibility(View.VISIBLE);
+                
+                if (isPending) {
+                    ivConfirm.setColorFilter(android.graphics.Color.parseColor("#FFD700")); // Màu vàng chờ duyệt
+                }
             }
         } else {
             ivEdit.setVisibility(View.GONE);
@@ -216,11 +262,16 @@ public class TaskDetailFragment extends Fragment {
             
             trPoints.setVisibility(isDone ? View.VISIBLE : View.GONE);
             
-            if (currentTask.getAssignedToIds() != null && currentTask.getAssignedToIds().contains(currentUserId)) {
-                if (!isDone && !Constants.TASK_STATUS_PENDING.equals(currentTask.getStatus())) {
-                    ivConfirm.setVisibility(View.VISIBLE);
-                } else {
+            boolean isAssigned = currentTask.getAssignedToIds() != null && currentTask.getAssignedToIds().contains(currentUserId);
+            if (isAssigned) {
+                if (isDone) {
                     ivConfirm.setVisibility(View.GONE);
+                } else if (isPending) {
+                    ivConfirm.setVisibility(View.VISIBLE);
+                    ivConfirm.setColorFilter(android.graphics.Color.parseColor("#888888"));
+                    ivConfirm.setAlpha(0.5f);
+                } else {
+                    ivConfirm.setVisibility(View.VISIBLE);
                 }
             } else {
                 ivConfirm.setVisibility(View.GONE);
@@ -234,35 +285,79 @@ public class TaskDetailFragment extends Fragment {
         tvPoints.setText(String.valueOf(task.getRewardPoints()));
         tvPointsStatic.setText(String.valueOf(task.getRewardPoints()));
         
-        // Logic kiểm tra quá hạn
-        long currentTime = System.currentTimeMillis();
-        boolean isOverdue = task.getEndDate() != null && 
-                           currentTime > task.getEndDate().toDate().getTime() &&
-                           !Constants.TASK_STATUS_DONE.equals(task.getStatus()) &&
-                           !Constants.TASK_STATUS_PENDING.equals(task.getStatus());
-
-        String statusText = task.getStatus();
-        if (isOverdue) {
-            tvStatus.setText("QUÁ HẠN");
-            tvStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF301B1B)); // Đỏ tối
-            tvStatus.setTextColor(0xFFD55959); // Đỏ tươi
-        } else if (Constants.TASK_STATUS_PENDING.equals(statusText)) {
-            tvStatus.setText("CHỜ DUYỆT");
-            tvStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF2A2215));
-            tvStatus.setTextColor(0xFFEBB059);
-        } else if (Constants.TASK_STATUS_DONE.equals(statusText)) {
-            tvStatus.setText("XONG");
-            tvStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF1B3022));
-            tvStatus.setTextColor(0xFF59D595);
-        } else {
-            tvStatus.setText("ĐANG LÀM");
-            tvStatus.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF1B2530));
-            tvStatus.setTextColor(0xFF5995D5);
+        boolean isRepeat = task.isRepeat() || task.isRepeating();
+        if (ivRepeatIcon != null) {
+            ivRepeatIcon.setVisibility(isRepeat ? View.VISIBLE : View.GONE);
         }
 
-        SimpleDateFormat sdf = new SimpleDateFormat("HH'h'mm EEE dd/MM/yyyy", new Locale("vi", "VN"));
-        if (task.getStartDate() != null) tvStartDate.setText(sdf.format(task.getStartDate().toDate()));
-        if (task.getEndDate() != null) tvEndDate.setText(sdf.format(task.getEndDate().toDate()));
+        String status = task.getStatus();
+        if (Constants.TASK_STATUS_DONE.equalsIgnoreCase(status)) {
+            tvStatus.setText(getString(R.string.status_done));
+            tvStatus.setTextColor(android.graphics.Color.parseColor("#59D595"));
+            tvStatus.getBackground().setTint(android.graphics.Color.parseColor("#1B3022"));
+        } else if (Constants.TASK_STATUS_IN_PROGRESS.equalsIgnoreCase(status) || "doing".equalsIgnoreCase(status) || Constants.TASK_STATUS_TODO.equalsIgnoreCase(status)) {
+            // "CHƯA LÀM" (TODO) cũng chuyển thành "ĐANG LÀM" (DOING) theo yêu cầu
+            tvStatus.setText(getString(R.string.status_doing));
+            tvStatus.setTextColor(android.graphics.Color.parseColor("#5EB5F7"));
+            tvStatus.getBackground().setTint(android.graphics.Color.parseColor("#1A2B3D"));
+        } else if (Constants.TASK_STATUS_PENDING.equalsIgnoreCase(status) || "review".equalsIgnoreCase(status)) {
+            tvStatus.setText(getString(R.string.status_review));
+            tvStatus.setTextColor(android.graphics.Color.parseColor("#FFD700"));
+            tvStatus.getBackground().setTint(android.graphics.Color.parseColor("#332D00"));
+        } else if (Constants.TASK_STATUS_OVERDUE.equalsIgnoreCase(status)) {
+            tvStatus.setText(getString(R.string.status_overdue));
+            tvStatus.setTextColor(android.graphics.Color.parseColor("#FF5252"));
+            tvStatus.getBackground().setTint(android.graphics.Color.parseColor("#3D1A1A"));
+        }
+
+        SimpleDateFormat dateOnlySdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        
+        if (task.getStartDate() != null) {
+            tvStartDate.setText(dateOnlySdf.format(task.getStartDate().toDate()));
+        }
+
+        String timePart = task.getEndTime() != null ? task.getEndTime().replace(":", "h") : "12h00";
+        
+        if (isRepeat) {
+            String repeatInfo = "";
+            if ("Daily".equalsIgnoreCase(task.getRepeatType())) {
+                repeatInfo = "Hằng ngày";
+                trRepeatDays.setVisibility(View.GONE);
+            } else if ("Weekly".equalsIgnoreCase(task.getRepeatType())) {
+                repeatInfo = "Hằng tuần";
+                trRepeatDays.setVisibility(View.VISIBLE);
+                
+                List<String> days = task.getRepeatDays();
+                if (days != null && !days.isEmpty()) {
+                    Map<String, String> dayMap = new HashMap<>();
+                    dayMap.put("mon", "Th 2");
+                    dayMap.put("tue", "Th 3");
+                    dayMap.put("wed", "Th 4");
+                    dayMap.put("thu", "Th 5");
+                    dayMap.put("fri", "Th 6");
+                    dayMap.put("sat", "Th 7");
+                    dayMap.put("sun", "CN");
+                    
+                    List<String> formattedDays = new java.util.ArrayList<>();
+                    for (String day : days) {
+                        if (dayMap.containsKey(day.toLowerCase())) {
+                            formattedDays.add(dayMap.get(day.toLowerCase()));
+                        }
+                    }
+                    tvRepeatDays.setText(TextUtils.join(", ", formattedDays));
+                } else {
+                    tvRepeatDays.setText("Chưa chọn ngày");
+                }
+            }
+            tvEndDate.setText(timePart + " " + repeatInfo);
+        } else {
+            trRepeatDays.setVisibility(View.GONE);
+            if (task.getEndDate() != null) {
+                tvEndDate.setText(timePart + " " + dateOnlySdf.format(task.getEndDate().toDate()));
+            } else {
+                tvEndDate.setText(timePart);
+            }
+        }
 
         MutableLiveData<String> creatorNameLiveData = new MutableLiveData<>();
         creatorNameLiveData.observe(getViewLifecycleOwner(), name -> {
@@ -270,12 +365,25 @@ public class TaskDetailFragment extends Fragment {
         });
         userRepository.getUserName(task.getCreatedBy(), creatorNameLiveData);
         
-        if (task.getAssignedToIds() != null && !task.getAssignedToIds().isEmpty()) {
-            MutableLiveData<String> assigneeNameLiveData = new MutableLiveData<>();
-            assigneeNameLiveData.observe(getViewLifecycleOwner(), name -> {
-                if (name != null) tvAssigneeName.setText(name);
-            });
-            userRepository.getUserName(task.getAssignedToIds().get(0), assigneeNameLiveData);
+        llAssigneesContainer.removeAllViews();
+        if (task.getAssignedToIds() != null) {
+            for (String assigneeId : task.getAssignedToIds()) {
+                addAssigneeRow(assigneeId);
+            }
         }
+    }
+
+    private void addAssigneeRow(String userId) {
+        View row = LayoutInflater.from(getContext()).inflate(R.layout.item_assignee_row, llAssigneesContainer, false);
+        ImageView ivAvatar = row.findViewById(R.id.ivAssigneeAvatar);
+        TextView tvName = row.findViewById(R.id.tvAssigneeName);
+        
+        MutableLiveData<String> nameLiveData = new MutableLiveData<>();
+        nameLiveData.observe(getViewLifecycleOwner(), name -> {
+            if (name != null) tvName.setText(name);
+        });
+        userRepository.getUserName(userId, nameLiveData);
+        
+        llAssigneesContainer.addView(row);
     }
 }
