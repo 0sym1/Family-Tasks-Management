@@ -6,18 +6,16 @@ import com.google.firebase.Timestamp;
 public class ChatMessage {
     @DocumentId
     private String messageId;
-    private String userId;
-    private String role;     // "user" | "bot"
+    private String userId;   // "uid" của người dùng hoặc "bot"
     private String content;
-    private Timestamp timestamp;
+    private Timestamp time;
 
     public ChatMessage() {}
 
-    public ChatMessage(String userId, String role, String content) {
+    public ChatMessage(String userId, String content) {
         this.userId = userId;
-        this.role = role;
         this.content = content;
-        this.timestamp = Timestamp.now();
+        this.time = Timestamp.now();
     }
 
     public String getMessageId() { return messageId; }
@@ -26,13 +24,9 @@ public class ChatMessage {
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
 
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
-
     public String getContent() { return content; }
     public void setContent(String content) { this.content = content; }
 
-    public Timestamp getTimestamp() { return timestamp; }
-    public void setTimestamp(Timestamp timestamp) { this.timestamp = timestamp; }
+    public Timestamp getTime() { return time; }
+    public void setTime(Timestamp time) { this.time = time; }
 }
-

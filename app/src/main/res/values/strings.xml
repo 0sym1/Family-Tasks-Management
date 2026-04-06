@@ -81,6 +81,9 @@
     <string name="repeat_times">lần</string>
     <string name="repeat_after_date">Sau ngày</string>
     <string name="btn_confirm">Xác nhận</string>
+    <string name="add_new_task">Tạo nhiệm vụ mới</string>
+    <string name="suggested_tasks">Nhiệm vụ mẫu</string>
+    <string name="select_task_template">Chọn nhiệm vụ mẫu</string>
 
     <!-- Edit Repeat -->
     <string name="edit_repeat_title">Sửa lặp lại</string>
@@ -142,4 +145,12 @@
     <string name="profile_save">Lưu</string>
     <string name="profile_logout">Đăng xuất</string>
     <string name="btn_logout">Đăng xuất</string>
+
+    <!-- History & Tabs -->
+    <string name="history_title">Lịch sử</string>
+    <string name="tab_all">Tất cả</string>
+    <string name="tab_task">Nhiệm vụ</string>
+    <string name="tab_point">Điểm số</string>
+    <string name="sample_reason">Hoàn thành nhiệm vụ</string>
+    <string name="sample_task">Quét dọn nhà cửa</string>
 </resources>

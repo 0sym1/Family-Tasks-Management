@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,15 +19,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.tngoc.familytaskapp.R;
+import com.tngoc.familytaskapp.utils.Constants;
 
 public class ChatBotFragment extends Fragment {
 
     private ChatBotViewModel chatBotViewModel;
-    private RecyclerView recyclerView;
+    private RecyclerView recyclerViewMessages;
+    private RecyclerView rvChatHistory;
     private EditText etMessage;
     private ImageButton btnSend;
+    private ImageButton btnToggleHistory;
+    private TextView tvChatbotTitle;
+    private TextView tvEmptyHistory;
     private ProgressBar progressBar;
     private String userId;
+    
+    private ChatMessageAdapter messageAdapter;
+    private ChatHistoryAdapter historyAdapter;
 
     @Nullable
     @Override
@@ -38,17 +47,39 @@ public class ChatBotFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        chatBotViewModel = new ViewModelProvider(this).get(ChatBotViewModel.class);
+        chatBotViewModel = new ViewModelProvider(requireActivity()).get(ChatBotViewModel.class);
+        chatBotViewModel.initModel(Constants.GEMINI_API_KEY);
 
-        userId      = FirebaseAuth.getInstance().getCurrentUser() != null
+        userId = FirebaseAuth.getInstance().getCurrentUser() != null
                 ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
 
-        recyclerView = view.findViewById(R.id.recyclerViewMessages);
-        etMessage    = view.findViewById(R.id.etMessage);
-        btnSend      = view.findViewById(R.id.btnSend);
-        progressBar  = view.findViewById(R.id.progressBar);
+        recyclerViewMessages = view.findViewById(R.id.recyclerViewMessages);
+        rvChatHistory        = view.findViewById(R.id.rvChatHistory);
+        etMessage            = view.findViewById(R.id.etMessage);
+        btnSend              = view.findViewById(R.id.btnSend);
+        btnToggleHistory     = view.findViewById(R.id.btnToggleHistory);
+        tvChatbotTitle       = view.findViewById(R.id.tvChatbotTitle);
+        tvEmptyHistory       = view.findViewById(R.id.tvEmptyHistory);
+        progressBar          = view.findViewById(R.id.progressBar);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        messageAdapter = new ChatMessageAdapter();
+        recyclerViewMessages.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recyclerViewMessages.setAdapter(messageAdapter);
+
+        historyAdapter = new ChatHistoryAdapter();
+        rvChatHistory.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false));
+        rvChatHistory.setAdapter(historyAdapter);
+        
+        historyAdapter.setOnHistoryClickListener(history -> {
+            if (userId != null) {
+                chatBotViewModel.selectHistory(userId, history.getHistoryId());
+            }
+        });
+
+        tvChatbotTitle.setOnClickListener(v -> {
+            chatBotViewModel.resetChat();
+            Toast.makeText(requireContext(), "Bắt đầu đoạn chat mới", Toast.LENGTH_SHORT).show();
+        });
 
         btnSend.setOnClickListener(v -> {
             String content = etMessage.getText().toString().trim();
@@ -57,13 +88,38 @@ public class ChatBotFragment extends Fragment {
             if (userId != null) chatBotViewModel.sendMessage(userId, content);
         });
 
+        btnToggleHistory.setOnClickListener(v -> {
+            if (rvChatHistory.getVisibility() == View.VISIBLE || tvEmptyHistory.getVisibility() == View.VISIBLE) {
+                rvChatHistory.setVisibility(View.GONE);
+                tvEmptyHistory.setVisibility(View.GONE);
+            } else {
+                updateHistoryVisibility(chatBotViewModel.historiesLiveData.getValue());
+            }
+        });
+
         observeViewModel();
-        if (userId != null) chatBotViewModel.loadHistory(userId);
+        
+        if (userId != null) {
+            chatBotViewModel.loadContextData(userId);
+            chatBotViewModel.loadHistories(userId);
+        }
     }
 
     private void observeViewModel() {
         chatBotViewModel.messagesLiveData.observe(getViewLifecycleOwner(), messages -> {
-            // TODO: set adapter data, scroll to bottom
+            if (messages != null) {
+                messageAdapter.setMessages(messages);
+                if (!messages.isEmpty()) {
+                    recyclerViewMessages.smoothScrollToPosition(messages.size() - 1);
+                }
+            }
+        });
+
+        chatBotViewModel.historiesLiveData.observe(getViewLifecycleOwner(), histories -> {
+            if (histories != null) {
+                historyAdapter.setHistories(histories);
+                updateHistoryVisibility(histories);
+            }
         });
 
         chatBotViewModel.loadingLiveData.observe(getViewLifecycleOwner(), isLoading ->
@@ -74,5 +130,15 @@ public class ChatBotFragment extends Fragment {
             if (error != null) Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
         });
     }
-}
 
+    private void updateHistoryVisibility(java.util.List<?> histories) {
+        // Chỉ cập nhật hiển thị nếu vùng chứa lịch sử đang được mở (không bị ẩn bởi nút toggle)
+        if (histories == null || histories.isEmpty()) {
+            rvChatHistory.setVisibility(View.GONE);
+            tvEmptyHistory.setVisibility(View.VISIBLE);
+        } else {
+            rvChatHistory.setVisibility(View.VISIBLE);
+            tvEmptyHistory.setVisibility(View.GONE);
+        }
+    }
+}
