@@ -11,13 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.tngoc.familytaskapp.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,7 +32,9 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     private List<Date> dates = new ArrayList<>();
     private Set<Date> selectedDates = new HashSet<>();
     private final OnDatesSelectedListener listener;
-    private final String[] dayNames = {"CN", "T2", "T3", "T4", "T5", "T6", "T7"};
+    
+    // Sử dụng SimpleDateFormat để lấy tên thứ theo ngôn ngữ hiện tại
+    private final SimpleDateFormat dayNameFormat = new SimpleDateFormat("E", Locale.getDefault());
     private Calendar currentStartCal;
 
     public CalendarAdapter(OnDatesSelectedListener listener) {
@@ -58,14 +61,14 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
     }
 
     private void updateMonthYear() {
-        Map<String, Integer> monthCounts = new HashMap<>();
-        Map<String, Integer> yearCounts = new HashMap<>();
+        Map<Integer, Integer> monthCounts = new HashMap<>();
+        Map<Integer, Integer> yearCounts = new HashMap<>();
         
         Calendar cal = Calendar.getInstance();
         for (Date date : dates) {
             cal.setTime(date);
-            String monthKey = String.valueOf(cal.get(Calendar.MONTH));
-            String yearKey = String.valueOf(cal.get(Calendar.YEAR));
+            int monthKey = cal.get(Calendar.MONTH);
+            int yearKey = cal.get(Calendar.YEAR);
             
             monthCounts.put(monthKey, monthCounts.getOrDefault(monthKey, 0) + 1);
             yearCounts.put(yearKey, yearCounts.getOrDefault(yearKey, 0) + 1);
@@ -73,19 +76,19 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         
         int majorityMonth = -1;
         int maxMonthCount = -1;
-        for (Map.Entry<String, Integer> entry : monthCounts.entrySet()) {
+        for (Map.Entry<Integer, Integer> entry : monthCounts.entrySet()) {
             if (entry.getValue() > maxMonthCount) {
                 maxMonthCount = entry.getValue();
-                majorityMonth = Integer.parseInt(entry.getKey());
+                majorityMonth = entry.getKey();
             }
         }
         
         int majorityYear = -1;
         int maxYearCount = -1;
-        for (Map.Entry<String, Integer> entry : yearCounts.entrySet()) {
+        for (Map.Entry<Integer, Integer> entry : yearCounts.entrySet()) {
             if (entry.getValue() > maxYearCount) {
                 maxYearCount = entry.getValue();
-                majorityYear = Integer.parseInt(entry.getKey());
+                majorityYear = entry.getKey();
             }
         }
         
@@ -130,7 +133,13 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarAdapter.Calend
         normalizeCalendar(cal);
         Date normalizedDate = cal.getTime();
 
-        holder.tvDayName.setText(dayNames[cal.get(Calendar.DAY_OF_WEEK) - 1]);
+        // Định dạng tên thứ theo locale (ví dụ: T2, Mon, Lun)
+        String dayName = dayNameFormat.format(date);
+        // Viết hoa chữ cái đầu cho đồng nhất
+        if (dayName.length() > 0) {
+            dayName = dayName.substring(0, 1).toUpperCase() + dayName.substring(1);
+        }
+        holder.tvDayName.setText(dayName);
         holder.tvDateNumber.setText(String.valueOf(cal.get(Calendar.DAY_OF_MONTH)));
 
         if (selectedDates.contains(normalizedDate)) {

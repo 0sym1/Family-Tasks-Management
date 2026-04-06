@@ -25,6 +25,7 @@
     <!-- Errors -->
     <string name="error_empty_fields">Veuillez remplir tous les champs</string>
     <string name="error_password_mismatch">Les mots de passe ne correspondent pas</string>
+    <string name="error_fill_new_password">Veuillez remplir les hai champs de nouveau mot de passe</string>
 
     <!-- Home -->
     <string name="home_title">Accueil</string>
@@ -59,10 +60,11 @@
 
     <!-- Task -->
     <string name="tasks">Tâches</string>
+    <string name="my_tasks">Mes Tâches</string>
     <string name="task_detail">Détail de la Tâche</string>
     <string name="create_task">Créer une Tâche</string>
     <string name="edit_task">Modifier la tâche</string>
-    <string name="task_created">Tâche créée với succès !</string>
+    <string name="task_created">Tâche créée avec succès !</string>
     <string name="task_completed">Tâche terminée !</string>
     <string name="label_task_name">Nom de la tâche</string>
     <string name="hint_task_name">Entrez ici...</string>
@@ -97,8 +99,10 @@
     <string name="repeat_after_date">Après le</string>
     <string name="btn_confirm">Confirmer</string>
     <string name="task_deadline_label">Échéance : %s</string>
+    <string name="task_deadline_prefix">Échéance :</string>
     <string name="task_repeat_finish">Se termine : %s</string>
     <string name="hint_assigned_to">Choisir le destinataire...</string>
+    <string name="error_select_assignee">Veuillez sélectionner un destinataire</string>
     <string name="delete_task_title">Supprimer la tâche</string>
     <string name="delete_task_confirm">Êtes-vous sûr de vouloir supprimer cette tâche ?</string>
     <string name="task_deleted">Tâche supprimée</string>
@@ -106,6 +110,7 @@
     <string name="email_not_registered">Cet e-mail n\'est pas enregistré</string>
     <string name="enter_email_hint">Veuillez entrer l\'e-mail</string>
     <string name="invitation_msg">Vous avez reçu une invitation pour rejoindre l\'espace : %s</string>
+    <string name="work_report">Rapport de travail</string>
 
     <!-- Invite Dialog -->
     <string name="dialog_invite_title">Inviter un membre</string>
@@ -154,9 +159,34 @@
     <string name="tab_all">Tout</string>
     <string name="tab_task">Tâches</string>
     <string name="tab_point">Points</string>
-
     <string name="sample_task">Reçu +5 points</string>
     <string name="sample_reason">Raison : À l\'heure</string>
+    <string name="feature_updating">Fonctionnalité en cours de mise à jour</string>
+    <string name="unknown">Inconnu</string>
+
+    <!-- Chatbot -->
+    <string name="empty_chatbot_history">Commencez votre premier chat</string>
+    <string name="hint_chatbot_input">Écrivez quelque chose ...</string>
+    <string name="btn_send">Envoyer</string>
+
+    <!-- Work Report -->
+    <string name="content_desc_back">Retour</string>
+    <string name="title_work_report">Rapport de travail</string>
+    <string name="weekly_tasks">Tâches hebdomadaires</string>
+    <string name="monthly_tasks">Tâches mensuelles</string>
+    <string name="work_time">Temps de travail</string>
+    <string name="completion_progress">Progrès d\'achèvement</string>
+    <string name="tasks_by_week">Tâches par semaine</string>
+    <string name="actual_efficiency">Efficacité réelle</string>
+    <string name="work_report_loading_data">Chargement des données...</string>
+    <string name="work_report_workspace_other">Autre</string>
+    <string name="work_report_no_completed_tasks_10_days">Aucune tâche terminée au cours des 10 derniers jours</string>
+    <string name="work_report_duration_hours_minutes">%1$dh %2$dmin</string>
+    <string name="work_report_duration_minutes">%1$dmin</string>
+    <string name="work_report_center_total_time">TEMPS TOTAL\n%1$s</string>
+    <string name="work_report_completed_tasks">Tâches terminées</string>
+    <string name="work_report_planned">Prévu</string>
+    <string name="work_report_actual">Réel</string>
 
     <!-- Profile -->
     <string name="profile_title">Profil</string>
@@ -169,10 +199,11 @@
     <string name="profile_new_password">Nouveau mot de passe</string>
     <string name="profile_confirm_password">Confirmer le mot de passe</string>
     <string name="profile_language">Langue</string>
-    <string name="profile_language_vi">Langue</string>
     <string name="profile_save">Enregistrer</string>
+    <string name="profile_save_success">Profil mis à jour avec succès !</string>
     <string name="profile_logout">Déconnexion</string>
     <string name="btn_logout">Déconnexion</string>
+    <string name="avatar_update_success">Avatar mis à jour avec succès !</string>
 
     <!-- Reward -->
     <string name="reward_points">Points : %d</string>

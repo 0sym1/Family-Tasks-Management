@@ -69,7 +69,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
     static class TaskViewHolder extends RecyclerView.ViewHolder {
         TextView tvTaskTime, tvTaskDeadline, tvTaskStatus, tvTaskTitle;
         ImageView ivRepeat, ivMore;
-        SimpleDateFormat dateOnlySdf = new SimpleDateFormat("EEE dd/MM", new Locale("vi", "VN"));
 
         public TaskViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -83,6 +82,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.TaskViewHolder
 
         public void bind(Task task, OnTaskClickListener listener, OnTaskMoreActionsListener moreListener) {
             Context context = itemView.getContext();
+            SimpleDateFormat dateOnlySdf = new SimpleDateFormat("EEE dd/MM", Locale.getDefault());
             tvTaskTitle.setText(task.getTitle());
             
             tvTaskTime.setVisibility(View.GONE);

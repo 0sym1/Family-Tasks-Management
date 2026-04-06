@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -23,7 +25,6 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.google.android.material.datepicker.CalendarConstraints;
 import com.google.android.material.datepicker.DateValidatorPointForward;
 import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 import com.google.firebase.Timestamp;
@@ -49,7 +50,8 @@ public class CreateTaskFragment extends Fragment {
     private WorkspaceViewModel workspaceViewModel;
     
     private EditText etTaskName, etTaskDescription;
-    private TextView tvStartDate, tvEndDate, tvEndTime, tvTitle, tvAssignedTo;
+    private TextView tvStartDate, tvEndDate, tvEndTime, tvTitle;
+    private AutoCompleteTextView tvAssignedTo;
     private RadioGroup rgRepeat;
     private RadioButton rbRepeatOn, rbRepeatOff;
     private ImageView ivEditRepeat;
@@ -65,7 +67,6 @@ public class CreateTaskFragment extends Fragment {
     private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
     private List<User> workspaceMembers = new ArrayList<>();
     private List<String> selectedMemberIds = new ArrayList<>();
-    private int selectedItemIndex = -1;
     private Task mTask;
 
     @Nullable
@@ -238,7 +239,12 @@ public class CreateTaskFragment extends Fragment {
             Navigation.findNavController(v).navigate(R.id.action_createTask_to_editRepeat);
         });
 
-        llAssignedTo.setOnClickListener(v -> showSingleSelectDialog());
+        llAssignedTo.setOnClickListener(v -> {
+            if (tvAssignedTo != null) {
+                tvAssignedTo.requestFocus();
+                tvAssignedTo.showDropDown();
+            }
+        });
 
         btnSave.setOnClickListener(v -> {
             String name = etTaskName.getText().toString().trim();
@@ -250,7 +256,7 @@ public class CreateTaskFragment extends Fragment {
             }
 
             if (selectedMemberIds.isEmpty()) {
-                Toast.makeText(requireContext(), "Vui lòng chọn người thực hiện", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.error_select_assignee, Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -334,32 +340,30 @@ public class CreateTaskFragment extends Fragment {
         });
     }
 
-    private void showSingleSelectDialog() {
-        if (workspaceMembers.isEmpty()) return;
+    private void setupAssigneeDropdown() {
+        if (!isAdded()) return;
 
-        String[] memberNames = new String[workspaceMembers.size()];
-        for (int i = 0; i < workspaceMembers.size(); i++) {
-            User user = workspaceMembers.get(i);
-            memberNames[i] = user.getDisplayName() != null && !user.getDisplayName().isEmpty() 
-                    ? user.getDisplayName() : user.getEmail();
+        List<String> memberNames = new ArrayList<>();
+        for (User user : workspaceMembers) {
+            memberNames.add(getDisplayName(user));
         }
 
-        new MaterialAlertDialogBuilder(requireContext(), R.style.CustomDialogTheme)
-                .setTitle("Chọn người thực hiện")
-                .setSingleChoiceItems(memberNames, selectedItemIndex, (dialog, which) -> {
-                    selectedItemIndex = which;
-                })
-                .setPositiveButton("Xong", (dialog, which) -> {
-                    selectedMemberIds.clear();
-                    if (selectedItemIndex != -1) {
-                        selectedMemberIds.add(workspaceMembers.get(selectedItemIndex).getUserId());
-                        tvAssignedTo.setText(memberNames[selectedItemIndex]);
-                    } else {
-                        tvAssignedTo.setText(getString(R.string.hint_assigned_to));
-                    }
-                })
-                .setNegativeButton("Hủy", null)
-                .show();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_list_item_1,
+                memberNames
+        );
+        tvAssignedTo.setAdapter(adapter);
+
+        tvAssignedTo.setOnClickListener(v -> tvAssignedTo.showDropDown());
+        tvAssignedTo.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) tvAssignedTo.showDropDown();
+        });
+        tvAssignedTo.setOnItemClickListener((parent, view, position, id) -> {
+            selectedMemberIds.clear();
+            selectedMemberIds.add(workspaceMembers.get(position).getUserId());
+            tvAssignedTo.setText(memberNames.get(position), false);
+        });
     }
 
     private void observeViewModel() {
@@ -372,6 +376,7 @@ public class CreateTaskFragment extends Fragment {
         workspaceViewModel.membersLiveData.observe(getViewLifecycleOwner(), members -> {
             if (members != null) {
                 workspaceMembers = members;
+                setupAssigneeDropdown();
                 if (taskId != null && mTask != null) {
                     updateCheckedItems();
                 }
@@ -430,13 +435,17 @@ public class CreateTaskFragment extends Fragment {
         String memberId = selectedMemberIds.get(0);
         for (int i = 0; i < workspaceMembers.size(); i++) {
             if (workspaceMembers.get(i).getUserId().equals(memberId)) {
-                selectedItemIndex = i;
                 User user = workspaceMembers.get(i);
-                tvAssignedTo.setText(user.getDisplayName() != null && !user.getDisplayName().isEmpty() 
-                        ? user.getDisplayName() : user.getEmail());
+                tvAssignedTo.setText(getDisplayName(user), false);
                 break;
             }
         }
+    }
+
+    private String getDisplayName(User user) {
+        return (user.getDisplayName() != null && !user.getDisplayName().isEmpty())
+                ? user.getDisplayName()
+                : user.getEmail();
     }
 
     private void updateRepeatUIFromViewModel() {

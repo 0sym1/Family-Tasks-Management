@@ -27,7 +27,6 @@
                 android:background="@drawable/bg_rect_dark"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="4dp"
-                android:text="12h00 Daily"
                 android:textColor="#AAAAAA"
                 android:textSize="11sp" />
 
@@ -43,7 +42,6 @@
                 android:background="@drawable/bg_rect_dark"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="4dp"
-                android:text="DONE"
                 android:textColor="#59D595"
                 android:textSize="10sp"
                 android:textStyle="bold" />
@@ -68,7 +66,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_toStartOf="@id/ivRepeatStatus"
-                android:text="Task Title"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />

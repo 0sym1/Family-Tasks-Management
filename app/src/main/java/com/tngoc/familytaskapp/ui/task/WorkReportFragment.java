@@ -2,7 +2,6 @@ package com.tngoc.familytaskapp.ui.task;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -85,10 +83,24 @@ public class WorkReportFragment extends Fragment {
         setupCharts();
 
         if (btnBack != null) {
-            btnBack.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
+            btnBack.setOnClickListener(this::handleBackNavigation);
         }
 
         fetchWorkspacesAndStartListening();
+    }
+
+    private void handleBackNavigation(View view) {
+        try {
+            if (Navigation.findNavController(view).navigateUp()) {
+                return;
+            }
+        } catch (Exception ignored) {
+            // Fragment might be shown via FragmentTransaction in HomeActivity.
+        }
+
+        if (isAdded()) {
+            requireActivity().getOnBackPressedDispatcher().onBackPressed();
+        }
     }
 
     private void setupCharts() {
@@ -121,7 +133,7 @@ public class WorkReportFragment extends Fragment {
         barChart.getXAxis().setTextColor(Color.WHITE);
         barChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
         barChart.getXAxis().setDrawGridLines(false);
-        barChart.setNoDataText("Đang tải dữ liệu...");
+        barChart.setNoDataText(getString(R.string.work_report_loading_data));
 
         // Line Chart
         lineChart.getDescription().setEnabled(false);
@@ -140,7 +152,7 @@ public class WorkReportFragment extends Fragment {
         lineChart.getLegend().setTextColor(Color.WHITE);
         lineChart.getLegend().setVerticalAlignment(com.github.mikephil.charting.components.Legend.LegendVerticalAlignment.TOP);
         lineChart.getLegend().setHorizontalAlignment(com.github.mikephil.charting.components.Legend.LegendHorizontalAlignment.RIGHT);
-        lineChart.setNoDataText("Đang tải dữ liệu...");
+        lineChart.setNoDataText(getString(R.string.work_report_loading_data));
     }
 
     private void fetchWorkspacesAndStartListening() {
@@ -254,19 +266,19 @@ public class WorkReportFragment extends Fragment {
     private void updateUI(int weekly, int monthly, long time) {
         tvWeeklyTasks.setText(String.valueOf(weekly));
         tvMonthlyTasks.setText(String.valueOf(monthly));
-        tvTotalWorkTime.setText((time / 60) + "h " + (time % 60) + "m");
+        tvTotalWorkTime.setText(formatDuration(time));
     }
 
     private void updatePieChart(Map<String, Long> timeMap, long totalMinutes) {
         ArrayList<PieEntry> entries = new ArrayList<>();
         for (Map.Entry<String, Long> entry : timeMap.entrySet()) {
-            String wsName = workspaceNameMap.getOrDefault(entry.getKey(), "Khác");
+            String wsName = workspaceNameMap.getOrDefault(entry.getKey(), getString(R.string.work_report_workspace_other));
             entries.add(new PieEntry(entry.getValue(), wsName));
         }
 
         if (entries.isEmpty()) {
             pieChart.clear();
-            pieChart.setNoDataText("Không có task hoàn thành 10 ngày qua");
+            pieChart.setNoDataText(getString(R.string.work_report_no_completed_tasks_10_days));
             pieChart.setNoDataTextColor(Color.GRAY);
             return;
         }
@@ -293,14 +305,18 @@ public class WorkReportFragment extends Fragment {
             @Override
             public String getFormattedValue(float value) {
                 if (value >= 60) {
-                    return (int)(value / 60) + "h " + (int)(value % 60) + "m";
+                    return getString(
+                            R.string.work_report_duration_hours_minutes,
+                            (int) (value / 60),
+                            (int) (value % 60)
+                    );
                 }
-                return (int)value + "m";
+                return getString(R.string.work_report_duration_minutes, (int) value);
             }
         });
 
         pieChart.setData(new PieData(dataSet));
-        pieChart.setCenterText("TỔNG THỜI GIAN\n" + (totalMinutes / 60) + "h " + (totalMinutes % 60) + "m");
+        pieChart.setCenterText(getString(R.string.work_report_center_total_time, formatDuration(totalMinutes)));
         pieChart.invalidate();
     }
 
@@ -310,7 +326,7 @@ public class WorkReportFragment extends Fragment {
             entries.add(new BarEntry(i, stats[i]));
         }
 
-        BarDataSet dataSet = new BarDataSet(entries, "Số việc xong");
+        BarDataSet dataSet = new BarDataSet(entries, getString(R.string.work_report_completed_tasks));
         dataSet.setColor(Color.parseColor("#4285F4"));
         dataSet.setValueTextColor(Color.WHITE);
         dataSet.setDrawValues(false);
@@ -329,14 +345,14 @@ public class WorkReportFragment extends Fragment {
             doneEntries.add(new Entry(i, done[i]));
         }
 
-        LineDataSet setTotal = new LineDataSet(totalEntries, "Dự kiến");
+        LineDataSet setTotal = new LineDataSet(totalEntries, getString(R.string.work_report_planned));
         setTotal.setColor(Color.GRAY);
         setTotal.setCircleColor(Color.GRAY);
         setTotal.setLineWidth(2f);
         setTotal.setDrawValues(false);
         setTotal.setMode(LineDataSet.Mode.LINEAR); // Linear mode to avoid negative curves
 
-        LineDataSet setDone = new LineDataSet(doneEntries, "Thực tế");
+        LineDataSet setDone = new LineDataSet(doneEntries, getString(R.string.work_report_actual));
         setDone.setColor(Color.parseColor("#59D595"));
         setDone.setCircleColor(Color.parseColor("#59D595"));
         setDone.setLineWidth(3f);
@@ -357,6 +373,14 @@ public class WorkReportFragment extends Fragment {
             cal.add(Calendar.DAY_OF_YEAR, 1);
         }
         return days;
+    }
+
+    private String formatDuration(long minutes) {
+        return getString(
+                R.string.work_report_duration_hours_minutes,
+                minutes / 60,
+                minutes % 60
+        );
     }
 
     @Override

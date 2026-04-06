@@ -7,7 +7,7 @@
     <fragment
         android:id="@+id/workspaceListFragment"
         android:name="com.tngoc.familytaskapp.ui.workspace.WorkspaceListFragment"
-        android:label="Workspace">
+        android:label="@string/workspaces">
         <action
             android:id="@+id/action_workspaceList_to_createWorkspace"
             app:destination="@id/createWorkspaceFragment" />
@@ -22,7 +22,7 @@
     <fragment
         android:id="@+id/workspaceDetailFragment"
         android:name="com.tngoc.familytaskapp.ui.workspace.WorkspaceDetailFragment"
-        android:label="Chi tiết">
+        android:label="@string/workspace_detail">
         <argument
             android:name="workspaceId"
             app:argType="string" />
@@ -40,17 +40,17 @@
     <fragment
         android:id="@+id/createWorkspaceFragment"
         android:name="com.tngoc.familytaskapp.ui.workspace.CreateWorkspaceFragment"
-        android:label="Tạo workspace" />
+        android:label="@string/create_workspace" />
 
     <fragment
         android:id="@+id/inviteMemberFragment"
         android:name="com.tngoc.familytaskapp.ui.workspace.InviteMemberFragment"
-        android:label="Mời thành viên" />
+        android:label="@string/invite_member" />
 
     <fragment
         android:id="@+id/taskListFragment"
         android:name="com.tngoc.familytaskapp.ui.task.TaskListFragment"
-        android:label="Nhiệm vụ">
+        android:label="@string/tasks">
         <argument
             android:name="workspaceId"
             app:argType="string" />
@@ -78,7 +78,7 @@
     <fragment
         android:id="@+id/myTasksFragment"
         android:name="com.tngoc.familytaskapp.ui.task.MyTasksFragment"
-        android:label="Nhiệm vụ của tôi">
+        android:label="@string/my_tasks">
         <action
             android:id="@+id/action_myTasks_to_createTask"
             app:destination="@id/createTaskFragment" />
@@ -93,7 +93,7 @@
     <fragment
         android:id="@+id/taskDetailFragment"
         android:name="com.tngoc.familytaskapp.ui.task.TaskDetailFragment"
-        android:label="Chi tiết nhiệm vụ">
+        android:label="@string/task_detail">
         <argument
             android:name="taskId"
             app:argType="string" />
@@ -108,7 +108,7 @@
     <fragment
         android:id="@+id/createTaskFragment"
         android:name="com.tngoc.familytaskapp.ui.task.CreateTaskFragment"
-        android:label="Tạo nhiệm vụ">
+        android:label="@string/create_task">
         <argument
             android:name="workspaceId"
             app:argType="string"
@@ -130,17 +130,17 @@
     <fragment
         android:id="@+id/notificationFragment"
         android:name="com.tngoc.familytaskapp.ui.notification.NotificationFragment"
-        android:label="Thông báo" />
+        android:label="@string/notifications" />
 
     <fragment
         android:id="@+id/rewardFragment"
         android:name="com.tngoc.familytaskapp.ui.reward.RewardFragment"
-        android:label="Phần thưởng" />
+        android:label="@string/rewards" />
 
     <fragment
         android:id="@+id/historyFragment"
         android:name="com.tngoc.familytaskapp.ui.history.HistoryFragment"
-        android:label="Lịch sử">
+        android:label="@string/history_title">
         <argument
             android:name="workspaceId"
             app:argType="string" />
@@ -149,7 +149,7 @@
     <fragment
         android:id="@+id/chatBotFragment"
         android:name="com.tngoc.familytaskapp.ui.chatbot.ChatBotFragment"
-        android:label="Trợ lý AI" />
+        android:label="@string/chatbot" />
 
     <fragment
         android:id="@+id/profileFragment"
@@ -163,7 +163,7 @@
     <fragment
         android:id="@+id/rankingFragment"
         android:name="com.tngoc.familytaskapp.ui.ranking.RankingFragment"
-        android:label="Bảng xếp hạng">
+        android:label="@string/ranking">
         <argument
             android:name="workspaceId"
             app:argType="string" />
@@ -172,16 +172,16 @@
     <fragment
         android:id="@+id/editRepeatFragment"
         android:name="com.tngoc.familytaskapp.ui.task.EditRepeatFragment"
-        android:label="Sửa lặp lại" />
+        android:label="@string/edit_repeat_title" />
 
     <fragment
         android:id="@+id/changeLanguageFragment"
         android:name="com.tngoc.familytaskapp.ui.settings.ChangeLanguageFragment"
-        android:label="Chọn ngôn ngữ" />
+        android:label="@string/select_language_title" />
 
     <fragment
         android:id="@+id/workReportFragment"
         android:name="com.tngoc.familytaskapp.ui.task.WorkReportFragment"
-        android:label="Báo cáo công việc" />
+        android:label="@string/work_report" />
 
 </navigation>

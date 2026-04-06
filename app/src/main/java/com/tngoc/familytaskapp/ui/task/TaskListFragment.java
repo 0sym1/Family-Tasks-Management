@@ -38,6 +38,7 @@ import com.tngoc.familytaskapp.utils.Constants;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 public class TaskListFragment extends Fragment {
@@ -256,8 +257,9 @@ public class TaskListFragment extends Fragment {
         List<Task> filteredList = new ArrayList<>();
 
         for (Task task : allTasks) {
-            boolean matchesSearch = task.getTitle().toLowerCase().contains(query);
-            boolean matchesStatus = selectedStatuses.isEmpty() || selectedStatuses.contains(task.getStatus());
+            String taskTitle = task.getTitle() == null ? "" : task.getTitle();
+            boolean matchesSearch = taskTitle.toLowerCase().contains(query);
+            boolean matchesStatus = selectedStatuses.isEmpty() || selectedStatuses.contains(normalizeStatus(task.getStatus()));
             
             boolean isOwner = currentWorkspace != null && currentUserId != null && currentUserId.equals(currentWorkspace.getOwnerId());
             boolean isAssigned = currentUserId != null && task.getAssignedToIds() != null && task.getAssignedToIds().contains(currentUserId);
@@ -266,7 +268,62 @@ public class TaskListFragment extends Fragment {
                 filteredList.add(task);
             }
         }
+
+        filteredList.sort(this::compareTasks);
         adapter.setTaskList(filteredList);
+    }
+
+    private int compareTasks(Task first, Task second) {
+        int byStatus = Integer.compare(getStatusRank(first), getStatusRank(second));
+        if (byStatus != 0) return byStatus;
+
+        int byDeadline = compareNullableLongAsc(getTimestampMillis(first.getEndDate()), getTimestampMillis(second.getEndDate()));
+        if (byDeadline != 0) return byDeadline;
+
+        int byCreatedAt = compareNullableLongDesc(getTimestampMillis(first.getCreatedAt()), getTimestampMillis(second.getCreatedAt()));
+        if (byCreatedAt != 0) return byCreatedAt;
+
+        String firstTitle = first.getTitle() == null ? "" : first.getTitle();
+        String secondTitle = second.getTitle() == null ? "" : second.getTitle();
+        int byTitle = firstTitle.compareToIgnoreCase(secondTitle);
+        if (byTitle != 0) return byTitle;
+
+        String firstTaskId = first.getTaskId() == null ? "" : first.getTaskId();
+        String secondTaskId = second.getTaskId() == null ? "" : second.getTaskId();
+        return firstTaskId.compareTo(secondTaskId);
+    }
+
+    private int getStatusRank(Task task) {
+        String normalizedStatus = normalizeStatus(task.getStatus());
+        if ("doing".equals(normalizedStatus)) return 0;
+        if (Constants.TASK_STATUS_TODO.equals(normalizedStatus)) return 1;
+        if ("review".equals(normalizedStatus)) return 2;
+        if (Constants.TASK_STATUS_DONE.equals(normalizedStatus)) return 3;
+        if (Constants.TASK_STATUS_OVERDUE.equals(normalizedStatus)) return 4;
+        return 5;
+    }
+
+    private String normalizeStatus(String rawStatus) {
+        if (rawStatus == null) return "";
+        String status = rawStatus.trim().toLowerCase(Locale.ROOT);
+        if (Constants.TASK_STATUS_IN_PROGRESS.equals(status) || "doing".equals(status)) return "doing";
+        if (Constants.TASK_STATUS_PENDING.equals(status) || "review".equals(status)) return "review";
+        return status;
+    }
+
+    private Long getTimestampMillis(com.google.firebase.Timestamp timestamp) {
+        return timestamp == null ? null : timestamp.toDate().getTime();
+    }
+
+    private int compareNullableLongAsc(Long first, Long second) {
+        if (first == null && second == null) return 0;
+        if (first == null) return 1;
+        if (second == null) return -1;
+        return Long.compare(first, second);
+    }
+
+    private int compareNullableLongDesc(Long first, Long second) {
+        return -compareNullableLongAsc(first, second);
     }
 
     private void observeViewModel() {

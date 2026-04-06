@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
-        android:text="Chatbot"
+        android:text="@string/chatbot"
         android:textColor="@color/white"
         android:textSize="32sp"
         android:textStyle="bold"
@@ -30,7 +30,8 @@
         app:layout_constraintBottom_toBottomOf="@id/tvChatbotTitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/tvChatbotTitle"
-        app:tint="@color/white" />
+        app:tint="@color/white"
+        android:contentDescription="@null" />
 
     <!-- History Container: Co giãn theo nội dung, giới hạn chiều ngang -->
     <FrameLayout
@@ -67,7 +68,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="12dp"
-            android:text="Hãy bắt đầu đoạn chat đầu tiên của bạn"
+            android:text="@string/empty_chatbot_history"
             android:textColor="@color/white"
             android:textSize="14sp"
             android:gravity="center"
@@ -117,7 +118,8 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginEnd="12dp"
-            android:src="@drawable/ic_avatar_placeholder" />
+            android:src="@drawable/ic_avatar_placeholder"
+            android:contentDescription="@null" />
 
         <EditText
             android:id="@+id/etMessage"
@@ -125,7 +127,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/bg_input_chatbot"
-            android:hint="Hãy chat gì đó ..."
+            android:hint="@string/hint_chatbot_input"
             android:inputType="textMultiLine"
             android:maxLines="4"
             android:paddingHorizontal="16dp"
@@ -140,7 +142,7 @@
             android:layout_height="44dp"
             android:layout_marginStart="8dp"
             android:background="@null"
-            android:contentDescription="Gửi"
+            android:contentDescription="@string/btn_send"
             android:src="@android:drawable/ic_menu_send"
             app:tint="@color/white" />
 

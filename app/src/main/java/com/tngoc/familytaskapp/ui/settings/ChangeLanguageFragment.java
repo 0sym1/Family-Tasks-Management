@@ -80,7 +80,15 @@ public class ChangeLanguageFragment extends Fragment {
 
         View btnCancel = view.findViewById(R.id.btnCancel);
         if (btnCancel != null) {
-            btnCancel.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
+            btnCancel.setOnClickListener(v -> {
+                try {
+                    Navigation.findNavController(v).navigateUp();
+                } catch (Exception e) {
+                    if (getActivity() != null) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
+                }
+            });
         }
 
         View btnSave = view.findViewById(R.id.btnSave);
@@ -111,6 +119,7 @@ public class ChangeLanguageFragment extends Fragment {
     private void restartApp() {
         if (getActivity() != null) {
             Intent intent = new Intent(getActivity(), HomeActivity.class);
+            intent.putExtra("SHOW_PROFILE", true);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             getActivity().finish();

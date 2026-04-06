@@ -112,7 +112,7 @@ public class TaskDetailFragment extends Fragment {
     }
 
     private void setupClickListeners() {
-        ivBack.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
+        ivBack.setOnClickListener(this::handleBackNavigation);
 
         ivEdit.setOnClickListener(v -> {
             Bundle bundle = new Bundle();
@@ -184,6 +184,20 @@ public class TaskDetailFragment extends Fragment {
                 taskViewModel.updateTask(workspaceId, currentTask, null);
             }
         });
+    }
+
+    private void handleBackNavigation(View view) {
+        try {
+            if (Navigation.findNavController(view).navigateUp()) {
+                return;
+            }
+        } catch (Exception ignored) {
+            // Fragment might be shown via FragmentTransaction in HomeActivity.
+        }
+
+        if (isAdded()) {
+            requireActivity().getOnBackPressedDispatcher().onBackPressed();
+        }
     }
 
     private void sendNotification(String receiverId, String title, String message) {

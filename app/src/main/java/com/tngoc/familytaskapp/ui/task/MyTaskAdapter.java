@@ -25,7 +25,6 @@ public class MyTaskAdapter extends RecyclerView.Adapter<MyTaskAdapter.MyTaskView
     }
 
     private List<Task> tasks = new ArrayList<>();
-    private final SimpleDateFormat deadlineFormat = new SimpleDateFormat("dd/MM", new Locale("vi", "VN"));
     private OnTaskClickListener listener;
 
     public void setTasks(List<Task> tasks) {
@@ -47,31 +46,38 @@ public class MyTaskAdapter extends RecyclerView.Adapter<MyTaskAdapter.MyTaskView
     @Override
     public void onBindViewHolder(@NonNull MyTaskViewHolder holder, int position) {
         Task task = tasks.get(position);
+        Locale currentLocale = Locale.getDefault();
+        SimpleDateFormat deadlineFormat = new SimpleDateFormat("dd/MM", currentLocale);
+        String deadlinePrefix = holder.itemView.getContext().getString(R.string.task_deadline_prefix);
         
         holder.tvTaskTitle.setText(task.getTitle());
         
-        String timePart = task.getEndTime() != null ? task.getEndTime().replace(":", "h") : "12h00";
+        String timePart = task.getEndTime() != null ? task.getEndTime() : "12:00";
 
         if (task.isRepeating()) {
-            holder.tvTaskTime.setText(timePart + " " + task.getRepeatType());
+            String repeatLabel = holder.itemView.getContext().getString(R.string.repeat_daily);
+            if ("weekly".equalsIgnoreCase(task.getRepeatType())) {
+                repeatLabel = holder.itemView.getContext().getString(R.string.repeat_weekly);
+            }
+            holder.tvTaskTime.setText(timePart + " " + repeatLabel);
             holder.ivRepeatStatus.setVisibility(View.VISIBLE);
         } else {
             if (task.getEndDate() != null) {
-                holder.tvTaskTime.setText("Deadline: " + timePart + " " + deadlineFormat.format(task.getEndDate().toDate()));
+                holder.tvTaskTime.setText(deadlinePrefix + " " + timePart + " " + deadlineFormat.format(task.getEndDate().toDate()));
             } else {
-                holder.tvTaskTime.setText("Deadline: " + timePart);
+                holder.tvTaskTime.setText(deadlinePrefix + " " + timePart);
             }
             holder.ivRepeatStatus.setVisibility(View.GONE);
         }
 
         if (Constants.TASK_STATUS_DONE.equals(task.getStatus())) {
-            holder.tvStatusLabel.setText("DONE");
+            holder.tvStatusLabel.setText(R.string.status_done);
             holder.tvStatusLabel.setTextColor(0xFF59D595);
         } else if (Constants.TASK_STATUS_PENDING.equals(task.getStatus())) {
-            holder.tvStatusLabel.setText("PENDING");
+            holder.tvStatusLabel.setText(R.string.status_pending);
             holder.tvStatusLabel.setTextColor(0xFFEBB059);
         } else {
-            holder.tvStatusLabel.setText("DOING");
+            holder.tvStatusLabel.setText(R.string.status_doing);
             holder.tvStatusLabel.setTextColor(0xFF5995D5);
         }
 

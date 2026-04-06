@@ -20,13 +20,13 @@
             android:padding="12dp"
             android:src="@drawable/ic_back"
             app:tint="@color/white"
-            android:contentDescription="Quay lại" />
+            android:contentDescription="@string/content_desc_back" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Báo cáo công việc"
+            android:text="@string/title_work_report"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -73,7 +73,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="Việc trong tuần"
+                        android:text="@string/weekly_tasks"
                         android:textColor="#AAAAAA"
                         android:textSize="11sp" />
                 </LinearLayout>
@@ -100,7 +100,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="Việc trong tháng"
+                        android:text="@string/monthly_tasks"
                         android:textColor="#AAAAAA"
                         android:textSize="11sp" />
                 </LinearLayout>
@@ -126,7 +126,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="Thời gian làm"
+                        android:text="@string/work_time"
                         android:textColor="#AAAAAA"
                         android:textSize="11sp" />
                 </LinearLayout>
@@ -137,7 +137,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:text="Tiến độ hoàn thành"
+                android:text="@string/completion_progress"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -168,7 +168,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Công việc theo tuần"
+                        android:text="@string/tasks_by_week"
                         android:textColor="@color/white"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -190,7 +190,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Hiệu suất thực tế"
+                        android:text="@string/actual_efficiency"
                         android:textColor="@color/white"
                         android:textSize="14sp"
                         android:textStyle="bold" />

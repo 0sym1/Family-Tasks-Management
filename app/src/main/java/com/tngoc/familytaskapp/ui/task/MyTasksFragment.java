@@ -1,6 +1,5 @@
 package com.tngoc.familytaskapp.ui.task;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,7 +20,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.tngoc.familytaskapp.MainActivity;
 import com.tngoc.familytaskapp.R;
 import com.tngoc.familytaskapp.data.model.Task;
 import com.tngoc.familytaskapp.utils.Constants;
@@ -48,7 +46,11 @@ public class MyTasksFragment extends Fragment {
     private Map<String, Task> myTasksMap = new HashMap<>();
     private Map<String, String> userNameCache = new HashMap<>();
     private Set<Date> selectedDates = new HashSet<>();
-    private final SimpleDateFormat monthYearFormat = new SimpleDateFormat("'Tháng' M, yyyy", new Locale("vi", "VN"));
+    
+    // Sử dụng Locale.getDefault() để tự động định dạng theo ngôn ngữ đã chọn
+    private SimpleDateFormat getMonthYearFormat() {
+        return new SimpleDateFormat("MMMM, yyyy", Locale.getDefault());
+    }
 
     @Nullable
     @Override
@@ -89,14 +91,25 @@ public class MyTasksFragment extends Fragment {
             if (navController != null) {
                 navController.navigate(R.id.action_myTasks_to_workReport);
             } else {
-                Intent intent = new Intent(requireContext(), MainActivity.class);
-                intent.putExtra("OPEN_WORK_REPORT", true);
-                startActivity(intent);
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new WorkReportFragment())
+                        .addToBackStack("myTasksToWorkReport")
+                        .commit();
             }
         });
 
+        updateMonthYearDisplay();
+    }
+    
+    private void updateMonthYearDisplay() {
         if (!selectedDates.isEmpty()) {
-            tvMonthYear.setText(monthYearFormat.format(selectedDates.iterator().next()));
+            Date date = selectedDates.iterator().next();
+            String formatted = getMonthYearFormat().format(date);
+            // Viết hoa chữ cái đầu cho đẹp
+            if (formatted.length() > 0) {
+                formatted = formatted.substring(0, 1).toUpperCase() + formatted.substring(1);
+            }
+            tvMonthYear.setText(formatted);
         }
     }
 
@@ -106,9 +119,7 @@ public class MyTasksFragment extends Fragment {
             @Override
             public void onDatesSelected(Set<Date> dates) {
                 selectedDates = dates;
-                if (!dates.isEmpty()) {
-                    tvMonthYear.setText(monthYearFormat.format(dates.iterator().next()));
-                }
+                updateMonthYearDisplay();
                 applyFilters();
             }
 
@@ -117,7 +128,11 @@ public class MyTasksFragment extends Fragment {
                 Calendar cal = Calendar.getInstance();
                 cal.set(Calendar.MONTH, month);
                 cal.set(Calendar.YEAR, year);
-                tvMonthYear.setText(monthYearFormat.format(cal.getTime()));
+                String formatted = getMonthYearFormat().format(cal.getTime());
+                if (formatted.length() > 0) {
+                    formatted = formatted.substring(0, 1).toUpperCase() + formatted.substring(1);
+                }
+                tvMonthYear.setText(formatted);
             }
         });
         rvCalendar.setAdapter(calendarAdapter);
@@ -128,10 +143,8 @@ public class MyTasksFragment extends Fragment {
         taskAdapter = new MyTaskAdapter();
         
         taskAdapter.setOnTaskClickListener((task, v) -> {
-            Log.d("MyTasksFragment", "Task clicked: " + task.getTaskId() + ", wsId: " + task.getWorkspaceId());
-            
             if (task.getTaskId() == null || task.getWorkspaceId() == null) {
-                Toast.makeText(requireContext(), "Thiếu thông tin công việc", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), R.string.error_empty_fields, Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -146,11 +159,17 @@ public class MyTasksFragment extends Fragment {
                 bundle.putString("workspaceId", task.getWorkspaceId());
                 navController.navigate(R.id.action_myTasks_to_taskDetail, bundle);
             } else {
-                Intent intent = new Intent(requireContext(), MainActivity.class);
-                intent.putExtra("SHOW_TASK_DETAIL", true);
-                intent.putExtra("taskId", task.getTaskId());
-                intent.putExtra("workspaceId", task.getWorkspaceId());
-                startActivity(intent);
+                Bundle bundle = new Bundle();
+                bundle.putString("taskId", task.getTaskId());
+                bundle.putString("workspaceId", task.getWorkspaceId());
+
+                TaskDetailFragment taskDetailFragment = new TaskDetailFragment();
+                taskDetailFragment.setArguments(bundle);
+
+                requireActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, taskDetailFragment)
+                        .addToBackStack("myTasksToTaskDetail")
+                        .commit();
             }
         });
         
@@ -164,28 +183,19 @@ public class MyTasksFragment extends Fragment {
         FirebaseFirestore.getInstance().collectionGroup(Constants.COLLECTION_TASKS)
                 .whereArrayContains("assignedToIds", currentUserId)
                 .addSnapshotListener((snapshots, e) -> {
-                    if (e != null) {
-                        Log.e("MyTasksFragment", "Error listening to tasks", e);
-                        return;
-                    }
-
+                    if (e != null) return;
                     if (snapshots != null) {
                         myTasksMap.clear();
                         for (QueryDocumentSnapshot doc : snapshots) {
                             Task task = doc.toObject(Task.class);
                             task.setTaskId(doc.getId());
-                            
                             if (task.getWorkspaceId() == null || task.getWorkspaceId().isEmpty()) {
                                 try {
                                     if (doc.getReference().getParent().getParent() != null) {
-                                        String wsId = doc.getReference().getParent().getParent().getId();
-                                        task.setWorkspaceId(wsId);
+                                        task.setWorkspaceId(doc.getReference().getParent().getParent().getId());
                                     }
-                                } catch (Exception ex) {
-                                    Log.e("MyTasksFragment", "Error extracting workspaceId", ex);
-                                }
+                                } catch (Exception ignored) {}
                             }
-                            
                             if (task.getWorkspaceId() != null) {
                                 myTasksMap.put(task.getTaskId(), task);
                                 fetchOwnerName(task);
@@ -199,19 +209,15 @@ public class MyTasksFragment extends Fragment {
     private void fetchOwnerName(Task task) {
         String creatorId = task.getCreatedBy();
         if (creatorId == null) return;
-
         if (userNameCache.containsKey(creatorId)) {
             task.setOwnerName(userNameCache.get(creatorId));
             return;
         }
-
         FirebaseFirestore.getInstance().collection(Constants.COLLECTION_USERS)
-                .document(creatorId)
-                .get()
-                .addOnSuccessListener(snapshot -> {
+                .document(creatorId).get().addOnSuccessListener(snapshot -> {
                     if (snapshot.exists()) {
                         String name = snapshot.getString("displayName");
-                        if (name == null || name.isEmpty()) name = snapshot.getString("name");
+                        if (name == null) name = snapshot.getString("name");
                         if (name != null) {
                             userNameCache.put(creatorId, name);
                             task.setOwnerName(name);
@@ -223,12 +229,9 @@ public class MyTasksFragment extends Fragment {
 
     private void applyFilters() {
         List<Task> filtered = new ArrayList<>();
-        List<Task> allTasks = new ArrayList<>(myTasksMap.values());
-        
-        for (Task task : allTasks) {
+        for (Task task : myTasksMap.values()) {
             boolean matchesDate = false;
             Calendar taskCal = null;
-
             if (task.getStartDate() != null) {
                 taskCal = Calendar.getInstance();
                 taskCal.setTime(task.getStartDate().toDate());
@@ -236,12 +239,10 @@ public class MyTasksFragment extends Fragment {
                 taskCal = Calendar.getInstance();
                 taskCal.setTime(task.getEndDate().toDate());
             }
-
             if (taskCal != null) {
                 int day = taskCal.get(Calendar.DAY_OF_MONTH);
                 int month = taskCal.get(Calendar.MONTH);
                 int year = taskCal.get(Calendar.YEAR);
-
                 for (Date selDate : selectedDates) {
                     Calendar selCal = Calendar.getInstance();
                     selCal.setTime(selDate);
@@ -253,10 +254,7 @@ public class MyTasksFragment extends Fragment {
                     }
                 }
             }
-
-            if (matchesDate) {
-                filtered.add(task);
-            }
+            if (matchesDate) filtered.add(task);
         }
         taskAdapter.setTasks(filtered);
     }

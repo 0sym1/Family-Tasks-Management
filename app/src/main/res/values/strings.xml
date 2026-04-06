@@ -28,6 +28,7 @@
     <string name="error_empty_fields">Vui lòng điền đầy đủ thông tin</string>
     <string name="error_password_mismatch">Mật khẩu không khớp</string>
     <string name="error_invalid_username">Tên đăng nhập không hợp lệ</string>
+    <string name="error_fill_new_password">Vui lòng điền đầy đủ mật khẩu mới</string>
 
     <!-- Home -->
     <string name="home_title">Trang chủ</string>
@@ -62,6 +63,7 @@
 
     <!-- Task -->
     <string name="tasks">Nhiệm vụ</string>
+    <string name="my_tasks">Nhiệm vụ của tôi</string>
     <string name="task_detail">Chi tiết nhiệm vụ</string>
     <string name="create_task">Thêm công việc</string>
     <string name="edit_task">Sửa công việc</string>
@@ -100,8 +102,10 @@
     <string name="repeat_after_date">Sau ngày</string>
     <string name="btn_confirm">Xác nhận</string>
     <string name="task_deadline_label">Hạn: %s</string>
+    <string name="task_deadline_prefix">Hạn:</string>
     <string name="task_repeat_finish">Kết thúc: %s</string>
     <string name="hint_assigned_to">Chọn người được giao...</string>
+    <string name="error_select_assignee">Vui lòng chọn người thực hiện</string>
     <string name="delete_task_title">Xóa nhiệm vụ</string>
     <string name="delete_task_confirm">Bạn có chắc chắn muốn xóa nhiệm vụ này không?</string>
     <string name="task_deleted">Đã xóa nhiệm vụ</string>
@@ -109,6 +113,7 @@
     <string name="email_not_registered">Email này chưa đăng ký tài khoản</string>
     <string name="enter_email_hint">Vui lòng nhập email</string>
     <string name="invitation_msg">Bạn đã được mời tham gia không gian làm việc %s</string>
+    <string name="work_report">Báo cáo công việc</string>
 
     <!-- Invite Dialog -->
     <string name="dialog_invite_title">Nhập người dùng bạn muốn mời</string>
@@ -159,6 +164,31 @@
     <string name="tab_point">Điểm</string>
     <string name="sample_task">Đã nhận +5 điểm</string>
     <string name="sample_reason">Lý do: Đúng hạn</string>
+    <string name="feature_updating">Tính năng đang được cập nhật</string>
+
+    <!-- Chatbot -->
+    <string name="empty_chatbot_history">Hãy bắt đầu đoạn chat đầu tiên của bạn</string>
+    <string name="hint_chatbot_input">Hãy chat gì đó ...</string>
+    <string name="btn_send">Gửi</string>
+
+    <!-- Work Report -->
+    <string name="content_desc_back">Quay lại</string>
+    <string name="title_work_report">Báo cáo công việc</string>
+    <string name="weekly_tasks">Việc trong tuần</string>
+    <string name="monthly_tasks">Việc trong tháng</string>
+    <string name="work_time">Thời gian làm</string>
+    <string name="completion_progress">Tiến độ hoàn thành</string>
+    <string name="tasks_by_week">Công việc theo tuần</string>
+    <string name="actual_efficiency">Hiệu suất thực tế</string>
+    <string name="work_report_loading_data">Đang tải dữ liệu...</string>
+    <string name="work_report_workspace_other">Khác</string>
+    <string name="work_report_no_completed_tasks_10_days">Không có task hoàn thành 10 ngày qua</string>
+    <string name="work_report_duration_hours_minutes">%1$dh %2$dm</string>
+    <string name="work_report_duration_minutes">%1$dm</string>
+    <string name="work_report_center_total_time">TỔNG THỜI GIAN\n%1$s</string>
+    <string name="work_report_completed_tasks">Số việc xong</string>
+    <string name="work_report_planned">Dự kiến</string>
+    <string name="work_report_actual">Thực tế</string>
 
     <!-- Profile -->
     <string name="profile_title">Hồ sơ</string>
@@ -171,10 +201,11 @@
     <string name="profile_new_password">Nhập mật khẩu mới</string>
     <string name="profile_confirm_password">Xác nhận mật khẩu mới</string>
     <string name="profile_language">Ngôn ngữ</string>
-    <string name="profile_language_vi">Ngôn ngữ</string>
     <string name="profile_save">Lưu</string>
+    <string name="profile_save_success">Lưu thông tin thành công!</string>
     <string name="profile_logout">Đăng xuất</string>
     <string name="btn_logout">Đăng xuất</string>
+    <string name="avatar_update_success">Cập nhật ảnh đại diện thành công!</string>
 
     <!-- Reward -->
     <string name="reward_points">Điểm: %d</string>
