@@ -30,7 +30,6 @@ import com.tngoc.familytaskapp.R;
 import com.tngoc.familytaskapp.data.model.User;
 import com.tngoc.familytaskapp.ui.home.HomeActivity;
 import com.tngoc.familytaskapp.ui.settings.ChangeLanguageFragment;
-import com.tngoc.familytaskapp.utils.LocaleHelper;
 import com.tngoc.familytaskapp.utils.SharedPrefManager;
 
 public class ProfileFragment extends Fragment {
@@ -41,7 +40,7 @@ public class ProfileFragment extends Fragment {
 
     private ImageView ivAvatar;
     private FrameLayout layoutAvatar;
-    private TextView tvName, tvUsername, tvPoints, tvEmail;
+    private TextView tvName, tvUsername, tvPoints, tvEmail, tvCurrentLanguage;
     private EditText etOldPassword, etNewPassword, etConfirmPassword;
     private Button btnSave, btnLogout;
     private View llChangeLanguage;
@@ -92,16 +91,17 @@ public class ProfileFragment extends Fragment {
     }
 
     private void initViews(View view) {
-        ivAvatar = view.findViewById(R.id.ivAvatar);
-        layoutAvatar = view.findViewById(R.id.layoutAvatar);
-        tvName = view.findViewById(R.id.tvName);
-        tvUsername = view.findViewById(R.id.tvUsername);
-        tvPoints = view.findViewById(R.id.tvPoints);
-        tvEmail = view.findViewById(R.id.tvEmail);
+        try {
+            ivAvatar = view.findViewById(R.id.ivAvatar);
+            layoutAvatar = view.findViewById(R.id.layoutAvatar);
+            tvName = view.findViewById(R.id.tvName);
+            tvUsername = view.findViewById(R.id.tvUsername);
+            tvPoints = view.findViewById(R.id.tvPoints);
+            tvEmail = view.findViewById(R.id.tvEmail);
 
-        etOldPassword = view.findViewById(R.id.etOldPassword);
-        etNewPassword = view.findViewById(R.id.etNewPassword);
-        etConfirmPassword = view.findViewById(R.id.etConfirmPassword);
+            etOldPassword = view.findViewById(R.id.etOldPassword);
+            etNewPassword = view.findViewById(R.id.etNewPassword);
+            etConfirmPassword = view.findViewById(R.id.etConfirmPassword);
 
             btnSave = view.findViewById(R.id.btnSave);
             btnLogout = view.findViewById(R.id.btnLogout);
@@ -115,6 +115,10 @@ public class ProfileFragment extends Fragment {
     }
 
     private void setupListeners() {
+        if (layoutAvatar != null) {
+            layoutAvatar.setOnClickListener(v -> openImagePicker());
+        }
+
         if (llChangeLanguage != null) {
             llChangeLanguage.setOnClickListener(v -> {
                 try {
@@ -156,7 +160,7 @@ public class ProfileFragment extends Fragment {
         }
     }
     
-     private void openImagePicker() {
+    private void openImagePicker() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         imagePickerLauncher.launch(intent);
     }
@@ -165,6 +169,8 @@ public class ProfileFragment extends Fragment {
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         if (currentUser != null) {
             profileViewModel.uploadAvatar(currentUser.getUid(), imageUri);
+        }
+    }
 
     private void observeViewModel() {
         profileViewModel.userLiveData.observe(getViewLifecycleOwner(), user -> {

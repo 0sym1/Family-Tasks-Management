@@ -38,6 +38,7 @@ import com.tngoc.familytaskapp.utils.Constants;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -58,12 +59,13 @@ public class CreateTaskFragment extends Fragment {
     
     private String workspaceId;
     private String taskId;
+    private String suggestedTaskName;
     private Calendar startCalendar, endCalendar, endTimeCalendar;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
     private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
     private List<User> workspaceMembers = new ArrayList<>();
     private List<String> selectedMemberIds = new ArrayList<>();
-    private boolean[] checkedItems;
+    private int selectedItemIndex = -1;
     private Task mTask;
 
     @Nullable
@@ -102,6 +104,8 @@ public class CreateTaskFragment extends Fragment {
             if (!taskViewModel.isEditModeInitialized) {
                 taskViewModel.loadTask(workspaceId, taskId);
             }
+        } else if (suggestedTaskName != null) {
+            etTaskName.setText(suggestedTaskName);
         }
 
         observeViewModel();
@@ -121,8 +125,8 @@ public class CreateTaskFragment extends Fragment {
         tvEndDate = view.findViewById(R.id.tvEndDate);
         tvEndTime = view.findViewById(R.id.tvEndTime);
         rgRepeat = view.findViewById(R.id.rgRepeat);
-        rbRepeatOn = rbRepeatOn != null ? rbRepeatOn : view.findViewById(R.id.rbRepeatOn);
-        rbRepeatOff = rbRepeatOff != null ? rbRepeatOff : view.findViewById(R.id.rbRepeatOff);
+        rbRepeatOn = view.findViewById(R.id.rbRepeatOn);
+        rbRepeatOff = view.findViewById(R.id.rbRepeatOff);
         ivEditRepeat = view.findViewById(R.id.ivEditRepeat);
         btnSave = view.findViewById(R.id.btnSave);
         btnCancel = view.findViewById(R.id.btnCancel);
@@ -234,7 +238,7 @@ public class CreateTaskFragment extends Fragment {
             Navigation.findNavController(v).navigate(R.id.action_createTask_to_editRepeat);
         });
 
-        llAssignedTo.setOnClickListener(v -> showMultiSelectDialog());
+        llAssignedTo.setOnClickListener(v -> showSingleSelectDialog());
 
         btnSave.setOnClickListener(v -> {
             String name = etTaskName.getText().toString().trim();
@@ -246,7 +250,7 @@ public class CreateTaskFragment extends Fragment {
             }
 
             if (selectedMemberIds.isEmpty()) {
-                Toast.makeText(requireContext(), "Vui lòng chọn ít nhất một người thực hiện", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Vui lòng chọn người thực hiện", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -306,12 +310,8 @@ public class CreateTaskFragment extends Fragment {
                 @Override
                 public void onSuccess(String newId) {
                     if (isAdded()) {
-                        Bundle bundle = new Bundle();
-                        bundle.putString("workspaceId", workspaceId);
-                        bundle.putString("taskId", newId);
                         taskViewModel.resetRepeatSettings();
-                        NavHostFragment.findNavController(CreateTaskFragment.this)
-                                .navigate(R.id.action_createTask_to_taskDetail, bundle);
+                        NavHostFragment.findNavController(CreateTaskFragment.this).navigateUp();
                     }
                 }
 
@@ -334,7 +334,7 @@ public class CreateTaskFragment extends Fragment {
         });
     }
 
-    private void showMultiSelectDialog() {
+    private void showSingleSelectDialog() {
         if (workspaceMembers.isEmpty()) return;
 
         String[] memberNames = new String[workspaceMembers.size()];
@@ -344,44 +344,22 @@ public class CreateTaskFragment extends Fragment {
                     ? user.getDisplayName() : user.getEmail();
         }
 
-        if (checkedItems == null) {
-            checkedItems = new boolean[workspaceMembers.size()];
-        }
-
         new MaterialAlertDialogBuilder(requireContext(), R.style.CustomDialogTheme)
                 .setTitle("Chọn người thực hiện")
-                .setMultiChoiceItems(memberNames, checkedItems, (dialog, which, isChecked) -> {
-                    checkedItems[which] = isChecked;
+                .setSingleChoiceItems(memberNames, selectedItemIndex, (dialog, which) -> {
+                    selectedItemIndex = which;
                 })
                 .setPositiveButton("Xong", (dialog, which) -> {
                     selectedMemberIds.clear();
-                    StringBuilder selectedNames = new StringBuilder();
-                    for (int i = 0; i < checkedItems.length; i++) {
-                        if (checkedItems[i]) {
-                            selectedMemberIds.add(workspaceMembers.get(i).getUserId());
-                            if (selectedNames.length() > 0) selectedNames.append(", ");
-                            selectedNames.append(memberNames[i]);
-                        }
+                    if (selectedItemIndex != -1) {
+                        selectedMemberIds.add(workspaceMembers.get(selectedItemIndex).getUserId());
+                        tvAssignedTo.setText(memberNames[selectedItemIndex]);
+                    } else {
+                        tvAssignedTo.setText(getString(R.string.hint_assigned_to));
                     }
-                    tvAssignedTo.setText(selectedNames.length() > 0 ? selectedNames.toString() : "Chọn người làm...");
                 })
                 .setNegativeButton("Hủy", null)
                 .show();
-    }
-    
-    private void updateRepeatIconVisibility() {
-        boolean isRepeat = rbRepeatOn.isChecked();
-        if (ivEditRepeat != null) ivEditRepeat.setVisibility(isRepeat ? View.VISIBLE : View.GONE);
-        if (llEndDate != null) llEndDate.setVisibility(isRepeat ? View.GONE : View.VISIBLE);
-    }
-
-    private void updateRepeatUIFromViewModel() {
-        Boolean isRepeating = taskViewModel.isRepeating.getValue();
-        if (isRepeating != null) {
-            if (isRepeating) rbRepeatOn.setChecked(true);
-            else rbRepeatOff.setChecked(true);
-            updateRepeatIconVisibility();
-        }
     }
 
     private void observeViewModel() {
@@ -393,70 +371,94 @@ public class CreateTaskFragment extends Fragment {
 
         workspaceViewModel.membersLiveData.observe(getViewLifecycleOwner(), members -> {
             if (members != null) {
-                this.workspaceMembers = members;
-                if (taskId != null && mTask != null) updateAssignedToUI();
-                else this.checkedItems = new boolean[members.size()];
+                workspaceMembers = members;
+                if (taskId != null && mTask != null) {
+                    updateCheckedItems();
+                }
             }
         });
 
         taskViewModel.taskLiveData.observe(getViewLifecycleOwner(), task -> {
-            if (task != null && taskId != null && !taskViewModel.isEditModeInitialized) {
-                this.mTask = task;
+            if (task != null && taskId != null) {
+                mTask = task;
                 etTaskName.setText(task.getTitle());
                 etTaskDescription.setText(task.getDescription());
-
+                
                 if (task.getStartDate() != null) {
                     startCalendar.setTime(task.getStartDate().toDate());
-                    normalizeCalendar(startCalendar);
                     tvStartDate.setText(dateFormat.format(startCalendar.getTime()));
+                }
+                
+                if (task.getEndDate() != null) {
+                    endCalendar.setTime(task.getEndDate().toDate());
+                    tvEndDate.setText(dateFormat.format(endCalendar.getTime()));
                 }
                 
                 if (task.getEndTime() != null) {
                     tvEndTime.setText(task.getEndTime());
                     try {
-                        String[] parts = task.getEndTime().split(":");
-                        endTimeCalendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(parts[0]));
-                        endTimeCalendar.set(Calendar.MINUTE, Integer.parseInt(parts[1]));
-                    } catch (Exception e) {}
+                        endTimeCalendar.setTime(timeFormat.parse(task.getEndTime()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
-
-                if (task.getEndDate() != null) {
-                    endCalendar.setTime(task.getEndDate().toDate());
-                    normalizeCalendar(endCalendar);
-                    tvEndDate.setText(dateFormat.format(endCalendar.getTime()));
-                }
-
-                boolean repeatState = task.isRepeat() || task.isRepeating();
-                if (repeatState) rbRepeatOn.setChecked(true);
-                else rbRepeatOff.setChecked(true);
-                
-                updateRepeatIconVisibility();
 
                 selectedMemberIds = new ArrayList<>(task.getAssignedToIds());
-                if (!workspaceMembers.isEmpty()) updateAssignedToUI();
-
-                taskViewModel.isRepeating.setValue(repeatState);
-                taskViewModel.repeatType.setValue(task.getRepeatType());
-                taskViewModel.repeatDays.setValue(task.getRepeatDays());
-                taskViewModel.repeatEndType.setValue(task.getRepeatEndType());
-                taskViewModel.repeatCount.setValue(task.getRepeatCount());
-                taskViewModel.repeatUntil.setValue(task.getRepeatUntil());
+                updateCheckedItems();
                 
-                taskViewModel.isEditModeInitialized = true;
+                if (task.isRepeating()) {
+                    rbRepeatOn.setChecked(true);
+                    if (!taskViewModel.isEditModeInitialized) {
+                        taskViewModel.repeatType.setValue(task.getRepeatType());
+                        taskViewModel.repeatDays.setValue(task.getRepeatDays());
+                        taskViewModel.repeatEndType.setValue(task.getRepeatEndType());
+                        taskViewModel.repeatCount.setValue(task.getRepeatCount());
+                        taskViewModel.repeatUntil.setValue(task.getRepeatUntil());
+                        taskViewModel.isEditModeInitialized = true;
+                    }
+                } else {
+                    rbRepeatOff.setChecked(true);
+                }
+                updateRepeatIconVisibility();
             }
         });
     }
 
-    private void updateAssignedToUI() {
-        checkedItems = new boolean[workspaceMembers.size()];
-        StringBuilder selectedNames = new StringBuilder();
+    private void updateCheckedItems() {
+        if (workspaceMembers.isEmpty() || selectedMemberIds.isEmpty()) return;
+        
+        String memberId = selectedMemberIds.get(0);
         for (int i = 0; i < workspaceMembers.size(); i++) {
-            if (selectedMemberIds.contains(workspaceMembers.get(i).getUserId())) {
-                checkedItems[i] = true;
-                if (selectedNames.length() > 0) selectedNames.append(", ");
-                selectedNames.append(workspaceMembers.get(i).getDisplayName());
+            if (workspaceMembers.get(i).getUserId().equals(memberId)) {
+                selectedItemIndex = i;
+                User user = workspaceMembers.get(i);
+                tvAssignedTo.setText(user.getDisplayName() != null && !user.getDisplayName().isEmpty() 
+                        ? user.getDisplayName() : user.getEmail());
+                break;
             }
         }
-        tvAssignedTo.setText(selectedNames.length() > 0 ? selectedNames.toString() : "Chọn người làm...");
+    }
+
+    private void updateRepeatUIFromViewModel() {
+        taskViewModel.isRepeating.observe(getViewLifecycleOwner(), isRepeating -> {
+            if (isRepeating != null) {
+                if (isRepeating) {
+                    rbRepeatOn.setChecked(true);
+                } else {
+                    rbRepeatOff.setChecked(true);
+                }
+                updateRepeatIconVisibility();
+            }
+        });
+    }
+
+    private void updateRepeatIconVisibility() {
+        if (rbRepeatOn.isChecked()) {
+            ivEditRepeat.setVisibility(View.VISIBLE);
+            llEndDate.setVisibility(View.GONE);
+        } else {
+            ivEditRepeat.setVisibility(View.GONE);
+            llEndDate.setVisibility(View.VISIBLE);
+        }
     }
 }

@@ -11,16 +11,6 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <ImageButton
-            android:id="@+id/btnBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="-12dp"
-            android:padding="12dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_back"
-            app:tint="@color/white" />
-
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"

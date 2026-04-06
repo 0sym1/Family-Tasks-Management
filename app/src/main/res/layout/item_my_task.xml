@@ -27,19 +27,7 @@
                 android:background="@drawable/bg_rect_dark"
                 android:paddingHorizontal="10dp"
                 android:paddingVertical="4dp"
-                android:text="17h CN 29/03"
-                android:textColor="#AAAAAA"
-                android:textSize="11sp" />
-
-            <TextView
-                android:id="@+id/tvDeadline"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/bg_rect_dark"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp"
-                android:text="Hạn: 17h CN 29/03"
+                android:text="12h00 Daily"
                 android:textColor="#AAAAAA"
                 android:textSize="11sp" />
 
@@ -52,33 +40,49 @@
                 android:id="@+id/tvStatusLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="8dp"
+                android:background="@drawable/bg_rect_dark"
+                android:paddingHorizontal="10dp"
                 android:paddingVertical="4dp"
-                android:text="ĐANG LÀM"
-                android:textColor="#5995D5"
+                android:text="DONE"
+                android:textColor="#59D595"
                 android:textSize="10sp"
                 android:textStyle="bold" />
 
+            <ImageView
+                android:id="@+id/ivMore"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_more_vert"
+                app:tint="#AAAAAA" />
+
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/tvTaskTitle"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="lm vc"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="12dp">
 
-        <TextView
-            android:id="@+id/tvAssignerName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="Ngọc giao"
-            android:textColor="#888888"
-            android:textSize="12sp" />
+            <TextView
+                android:id="@+id/tvTaskTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toStartOf="@id/ivRepeatStatus"
+                android:text="Task Title"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/ivRepeatStatus"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_sync"
+                android:visibility="gone"
+                app:tint="#59D595" />
+        </RelativeLayout>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

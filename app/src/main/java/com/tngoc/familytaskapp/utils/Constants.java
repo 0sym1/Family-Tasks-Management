@@ -42,5 +42,5 @@ public class Constants {
     public static final String CHAT_ROLE_BOT  = "bot";
 
     // Gemini API Key
-    public static final String GEMINI_API_KEY = "";
+    public static final String GEMINI_API_KEY = "AIzaSyDDlzLycTZbO3cgMi0q6S4YA0hoN6wORJo";
 }

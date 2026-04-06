@@ -296,7 +296,6 @@ public class TaskDetailFragment extends Fragment {
             tvStatus.setTextColor(android.graphics.Color.parseColor("#59D595"));
             tvStatus.getBackground().setTint(android.graphics.Color.parseColor("#1B3022"));
         } else if (Constants.TASK_STATUS_IN_PROGRESS.equalsIgnoreCase(status) || "doing".equalsIgnoreCase(status) || Constants.TASK_STATUS_TODO.equalsIgnoreCase(status)) {
-            // "CHƯA LÀM" (TODO) cũng chuyển thành "ĐANG LÀM" (DOING) theo yêu cầu
             tvStatus.setText(getString(R.string.status_doing));
             tvStatus.setTextColor(android.graphics.Color.parseColor("#5EB5F7"));
             tvStatus.getBackground().setTint(android.graphics.Color.parseColor("#1A2B3D"));
@@ -316,27 +315,31 @@ public class TaskDetailFragment extends Fragment {
             tvStartDate.setText(dateOnlySdf.format(task.getStartDate().toDate()));
         }
 
-        String timePart = task.getEndTime() != null ? task.getEndTime().replace(":", "h") : "12h00";
+        // Định dạng giờ dựa trên Locale
+        String timePart = task.getEndTime() != null ? task.getEndTime() : "12:00";
+        if (Locale.getDefault().getLanguage().equals("vi")) {
+            timePart = timePart.replace(":", "h");
+        }
         
         if (isRepeat) {
             String repeatInfo = "";
             if ("Daily".equalsIgnoreCase(task.getRepeatType())) {
-                repeatInfo = "Hằng ngày";
+                repeatInfo = getString(R.string.repeat_daily);
                 trRepeatDays.setVisibility(View.GONE);
             } else if ("Weekly".equalsIgnoreCase(task.getRepeatType())) {
-                repeatInfo = "Hằng tuần";
+                repeatInfo = getString(R.string.repeat_weekly);
                 trRepeatDays.setVisibility(View.VISIBLE);
                 
                 List<String> days = task.getRepeatDays();
                 if (days != null && !days.isEmpty()) {
                     Map<String, String> dayMap = new HashMap<>();
-                    dayMap.put("mon", "Th 2");
-                    dayMap.put("tue", "Th 3");
-                    dayMap.put("wed", "Th 4");
-                    dayMap.put("thu", "Th 5");
-                    dayMap.put("fri", "Th 6");
-                    dayMap.put("sat", "Th 7");
-                    dayMap.put("sun", "CN");
+                    dayMap.put("mon", getString(R.string.mon));
+                    dayMap.put("tue", getString(R.string.tue));
+                    dayMap.put("wed", getString(R.string.wed));
+                    dayMap.put("thu", getString(R.string.thu));
+                    dayMap.put("fri", getString(R.string.fri));
+                    dayMap.put("sat", getString(R.string.sat));
+                    dayMap.put("sun", getString(R.string.sun));
                     
                     List<String> formattedDays = new java.util.ArrayList<>();
                     for (String day : days) {
@@ -346,7 +349,7 @@ public class TaskDetailFragment extends Fragment {
                     }
                     tvRepeatDays.setText(TextUtils.join(", ", formattedDays));
                 } else {
-                    tvRepeatDays.setText("Chưa chọn ngày");
+                    tvRepeatDays.setText("---");
                 }
             }
             tvEndDate.setText(timePart + " " + repeatInfo);

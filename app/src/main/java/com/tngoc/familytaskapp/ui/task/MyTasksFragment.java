@@ -70,9 +70,13 @@ public class MyTasksFragment extends Fragment {
         setupTaskList();
         listenToMyTasks();
 
-        view.findViewById(R.id.btnBack).setOnClickListener(v -> {
-            if (getActivity() != null) getActivity().onBackPressed();
-        });
+        View btnBack = view.findViewById(R.id.btnBack);
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> {
+                if (getActivity() != null) getActivity().onBackPressed();
+            });
+        }
+
         view.findViewById(R.id.btnPrevWeek).setOnClickListener(v -> calendarAdapter.prevWeek());
         view.findViewById(R.id.btnNextWeek).setOnClickListener(v -> calendarAdapter.nextWeek());
 

@@ -6,11 +6,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
@@ -51,6 +53,7 @@ public class WorkReportFragment extends Fragment {
     private PieChart pieChart;
     private BarChart barChart;
     private LineChart lineChart;
+    private ImageView btnBack;
     
     private FirebaseFirestore db;
     private String currentUserId;
@@ -77,12 +80,13 @@ public class WorkReportFragment extends Fragment {
         pieChart = view.findViewById(R.id.pieChart);
         barChart = view.findViewById(R.id.barChart);
         lineChart = view.findViewById(R.id.lineChart);
+        btnBack = view.findViewById(R.id.btnBack);
 
         setupCharts();
 
-        view.findViewById(R.id.btnBack).setOnClickListener(v -> {
-            if (getActivity() != null) getActivity().onBackPressed();
-        });
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
+        }
 
         fetchWorkspacesAndStartListening();
     }

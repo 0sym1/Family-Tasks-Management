@@ -3,6 +3,7 @@ package com.tngoc.familytaskapp.ui.task;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,7 +25,7 @@ public class MyTaskAdapter extends RecyclerView.Adapter<MyTaskAdapter.MyTaskView
     }
 
     private List<Task> tasks = new ArrayList<>();
-    private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH'h' EEE dd/MM", new Locale("vi", "VN"));
+    private final SimpleDateFormat deadlineFormat = new SimpleDateFormat("dd/MM", new Locale("vi", "VN"));
     private OnTaskClickListener listener;
 
     public void setTasks(List<Task> tasks) {
@@ -49,43 +50,39 @@ public class MyTaskAdapter extends RecyclerView.Adapter<MyTaskAdapter.MyTaskView
         
         holder.tvTaskTitle.setText(task.getTitle());
         
-        if (task.getStartDate() != null) {
-            holder.tvTaskTime.setText(timeFormat.format(task.getStartDate().toDate()));
-            holder.tvTaskTime.setVisibility(View.VISIBLE);
-        } else {
-            holder.tvTaskTime.setVisibility(View.GONE);
-        }
+        String timePart = task.getEndTime() != null ? task.getEndTime().replace(":", "h") : "12h00";
 
-        if (task.getEndDate() != null) {
-            holder.tvDeadline.setVisibility(View.VISIBLE);
-            holder.tvDeadline.setText("Hạn: " + timeFormat.format(task.getEndDate().toDate()));
+        if (task.isRepeating()) {
+            holder.tvTaskTime.setText(timePart + " " + task.getRepeatType());
+            holder.ivRepeatStatus.setVisibility(View.VISIBLE);
         } else {
-            holder.tvDeadline.setVisibility(View.GONE);
-        }
-
-        String ownerName = task.getOwnerName();
-        if (ownerName != null && !ownerName.isEmpty() && !ownerName.equals("Người thân")) {
-            holder.tvAssignerName.setText("Giao bởi " + ownerName);
-        } else {
-            holder.tvAssignerName.setText("Giao bởi người thân");
+            if (task.getEndDate() != null) {
+                holder.tvTaskTime.setText("Deadline: " + timePart + " " + deadlineFormat.format(task.getEndDate().toDate()));
+            } else {
+                holder.tvTaskTime.setText("Deadline: " + timePart);
+            }
+            holder.ivRepeatStatus.setVisibility(View.GONE);
         }
 
         if (Constants.TASK_STATUS_DONE.equals(task.getStatus())) {
-            holder.tvStatusLabel.setText("XONG");
+            holder.tvStatusLabel.setText("DONE");
             holder.tvStatusLabel.setTextColor(0xFF59D595);
         } else if (Constants.TASK_STATUS_PENDING.equals(task.getStatus())) {
-            holder.tvStatusLabel.setText("CHỜ DUYỆT");
+            holder.tvStatusLabel.setText("PENDING");
             holder.tvStatusLabel.setTextColor(0xFFEBB059);
         } else {
-            holder.tvStatusLabel.setText("ĐANG LÀM");
+            holder.tvStatusLabel.setText("DOING");
             holder.tvStatusLabel.setTextColor(0xFF5995D5);
         }
 
-        // Đảm bảo click vào toàn bộ item
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onTaskClick(task, v);
             }
+        });
+
+        holder.ivMore.setOnClickListener(v -> {
+            // Show menu if needed
         });
     }
 
@@ -95,17 +92,17 @@ public class MyTaskAdapter extends RecyclerView.Adapter<MyTaskAdapter.MyTaskView
     }
 
     static class MyTaskViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTaskTime, tvDeadline, tvAssignerName, tvStatusLabel, tvTaskTitle;
+        TextView tvTaskTime, tvStatusLabel, tvTaskTitle;
+        ImageView ivMore, ivRepeatStatus;
 
         public MyTaskViewHolder(@NonNull View itemView) {
             super(itemView);
             tvTaskTime = itemView.findViewById(R.id.tvTaskTime);
-            tvDeadline = itemView.findViewById(R.id.tvDeadline);
-            tvAssignerName = itemView.findViewById(R.id.tvAssignerName);
             tvStatusLabel = itemView.findViewById(R.id.tvStatusLabel);
             tvTaskTitle = itemView.findViewById(R.id.tvTaskTitle);
+            ivMore = itemView.findViewById(R.id.ivMore);
+            ivRepeatStatus = itemView.findViewById(R.id.ivRepeatStatus);
             
-            // Thêm feedback khi nhấn
             itemView.setClickable(true);
             itemView.setFocusable(true);
         }

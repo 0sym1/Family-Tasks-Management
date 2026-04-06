@@ -163,7 +163,7 @@
     <fragment
         android:id="@+id/rankingFragment"
         android:name="com.tngoc.familytaskapp.ui.ranking.RankingFragment"
-        android:label="Xếp hạng">
+        android:label="Bảng xếp hạng">
         <argument
             android:name="workspaceId"
             app:argType="string" />
@@ -178,11 +178,6 @@
         android:id="@+id/changeLanguageFragment"
         android:name="com.tngoc.familytaskapp.ui.settings.ChangeLanguageFragment"
         android:label="Chọn ngôn ngữ" />
-
-    <fragment
-        android:id="@+id/rankingFragment"
-        android:name="com.tngoc.familytaskapp.ui.ranking.RankingFragment"
-        android:label="Bảng xếp hạng" />
 
     <fragment
         android:id="@+id/workReportFragment"

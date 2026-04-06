@@ -51,7 +51,8 @@
                     android:layout_height="18dp"
                     android:src="@drawable/ic_language"
                     app:tint="@color/white"
-                    android:layout_marginEnd="8dp" />
+                    android:layout_marginEnd="8dp"
+                    android:contentDescription="@null" />
 
                 <TextView
                     android:id="@+id/tvCurrentLanguage"
@@ -66,31 +67,39 @@
                     android:layout_width="12dp"
                     android:layout_height="12dp"
                     android:src="@drawable/ic_arrow_right"
-                    app:tint="@color/text_hint" />
+                    app:tint="@color/text_hint"
+                    android:contentDescription="@null" />
 
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
 
         </RelativeLayout>
 
         <!-- Avatar Section -->
         <FrameLayout
-            android:layout_width="match_parent"
+            android:id="@+id/layoutAvatar"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:cardBackgroundColor="@color/input_bg"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="0dp"
-            app:strokeWidth="0dp"
-            android:layout_marginBottom="20dp">
+            android:layout_gravity="center"
+            android:layout_marginBottom="20dp"
+            android:clickable="true"
+            android:focusable="true">
 
-            <ImageView
-                android:id="@+id/ivAvatar"
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:src="@drawable/ic_user_default"
-                android:contentDescription="@string/profile_avatar"
-                android:scaleType="centerCrop"
-                android:layout_gravity="center" />
+                app:cardCornerRadius="60dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp"
+                app:cardBackgroundColor="@color/input_bg">
+
+                <ImageView
+                    android:id="@+id/ivAvatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_user_default"
+                    android:contentDescription="@string/profile_avatar"
+                    android:scaleType="centerCrop" />
+            </com.google.android.material.card.MaterialCardView>
 
             <ImageView
                 android:layout_width="32dp"
@@ -99,8 +108,8 @@
                 app:tint="@color/white"
                 android:contentDescription="@string/profile_edit_avatar"
                 android:layout_gravity="bottom|end"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp" />
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp" />
 
         </FrameLayout>
 
@@ -120,7 +129,7 @@
             android:id="@+id/tvUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@Tuan Ngoc"
+            android:text="Tuan Ngoc"
             android:textColor="@color/text_hint"
             android:textSize="14sp"
             android:gravity="center"
@@ -129,66 +138,63 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
+            android:orientation="vertical"
+            android:background="@drawable/bg_rect_dark"
+            android:padding="16dp"
             android:layout_marginBottom="32dp">
 
-            <TextView
-                android:id="@+id/tvEmail"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="8dp">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_person"
+                    app:tint="@color/text_secondary"
+                    android:contentDescription="@null" />
+                <TextView
+                    android:id="@+id/tvEmail"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingVertical="8dp">
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_person"
-                        app:tint="@color/text_secondary" />
-                    <TextView
-                        android:id="@+id/tvEmail"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="16dp"
-                        android:text="user@example.com"
-                        android:textColor="@color/white"
-                        android:textSize="14sp" />
-                </LinearLayout>
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:text="user@example.com"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+            </LinearLayout>
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/divider"
-                    android:layout_marginVertical="8dp" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/divider"
+                android:layout_marginVertical="8dp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingVertical="8dp">
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_reward"
+                    app:tint="@color/text_secondary"
+                    android:contentDescription="@null" />
+                <TextView
+                    android:id="@+id/tvPoints"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingVertical="8dp">
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_reward"
-                        app:tint="@color/text_secondary" />
-                    <TextView
-                        android:id="@+id/tvPoints"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="16dp"
-                        android:text="@string/profile_points_default"
-                        android:textColor="@color/white"
-                        android:textSize="14sp" />
-                </LinearLayout>
+                    android:layout_weight="1"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/profile_points_default"
+                    android:textColor="@color/white"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
 
         <!-- Divider -->
         <View
@@ -217,7 +223,8 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:layout_marginBottom="12dp"
-            android:background="@drawable/bg_input_field" />
+            android:background="@drawable/bg_input_field"
+            android:importantForAutofill="no" />
 
         <EditText
             android:id="@+id/etNewPassword"
@@ -229,7 +236,8 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:layout_marginBottom="12dp"
-            android:background="@drawable/bg_input_field" />
+            android:background="@drawable/bg_input_field"
+            android:importantForAutofill="no" />
 
         <EditText
             android:id="@+id/etConfirmPassword"
@@ -241,7 +249,8 @@
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:layout_marginBottom="24dp"
-            android:background="@drawable/bg_input_field" />
+            android:background="@drawable/bg_input_field"
+            android:importantForAutofill="no" />
 
         <!-- Action Buttons -->
         <Button
@@ -266,4 +275,4 @@
 
     </LinearLayout>
 
-</ScrollView>
+</androidx.core.widget.NestedScrollView>
