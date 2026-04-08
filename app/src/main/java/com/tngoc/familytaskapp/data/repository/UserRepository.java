@@ -1,6 +1,7 @@
 package com.tngoc.familytaskapp.data.repository;
 
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -9,6 +10,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.tngoc.familytaskapp.data.model.User;
 import com.tngoc.familytaskapp.utils.Constants;
@@ -69,17 +71,55 @@ public class UserRepository {
     }
 
     public void uploadAvatar(String userId, Uri imageUri, MutableLiveData<String> avatarUrlLiveData, MutableLiveData<String> errorLiveData) {
-        StorageReference ref = storage.getReference().child("avatars/" + userId + ".jpg");
-        ref.putFile(imageUri)
-                .addOnSuccessListener(taskSnapshot -> ref.getDownloadUrl().addOnSuccessListener(uri -> {
-                    String url = uri.toString();
-                    Map<String, Object> update = new HashMap<>();
-                    update.put("avt_url", url);
-                    db.collection(Constants.COLLECTION_USERS).document(userId).update(update)
-                            .addOnSuccessListener(unused -> avatarUrlLiveData.setValue(url))
-                            .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
-                }))
-                .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
+        if (imageUri == null) {
+            errorLiveData.setValue("Lỗi: Ảnh không hợp lệ");
+            return;
+        }
+
+        try {
+            // Sử dụng tên file không có đuôi mở rộng hoặc tự động lấy từ Uri để tránh lỗi format
+            StorageReference ref = storage.getReference().child("avatars/" + userId);
+            
+            // Thêm Metadata để Firebase hiểu đây là ảnh
+            StorageMetadata metadata = new StorageMetadata.Builder()
+                    .setContentType("image/jpeg")
+                    .build();
+
+            ref.putFile(imageUri, metadata)
+                    .addOnSuccessListener(taskSnapshot -> {
+                        Log.d("UploadAvatar", "Upload successful, getting download URL");
+                        ref.getDownloadUrl().addOnSuccessListener(uri -> {
+                            String url = uri.toString();
+                            Log.d("UploadAvatar", "Download URL: " + url);
+                            
+                            // Cập nhật cả "avatarUrl" và "avt_url" để tương thích với model User
+                            Map<String, Object> update = new HashMap<>();
+                            update.put("avatarUrl", url);
+                            update.put("avt_url", url);
+
+                            db.collection(Constants.COLLECTION_USERS).document(userId).update(update)
+                                    .addOnSuccessListener(unused -> {
+                                        Log.d("UploadAvatar", "Firestore update successful");
+                                        avatarUrlLiveData.setValue(url);
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Log.e("UploadAvatar", "Firestore update failed: " + e.getMessage(), e);
+                                        errorLiveData.setValue("Lỗi cập nhật Firestore: " + e.getMessage());
+                                    });
+                        }).addOnFailureListener(e -> {
+                            Log.e("UploadAvatar", "Get download URL failed: " + e.getMessage(), e);
+                            errorLiveData.setValue("Lỗi lấy link ảnh: " + e.getMessage());
+                        });
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("UploadAvatar", "Upload failed: " + e.getMessage(), e);
+                        // Trả về lỗi chi tiết thay vì lỗi chung chung
+                        errorLiveData.setValue("Lỗi tải ảnh lên Storage: " + e.getMessage());
+                    });
+        } catch (Exception e) {
+            Log.e("UploadAvatar", "Exception: " + e.getMessage(), e);
+            errorLiveData.setValue("Lỗi hệ thống: " + e.getMessage());
+        }
     }
 
     public void getUsers(List<String> userIds, MutableLiveData<List<User>> usersLiveData, MutableLiveData<String> errorLiveData) {

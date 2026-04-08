@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class WorkspaceRepository {
 
@@ -23,22 +24,42 @@ public class WorkspaceRepository {
         this.db = FirebaseFirestore.getInstance();
     }
 
-    public void createWorkspace(Workspace workspace, MutableLiveData<String> workspaceIdLiveData, MutableLiveData<String> errorLiveData) {
+    public void createWorkspace(Workspace workspace, Consumer<String> onSuccess, Consumer<String> onFailure) {
         db.collection(Constants.COLLECTION_WORKSPACES)
                 .add(workspace)
-                .addOnSuccessListener(ref -> workspaceIdLiveData.setValue(ref.getId()))
-                .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
+                .addOnSuccessListener(ref -> {
+                    if (onSuccess != null) onSuccess.accept(ref.getId());
+                })
+                .addOnFailureListener(e -> {
+                    if (onFailure != null) onFailure.accept(e.getMessage());
+                });
     }
 
-    public void addMemberToWorkspace(String workspaceId, String userId, MutableLiveData<Boolean> successLiveData, MutableLiveData<String> errorLiveData) {
+    public void createWorkspace(Workspace workspace, MutableLiveData<String> workspaceIdLiveData, MutableLiveData<String> errorLiveData) {
+        createWorkspace(workspace, 
+                id -> { if (workspaceIdLiveData != null) workspaceIdLiveData.setValue(id); },
+                err -> { if (errorLiveData != null) errorLiveData.setValue(err); });
+    }
+
+    public void addMemberToWorkspace(String workspaceId, String userId, Consumer<Boolean> onSuccess, Consumer<String> onFailure) {
         db.collection(Constants.COLLECTION_WORKSPACES)
                 .document(workspaceId)
                 .update("memberIds", FieldValue.arrayUnion(userId))
-                .addOnSuccessListener(unused -> successLiveData.setValue(true))
-                .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
+                .addOnSuccessListener(unused -> {
+                    if (onSuccess != null) onSuccess.accept(true);
+                })
+                .addOnFailureListener(e -> {
+                    if (onFailure != null) onFailure.accept(e.getMessage());
+                });
     }
 
-    public void getWorkspacesForUser(String userId, MutableLiveData<List<Workspace>> workspacesLiveData, MutableLiveData<String> errorLiveData) {
+    public void addMemberToWorkspace(String workspaceId, String userId, MutableLiveData<Boolean> successLiveData, MutableLiveData<String> errorLiveData) {
+        addMemberToWorkspace(workspaceId, userId,
+                success -> { if (successLiveData != null) successLiveData.setValue(success); },
+                err -> { if (errorLiveData != null) errorLiveData.setValue(err); });
+    }
+
+    public void getWorkspacesForUser(String userId, Consumer<List<Workspace>> callback, Consumer<String> onError) {
         // Clear old listeners if any
         for (ListenerRegistration listener : activeListeners.values()) {
             listener.remove();
@@ -49,7 +70,7 @@ public class WorkspaceRepository {
                 .whereArrayContains("memberIds", userId)
                 .addSnapshotListener((snapshots, e) -> {
                     if (e != null) {
-                        errorLiveData.setValue(e.getMessage());
+                        if (onError != null) onError.accept(e.getMessage());
                         return;
                     }
 
@@ -57,11 +78,10 @@ public class WorkspaceRepository {
 
                     List<Workspace> list = new ArrayList<>();
                     if (snapshots.isEmpty()) {
-                        workspacesLiveData.setValue(list);
+                        if (callback != null) callback.accept(list);
                         return;
                     }
 
-                    final int totalWorkspaces = snapshots.size();
                     final Map<String, Workspace> workspaceMap = new HashMap<>();
 
                     for (QueryDocumentSnapshot doc : snapshots) {
@@ -86,7 +106,7 @@ public class WorkspaceRepository {
                                         workspace.setCompletedTasks(completed);
 
                                         // Update the live data whenever a task change occurs
-                                        workspacesLiveData.setValue(new ArrayList<>(workspaceMap.values()));
+                                        if (callback != null) callback.accept(new ArrayList<>(workspaceMap.values()));
                                     }
                                 });
                         
@@ -95,12 +115,18 @@ public class WorkspaceRepository {
                 });
     }
 
-    public void getWorkspace(String workspaceId, MutableLiveData<Workspace> workspaceLiveData, MutableLiveData<String> errorLiveData) {
+    public void getWorkspacesForUser(String userId, MutableLiveData<List<Workspace>> workspacesLiveData, MutableLiveData<String> errorLiveData) {
+        getWorkspacesForUser(userId,
+                list -> { if (workspacesLiveData != null) workspacesLiveData.setValue(list); },
+                err -> { if (errorLiveData != null) errorLiveData.setValue(err); });
+    }
+
+    public void getWorkspace(String workspaceId, Consumer<Workspace> callback, Consumer<String> onError) {
         db.collection(Constants.COLLECTION_WORKSPACES)
                 .document(workspaceId)
                 .addSnapshotListener((snapshot, e) -> {
                     if (e != null) {
-                        errorLiveData.setValue(e.getMessage());
+                        if (onError != null) onError.accept(e.getMessage());
                         return;
                     }
                     if (snapshot != null && snapshot.exists()) {
@@ -119,26 +145,52 @@ public class WorkspaceRepository {
                                         }
                                         workspace.setTotalTasks(total);
                                         workspace.setCompletedTasks(completed);
-                                        workspaceLiveData.setValue(workspace);
+                                        if (callback != null) callback.accept(workspace);
                                     });
                         }
                     }
                 });
     }
 
-    public void updateWorkspace(Workspace workspace, MutableLiveData<Boolean> successLiveData, MutableLiveData<String> errorLiveData) {
+    public void getWorkspace(String workspaceId, MutableLiveData<Workspace> workspaceLiveData, MutableLiveData<String> errorLiveData) {
+        getWorkspace(workspaceId,
+                ws -> { if (workspaceLiveData != null) workspaceLiveData.setValue(ws); },
+                err -> { if (errorLiveData != null) errorLiveData.setValue(err); });
+    }
+
+    public void updateWorkspace(Workspace workspace, Consumer<Boolean> onSuccess, Consumer<String> onFailure) {
         db.collection(Constants.COLLECTION_WORKSPACES)
                 .document(workspace.getWorkspaceId())
                 .set(workspace)
-                .addOnSuccessListener(unused -> successLiveData.setValue(true))
-                .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
+                .addOnSuccessListener(unused -> {
+                    if (onSuccess != null) onSuccess.accept(true);
+                })
+                .addOnFailureListener(e -> {
+                    if (onFailure != null) onFailure.accept(e.getMessage());
+                });
     }
 
-    public void deleteWorkspace(String workspaceId, MutableLiveData<Boolean> successLiveData, MutableLiveData<String> errorLiveData) {
+    public void updateWorkspace(Workspace workspace, MutableLiveData<Boolean> successLiveData, MutableLiveData<String> errorLiveData) {
+        updateWorkspace(workspace,
+                success -> { if (successLiveData != null) successLiveData.setValue(success); },
+                err -> { if (errorLiveData != null) errorLiveData.setValue(err); });
+    }
+
+    public void deleteWorkspace(String workspaceId, Consumer<Boolean> onSuccess, Consumer<String> onFailure) {
         db.collection(Constants.COLLECTION_WORKSPACES)
                 .document(workspaceId)
                 .delete()
-                .addOnSuccessListener(unused -> successLiveData.setValue(true))
-                .addOnFailureListener(e -> errorLiveData.setValue(e.getMessage()));
+                .addOnSuccessListener(unused -> {
+                    if (onSuccess != null) onSuccess.accept(true);
+                })
+                .addOnFailureListener(e -> {
+                    if (onFailure != null) onFailure.accept(e.getMessage());
+                });
+    }
+
+    public void deleteWorkspace(String workspaceId, MutableLiveData<Boolean> successLiveData, MutableLiveData<String> errorLiveData) {
+        deleteWorkspace(workspaceId,
+                success -> { if (successLiveData != null) successLiveData.setValue(success); },
+                err -> { if (errorLiveData != null) errorLiveData.setValue(err); });
     }
 }

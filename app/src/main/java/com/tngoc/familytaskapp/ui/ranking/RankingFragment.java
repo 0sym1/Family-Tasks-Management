@@ -9,15 +9,15 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tngoc.familytaskapp.R;
+import com.tngoc.familytaskapp.ui.BaseFragment;
 
-public class RankingFragment extends Fragment {
+public class RankingFragment extends BaseFragment {
 
     private RecyclerView recyclerView;
     private RankingAdapter adapter;
@@ -73,5 +73,7 @@ public class RankingFragment extends Fragment {
                 Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
             }
         });
+
+        viewModel.loadingLiveData.observe(getViewLifecycleOwner(), this::showLoading);
     }
 }

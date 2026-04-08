@@ -11,7 +11,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,8 +22,9 @@ import com.tngoc.familytaskapp.R;
 import com.tngoc.familytaskapp.adapter.NotificationAdapter;
 import com.tngoc.familytaskapp.data.model.Notification;
 import com.tngoc.familytaskapp.data.repository.NotificationRepository;
+import com.tngoc.familytaskapp.ui.BaseFragment;
 
-public class NotificationFragment extends Fragment {
+public class NotificationFragment extends BaseFragment {
 
     private NotificationViewModel notificationViewModel;
     private NotificationRepository notificationRepository;
@@ -130,5 +130,7 @@ public class NotificationFragment extends Fragment {
                 Toast.makeText(requireContext(), "Đã tham gia Workspace", Toast.LENGTH_SHORT).show();
             }
         });
+
+        notificationViewModel.loadingLiveData.observe(getViewLifecycleOwner(), this::showLoading);
     }
 }

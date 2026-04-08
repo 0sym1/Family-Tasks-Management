@@ -1,8 +1,10 @@
 package com.tngoc.familytaskapp.ui.profile;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
@@ -19,7 +21,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
@@ -28,11 +30,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.tngoc.familytaskapp.R;
 import com.tngoc.familytaskapp.data.model.User;
+import com.tngoc.familytaskapp.ui.BaseFragment;
 import com.tngoc.familytaskapp.ui.home.HomeActivity;
 import com.tngoc.familytaskapp.ui.settings.ChangeLanguageFragment;
 import com.tngoc.familytaskapp.utils.SharedPrefManager;
 
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends BaseFragment {
 
     private ProfileViewModel profileViewModel;
     private SharedPrefManager sharedPrefManager;
@@ -46,6 +49,7 @@ public class ProfileFragment extends Fragment {
     private View llChangeLanguage;
 
     private ActivityResultLauncher<Intent> imagePickerLauncher;
+    private ActivityResultLauncher<String> permissionLauncher;
 
     @Nullable
     @Override
@@ -57,15 +61,25 @@ public class ProfileFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // Đăng ký Activity Result để chọn ảnh
         imagePickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                         Uri imageUri = result.getData().getData();
                         if (imageUri != null) {
-                            uploadAvatar(imageUri);
+                            handleLocalAvatar(imageUri);
                         }
+                    }
+                }
+        );
+
+        permissionLauncher = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                isGranted -> {
+                    if (isGranted) {
+                        openImagePicker();
+                    } else {
+                        Toast.makeText(requireContext(), "Cần quyền truy cập ảnh để thay đổi avatar", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
@@ -91,32 +105,27 @@ public class ProfileFragment extends Fragment {
     }
 
     private void initViews(View view) {
-        try {
-            ivAvatar = view.findViewById(R.id.ivAvatar);
-            layoutAvatar = view.findViewById(R.id.layoutAvatar);
-            tvName = view.findViewById(R.id.tvName);
-            tvUsername = view.findViewById(R.id.tvUsername);
-            tvPoints = view.findViewById(R.id.tvPoints);
-            tvEmail = view.findViewById(R.id.tvEmail);
+        ivAvatar = view.findViewById(R.id.ivAvatar);
+        layoutAvatar = view.findViewById(R.id.layoutAvatar);
+        tvName = view.findViewById(R.id.tvName);
+        tvUsername = view.findViewById(R.id.tvUsername);
+        tvPoints = view.findViewById(R.id.tvPoints);
+        tvEmail = view.findViewById(R.id.tvEmail);
 
-            etOldPassword = view.findViewById(R.id.etOldPassword);
-            etNewPassword = view.findViewById(R.id.etNewPassword);
-            etConfirmPassword = view.findViewById(R.id.etConfirmPassword);
+        etOldPassword = view.findViewById(R.id.etOldPassword);
+        etNewPassword = view.findViewById(R.id.etNewPassword);
+        etConfirmPassword = view.findViewById(R.id.etConfirmPassword);
 
-            btnSave = view.findViewById(R.id.btnSave);
-            btnLogout = view.findViewById(R.id.btnLogout);
-            
-            llChangeLanguage = view.findViewById(R.id.llChangeLanguage);
-            tvCurrentLanguage = view.findViewById(R.id.tvCurrentLanguage);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(requireContext(), "Error initializing views: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+        btnSave = view.findViewById(R.id.btnSave);
+        btnLogout = view.findViewById(R.id.btnLogout);
+        
+        llChangeLanguage = view.findViewById(R.id.llChangeLanguage);
+        tvCurrentLanguage = view.findViewById(R.id.tvCurrentLanguage);
     }
 
     private void setupListeners() {
         if (layoutAvatar != null) {
-            layoutAvatar.setOnClickListener(v -> openImagePicker());
+            layoutAvatar.setOnClickListener(v -> requestImagePermissionAndPick());
         }
 
         if (llChangeLanguage != null) {
@@ -124,7 +133,6 @@ public class ProfileFragment extends Fragment {
                 try {
                     Navigation.findNavController(v).navigate(R.id.action_profile_to_changeLanguage);
                 } catch (Exception e) {
-                    // Fallback for manual transaction in HomeActivity
                     if (isAdded()) {
                         getParentFragmentManager().beginTransaction()
                                 .replace(R.id.fragment_container, new ChangeLanguageFragment())
@@ -165,10 +173,36 @@ public class ProfileFragment extends Fragment {
         imagePickerLauncher.launch(intent);
     }
 
-    private void uploadAvatar(Uri imageUri) {
+    private void requestImagePermissionAndPick() {
+        String permission;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permission = Manifest.permission.READ_MEDIA_IMAGES;
+        } else {
+            permission = Manifest.permission.READ_EXTERNAL_STORAGE;
+        }
+
+        if (ContextCompat.checkSelfPermission(requireContext(), permission)
+                == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            openImagePicker();
+        } else {
+            permissionLauncher.launch(permission);
+        }
+    }
+
+    private void handleLocalAvatar(Uri imageUri) {
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
         if (currentUser != null) {
-            profileViewModel.uploadAvatar(currentUser.getUid(), imageUri);
+            String userId = currentUser.getUid();
+            // Lưu Uri ảnh vào Shared Preferences cục bộ
+            sharedPrefManager.saveUserAvatar(userId, imageUri.toString());
+            
+            // Hiển thị ngay lên ImageView
+            Glide.with(this)
+                    .load(imageUri)
+                    .circleCrop()
+                    .into(ivAvatar);
+            
+            Toast.makeText(requireContext(), "Đã cập nhật ảnh đại diện cục bộ", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -176,13 +210,6 @@ public class ProfileFragment extends Fragment {
         profileViewModel.userLiveData.observe(getViewLifecycleOwner(), user -> {
             if (user != null) {
                 displayUserInfo(user);
-            }
-        });
-
-        profileViewModel.avatarUrlLiveData.observe(getViewLifecycleOwner(), url -> {
-            if (url != null && !url.isEmpty()) {
-                Glide.with(this).load(url).circleCrop().into(ivAvatar);
-                Toast.makeText(requireContext(), "Cập nhật ảnh đại diện thành công!", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -195,13 +222,11 @@ public class ProfileFragment extends Fragment {
 
         profileViewModel.errorLiveData.observe(getViewLifecycleOwner(), error -> {
             if (error != null && !error.isEmpty()) {
-                Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), error, Toast.LENGTH_LONG).show();
             }
         });
-        
-        profileViewModel.loadingLiveData.observe(getViewLifecycleOwner(), isLoading -> {
-            // Có thể thêm ProgressBar ở đây nếu muốn
-        });
+
+        profileViewModel.loadingLiveData.observe(getViewLifecycleOwner(), this::showLoading);
     }
 
     private void displayUserInfo(User user) {
@@ -218,32 +243,20 @@ public class ProfileFragment extends Fragment {
             tvEmail.setText(user.getEmail());
         }
 
-        if (user.getAvatarUrl() != null && !user.getAvatarUrl().isEmpty()) {
-            Glide.with(this)
-                    .load(user.getAvatarUrl())
-                    .placeholder(R.drawable.ic_user_default)
-                    .circleCrop()
-                    .into(ivAvatar);
-        }
+        // Ưu tiên hiển thị ảnh từ Local trước, nếu không có mới dùng ảnh từ Firebase (Cloud)
+        String localAvatar = sharedPrefManager.getUserAvatar(user.getUserId());
+        Object imageSource = (localAvatar != null) ? Uri.parse(localAvatar) : user.getAvatarUrl();
+
+        Glide.with(this)
+                .load(imageSource)
+                .placeholder(R.drawable.ic_user_default)
+                .error(R.drawable.ic_user_default)
+                .circleCrop()
+                .into(ivAvatar);
     }
 
     private void saveProfile() {
-        String newPassword = etNewPassword.getText().toString().trim();
-        String confirmPassword = etConfirmPassword.getText().toString().trim();
-
-        if (!newPassword.isEmpty() || !confirmPassword.isEmpty()) {
-            if (newPassword.isEmpty() || confirmPassword.isEmpty()) {
-                Toast.makeText(requireContext(), "Vui lòng điền đầy đủ mật khẩu mới", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (!newPassword.equals(confirmPassword)) {
-                Toast.makeText(requireContext(), "Mật khẩu không khớp", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            Toast.makeText(requireContext(), "Tính năng đổi mật khẩu đang được cập nhật", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(requireContext(), "Lưu thông tin thành công!", Toast.LENGTH_SHORT).show();
-        }
+        Toast.makeText(requireContext(), "Lưu thông tin thành công!", Toast.LENGTH_SHORT).show();
     }
 
     private void clearPasswordFields() {

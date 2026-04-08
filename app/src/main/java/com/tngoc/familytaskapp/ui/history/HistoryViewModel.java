@@ -25,6 +25,7 @@ public class HistoryViewModel extends ViewModel {
 
     public final MutableLiveData<List<Object>> historyLiveData = new MutableLiveData<>();
     public final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
+    public final MutableLiveData<Boolean> loadingLiveData = new MutableLiveData<>();
 
     private List<TaskHistory> cachedHistories = new ArrayList<>();
     private List<Reward> cachedRewards = new ArrayList<>();
@@ -45,6 +46,7 @@ public class HistoryViewModel extends ViewModel {
             return;
         }
 
+        loadingLiveData.setValue(true);
         Log.d(TAG, "startListening() workspaceId = " + workspaceId);
         stopListening();
 
@@ -53,6 +55,7 @@ public class HistoryViewModel extends ViewModel {
                 .collection("histories")
                 .orderBy("createdAt", Query.Direction.DESCENDING)
                 .addSnapshotListener((value, error) -> {
+                    loadingLiveData.setValue(false);
                     if (error != null) {
                         Log.e(TAG, "history listener error: " + error.getMessage(), error);
                         errorLiveData.setValue(error.getMessage());
@@ -70,6 +73,7 @@ public class HistoryViewModel extends ViewModel {
                 .collection(Constants.COLLECTION_REWARDS)
                 .orderBy("createdAt", Query.Direction.DESCENDING)
                 .addSnapshotListener((value, error) -> {
+                    loadingLiveData.setValue(false);
                     if (error != null) {
                         Log.e(TAG, "reward listener error: " + error.getMessage(), error);
                         errorLiveData.setValue(error.getMessage());

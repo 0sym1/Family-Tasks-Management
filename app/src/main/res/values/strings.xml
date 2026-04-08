@@ -165,6 +165,8 @@
     <string name="sample_task">Đã nhận +5 điểm</string>
     <string name="sample_reason">Lý do: Đúng hạn</string>
     <string name="feature_updating">Tính năng đang được cập nhật</string>
+    <string name="loading">Đang tải...</string>
+    <string name="unknown">Không xác định</string>
 
     <!-- Chatbot -->
     <string name="empty_chatbot_history">Hãy bắt đầu đoạn chat đầu tiên của bạn</string>

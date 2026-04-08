@@ -9,6 +9,7 @@ import com.tngoc.familytaskapp.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class NotificationRepository {
 
@@ -25,7 +26,7 @@ public class NotificationRepository {
                 .add(notification);
     }
 
-    public ListenerRegistration getNotificationsRealtime(String userId, MutableLiveData<List<Notification>> notificationsLiveData) {
+    public ListenerRegistration getNotificationsRealtime(String userId, Consumer<List<Notification>> callback) {
         return db.collection(Constants.COLLECTION_USERS)
                 .document(userId)
                 .collection(Constants.COLLECTION_NOTIFICATIONS)
@@ -44,32 +45,44 @@ public class NotificationRepository {
                             if (o1.getCreatedAt() == null || o2.getCreatedAt() == null) return 0;
                             return o2.getCreatedAt().compareTo(o1.getCreatedAt());
                         });
-                        notificationsLiveData.setValue(list);
+                        if (callback != null) callback.accept(list);
                     }
                 });
     }
 
-    public void deleteNotification(String userId, String notificationId, MutableLiveData<Boolean> successLiveData) {
+    public ListenerRegistration getNotificationsRealtime(String userId, MutableLiveData<List<Notification>> notificationsLiveData) {
+        return getNotificationsRealtime(userId, notificationsLiveData != null ? notificationsLiveData::setValue : null);
+    }
+
+    public void deleteNotification(String userId, String notificationId, Consumer<Boolean> callback) {
         db.collection(Constants.COLLECTION_USERS)
                 .document(userId)
                 .collection(Constants.COLLECTION_NOTIFICATIONS)
                 .document(notificationId)
                 .delete()
                 .addOnSuccessListener(unused -> {
-                    if (successLiveData != null) successLiveData.setValue(true);
+                    if (callback != null) callback.accept(true);
                 });
     }
 
-    public void getUnreadCountRealtime(String userId, MutableLiveData<Integer> unreadCountLiveData) {
+    public void deleteNotification(String userId, String notificationId, MutableLiveData<Boolean> successLiveData) {
+        deleteNotification(userId, notificationId, successLiveData != null ? successLiveData::setValue : null);
+    }
+
+    public void getUnreadCountRealtime(String userId, Consumer<Integer> callback) {
         db.collection(Constants.COLLECTION_USERS)
                 .document(userId)
                 .collection(Constants.COLLECTION_NOTIFICATIONS)
                 .whereEqualTo("isRead", false)
                 .addSnapshotListener((snapshots, e) -> {
-                    if (snapshots != null) {
-                        unreadCountLiveData.setValue(snapshots.size());
+                    if (snapshots != null && callback != null) {
+                        callback.accept(snapshots.size());
                     }
                 });
+    }
+
+    public void getUnreadCountRealtime(String userId, MutableLiveData<Integer> unreadCountLiveData) {
+        getUnreadCountRealtime(userId, unreadCountLiveData != null ? unreadCountLiveData::setValue : null);
     }
 
     public void markAllAsRead(String userId) {

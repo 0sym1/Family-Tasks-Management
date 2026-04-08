@@ -23,6 +23,7 @@ public class RankingViewModel extends ViewModel {
     private final FirebaseFirestore db;
     public final MutableLiveData<List<User>> rankingLiveData = new MutableLiveData<>();
     public final MutableLiveData<String> errorLiveData = new MutableLiveData<>();
+    public final MutableLiveData<Boolean> loadingLiveData = new MutableLiveData<>();
 
     public RankingViewModel() {
         this.db = FirebaseFirestore.getInstance();
@@ -33,6 +34,8 @@ public class RankingViewModel extends ViewModel {
             errorLiveData.setValue("Workspace ID không hợp lệ");
             return;
         }
+
+        loadingLiveData.setValue(true);
 
         // 1. Lấy thông tin workspace để biết danh sách thành viên (memberIds)
         db.collection(Constants.COLLECTION_WORKSPACES).document(workspaceId)
@@ -48,14 +51,17 @@ public class RankingViewModel extends ViewModel {
                             loadRewardsAndMembers(workspaceId, rawMemberIds);
                         } else {
                             rankingLiveData.setValue(new ArrayList<>());
+                            loadingLiveData.setValue(false);
                         }
                     } else {
                         rankingLiveData.setValue(new ArrayList<>());
+                        loadingLiveData.setValue(false);
                     }
                 })
                 .addOnFailureListener(e -> {
                     Log.e("RankingViewModel", "Error loading workspace", e);
                     errorLiveData.setValue(e.getMessage());
+                    loadingLiveData.setValue(false);
                 });
     }
 
@@ -80,13 +86,12 @@ public class RankingViewModel extends ViewModel {
                 .addOnFailureListener(e -> {
                     Log.e("RankingViewModel", "Error loading rewards", e);
                     errorLiveData.setValue(e.getMessage());
+                    loadingLiveData.setValue(false);
                 });
     }
 
     private void fetchMemberDetails(List<String> memberIds, Map<String, Integer> userPointsMap) {
         // 3. Lấy thông tin chi tiết của TẤT CẢ thành viên
-        // Sử dụng FieldPath.documentId() để query theo danh sách ID tài liệu
-        // Lưu ý: whereIn giới hạn tối đa 10 IDs. Nếu nhóm > 10 người cần xử lý phân đoạn (cho đơn giản ta xử lý 10 đầu tiên)
         List<String> limitedIds = memberIds.size() > 10 ? memberIds.subList(0, 10) : memberIds;
 
         db.collection(Constants.COLLECTION_USERS)
@@ -112,10 +117,12 @@ public class RankingViewModel extends ViewModel {
                     // 4. Sắp xếp theo điểm giảm dần
                     Collections.sort(rankingList, (u1, u2) -> Integer.compare(u2.getPoints(), u1.getPoints()));
                     rankingLiveData.setValue(rankingList);
+                    loadingLiveData.setValue(false);
                 })
                 .addOnFailureListener(e -> {
                     Log.e("RankingViewModel", "Error fetching member details", e);
                     errorLiveData.setValue(e.getMessage());
+                    loadingLiveData.setValue(false);
                 });
     }
 }

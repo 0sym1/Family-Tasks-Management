@@ -19,6 +19,7 @@ public class NotificationViewModel extends ViewModel {
     public final MutableLiveData<List<Notification>> notificationsLiveData = new MutableLiveData<>();
     public final MutableLiveData<String>             errorLiveData         = new MutableLiveData<>();
     public final MutableLiveData<Boolean>            acceptSuccessLiveData = new MutableLiveData<>();
+    public final MutableLiveData<Boolean>            loadingLiveData       = new MutableLiveData<>();
 
     public NotificationViewModel() {
         this.notificationRepository = new NotificationRepository();
@@ -26,7 +27,11 @@ public class NotificationViewModel extends ViewModel {
     }
 
     public void loadNotifications(String userId) {
-        notificationRepository.getNotificationsRealtime(userId, notificationsLiveData);
+        loadingLiveData.setValue(true);
+        notificationRepository.getNotificationsRealtime(userId, notifications -> {
+            notificationsLiveData.setValue(notifications);
+            loadingLiveData.setValue(false);
+        });
     }
 
     public void markAsRead(String userId, String notificationId) {
@@ -38,7 +43,14 @@ public class NotificationViewModel extends ViewModel {
     }
 
     public void acceptInvitation(String userId, Notification notification) {
-        workspaceRepository.addMemberToWorkspace(notification.getWorkspaceId(), userId, acceptSuccessLiveData, errorLiveData);
+        loadingLiveData.setValue(true);
+        workspaceRepository.addMemberToWorkspace(notification.getWorkspaceId(), userId, success -> {
+            acceptSuccessLiveData.setValue(success);
+            loadingLiveData.setValue(false);
+        }, error -> {
+            errorLiveData.setValue(error);
+            loadingLiveData.setValue(false);
+        });
         updateNotificationType(userId, notification.getNotificationId(), "invitation_accepted");
     }
 

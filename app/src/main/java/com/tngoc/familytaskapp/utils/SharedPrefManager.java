@@ -27,8 +27,15 @@ public class SharedPrefManager {
         return prefs.getString(Constants.PREF_LANGUAGE, "vi");
     }
 
+    public void saveUserAvatar(String userId, String avatarUri) {
+        prefs.edit().putString("avatar_" + userId, avatarUri).apply();
+    }
+
+    public String getUserAvatar(String userId) {
+        return prefs.getString("avatar_" + userId, null);
+    }
+
     public void clear() {
         prefs.edit().clear().apply();
     }
 }
-

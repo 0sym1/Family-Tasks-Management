@@ -13,15 +13,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tngoc.familytaskapp.R;
+import com.tngoc.familytaskapp.ui.BaseFragment;
 
-public class HistoryFragment extends Fragment {
+public class HistoryFragment extends BaseFragment {
 
     private HistoryViewModel historyViewModel;
     private RecyclerView recyclerView;
@@ -86,6 +86,8 @@ public class HistoryFragment extends Fragment {
                 Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
             }
         });
+
+        historyViewModel.loadingLiveData.observe(getViewLifecycleOwner(), this::showLoading);
 
         historyViewModel.loadAllData(workspaceId);
     }
