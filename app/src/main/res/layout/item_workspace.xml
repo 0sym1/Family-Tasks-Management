@@ -86,7 +86,7 @@
                 android:id="@+id/tvTaskCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0/0 task"
+                android:text="0/0"
                 android:textColor="#AAAAAA"
                 android:textSize="12sp" />
         </LinearLayout>

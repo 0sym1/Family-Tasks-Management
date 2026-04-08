@@ -312,7 +312,7 @@ public class HomeActivity extends BaseActivity {
         
         int total = workspace.getTotalTasks();
         int completed = workspace.getCompletedTasks();
-        ((TextView) workspaceView.findViewById(R.id.tvTaskCount)).setText(completed + "/" + total + " task");
+        ((TextView) workspaceView.findViewById(R.id.tvTaskCount)).setText(getString(R.string.task_count_format, completed, total));
         
         ProgressBar pb = workspaceView.findViewById(R.id.pbWorkspace);
         if (total > 0) pb.setProgress((int) (((float) completed / total) * 100));

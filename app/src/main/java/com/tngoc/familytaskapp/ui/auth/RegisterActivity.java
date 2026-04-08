@@ -10,14 +10,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.tngoc.familytaskapp.R;
+import com.tngoc.familytaskapp.ui.BaseActivity;
 import com.tngoc.familytaskapp.ui.home.HomeActivity;
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends BaseActivity {
 
     private AuthViewModel authViewModel;
     private EditText etName, etEmail, etUsername, etPassword, etConfirmPassword;

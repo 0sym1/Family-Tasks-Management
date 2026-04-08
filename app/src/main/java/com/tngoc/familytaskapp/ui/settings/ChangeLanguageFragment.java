@@ -56,6 +56,8 @@ public class ChangeLanguageFragment extends Fragment {
         View btnVi = view.findViewById(R.id.btnLangVi);
         View btnEn = view.findViewById(R.id.btnLangEn);
         View btnFr = view.findViewById(R.id.btnLangFr);
+        View btnZh = view.findViewById(R.id.btnLangZh);
+        View btnKo = view.findViewById(R.id.btnLangKo);
 
         if (btnVi != null) {
             btnVi.setOnClickListener(v -> {
@@ -74,6 +76,20 @@ public class ChangeLanguageFragment extends Fragment {
         if (btnFr != null) {
             btnFr.setOnClickListener(v -> {
                 selectedLanguage = "fr";
+                updateUI(view);
+            });
+        }
+
+        if (btnZh != null) {
+            btnZh.setOnClickListener(v -> {
+                selectedLanguage = "zh";
+                updateUI(view);
+            });
+        }
+
+        if (btnKo != null) {
+            btnKo.setOnClickListener(v -> {
+                selectedLanguage = "ko";
                 updateUI(view);
             });
         }
@@ -135,6 +151,8 @@ public class ChangeLanguageFragment extends Fragment {
         updateRowUI(root, "vi", activeColor, inactiveColor);
         updateRowUI(root, "en", activeColor, inactiveColor);
         updateRowUI(root, "fr", activeColor, inactiveColor);
+        updateRowUI(root, "zh", activeColor, inactiveColor);
+        updateRowUI(root, "ko", activeColor, inactiveColor);
     }
 
     private void updateRowUI(View root, String langCode, int activeColor, int inactiveColor) {
@@ -160,18 +178,24 @@ public class ChangeLanguageFragment extends Fragment {
     private int getRadioButtonId(String langCode) {
         if ("vi".equals(langCode)) return R.id.rbVi;
         if ("en".equals(langCode)) return R.id.rbEn;
-        return R.id.rbFr;
+        if ("fr".equals(langCode)) return R.id.rbFr;
+        if ("zh".equals(langCode)) return R.id.rbZh;
+        return R.id.rbKo;
     }
 
     private int getTextViewId(String langCode) {
         if ("vi".equals(langCode)) return R.id.tvVi;
         if ("en".equals(langCode)) return R.id.tvEn;
-        return R.id.tvFr;
+        if ("fr".equals(langCode)) return R.id.tvFr;
+        if ("zh".equals(langCode)) return R.id.tvZh;
+        return R.id.tvKo;
     }
     
     private int getCheckIconId(String langCode) {
         if ("vi".equals(langCode)) return R.id.ivCheckVi;
         if ("en".equals(langCode)) return R.id.ivCheckEn;
-        return R.id.ivCheckFr;
+        if ("fr".equals(langCode)) return R.id.ivCheckFr;
+        if ("zh".equals(langCode)) return R.id.ivCheckZh;
+        return R.id.ivCheckKo;
     }
 }

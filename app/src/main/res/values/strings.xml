@@ -147,6 +147,8 @@
     <string name="lang_vietnamese">Tiếng Việt</string>
     <string name="lang_english">English</string>
     <string name="lang_french">Français</string>
+    <string name="lang_chinese">中文</string>
+    <string name="lang_korean">한국어</string>
 
     <!-- Others -->
     <string name="home">Trang chủ</string>

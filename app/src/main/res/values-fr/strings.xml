@@ -18,13 +18,16 @@
     <!-- Register -->
     <string name="title_register">S\'inscrire</string>
     <string name="label_name">Nom</string>
+    <string name="label_email">E-mail</string>
     <string name="label_confirm_password">Confirmer\nle mot de passe</string>
     <string name="hint_name">Entrez votre nom</string>
+    <string name="hint_email">Entrez votre e-mail</string>
     <string name="hint_confirm_password">Ressaisir le mot de passe</string>
 
     <!-- Errors -->
     <string name="error_empty_fields">Veuillez remplir tous les champs</string>
     <string name="error_password_mismatch">Les mots de passe ne correspondent pas</string>
+    <string name="error_invalid_username">Nom d\'utilisateur invalide</string>
     <string name="error_fill_new_password">Veuillez remplir les hai champs de nouveau mot de passe</string>
 
     <!-- Home -->
@@ -144,6 +147,8 @@
     <string name="lang_vietnamese">Vietnamien</string>
     <string name="lang_english">Anglais</string>
     <string name="lang_french">Français</string>
+    <string name="lang_chinese">Chinois</string>
+    <string name="lang_korean">Coréen</string>
 
     <!-- Others -->
     <string name="home">Accueil</string>
@@ -162,6 +167,7 @@
     <string name="sample_task">Reçu +5 points</string>
     <string name="sample_reason">Raison : À l\'heure</string>
     <string name="feature_updating">Fonctionnalité en cours de mise à jour</string>
+    <string name="loading">Chargement...</string>
     <string name="unknown">Inconnu</string>
 
     <!-- Chatbot -->

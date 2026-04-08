@@ -63,7 +63,7 @@
                         android:id="@+id/tvCurrentLanguage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tiếng Việt"
+                        android:text="@string/lang_vietnamese"
                         android:textColor="@color/white"
                         android:textSize="13sp"
                         android:layout_marginEnd="4dp" />

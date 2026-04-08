@@ -159,11 +159,17 @@ public class ProfileFragment extends BaseFragment {
         String langCode = sharedPrefManager.getLanguage();
         if (tvCurrentLanguage != null) {
             if ("vi".equals(langCode)) {
-                tvCurrentLanguage.setText("Tiếng Việt");
+                tvCurrentLanguage.setText(getString(R.string.lang_vietnamese));
             } else if ("en".equals(langCode)) {
-                tvCurrentLanguage.setText("English");
+                tvCurrentLanguage.setText(getString(R.string.lang_english));
             } else if ("fr".equals(langCode)) {
-                tvCurrentLanguage.setText("Français");
+                tvCurrentLanguage.setText(getString(R.string.lang_french));
+            } else if ("zh".equals(langCode)) {
+                tvCurrentLanguage.setText(getString(R.string.lang_chinese));
+            } else if ("ko".equals(langCode)) {
+                tvCurrentLanguage.setText(getString(R.string.lang_korean));
+            } else {
+                tvCurrentLanguage.setText(getString(R.string.lang_vietnamese));
             }
         }
     }
