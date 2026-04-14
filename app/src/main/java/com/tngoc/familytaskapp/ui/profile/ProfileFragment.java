@@ -168,6 +168,8 @@ public class ProfileFragment extends BaseFragment {
                 tvCurrentLanguage.setText(getString(R.string.lang_chinese));
             } else if ("ko".equals(langCode)) {
                 tvCurrentLanguage.setText(getString(R.string.lang_korean));
+            } else if ("ru".equals(langCode)) {
+                tvCurrentLanguage.setText(getString(R.string.lang_russian));
             } else {
                 tvCurrentLanguage.setText(getString(R.string.lang_vietnamese));
             }

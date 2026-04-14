@@ -58,6 +58,7 @@ public class ChangeLanguageFragment extends Fragment {
         View btnFr = view.findViewById(R.id.btnLangFr);
         View btnZh = view.findViewById(R.id.btnLangZh);
         View btnKo = view.findViewById(R.id.btnLangKo);
+        View btnRu = view.findViewById(R.id.btnLangRu);
 
         if (btnVi != null) {
             btnVi.setOnClickListener(v -> {
@@ -90,6 +91,13 @@ public class ChangeLanguageFragment extends Fragment {
         if (btnKo != null) {
             btnKo.setOnClickListener(v -> {
                 selectedLanguage = "ko";
+                updateUI(view);
+            });
+        }
+
+        if (btnRu != null) {
+            btnRu.setOnClickListener(v -> {
+                selectedLanguage = "ru";
                 updateUI(view);
             });
         }
@@ -153,6 +161,7 @@ public class ChangeLanguageFragment extends Fragment {
         updateRowUI(root, "fr", activeColor, inactiveColor);
         updateRowUI(root, "zh", activeColor, inactiveColor);
         updateRowUI(root, "ko", activeColor, inactiveColor);
+        updateRowUI(root, "ru", activeColor, inactiveColor);
     }
 
     private void updateRowUI(View root, String langCode, int activeColor, int inactiveColor) {
@@ -180,7 +189,8 @@ public class ChangeLanguageFragment extends Fragment {
         if ("en".equals(langCode)) return R.id.rbEn;
         if ("fr".equals(langCode)) return R.id.rbFr;
         if ("zh".equals(langCode)) return R.id.rbZh;
-        return R.id.rbKo;
+        if ("ko".equals(langCode)) return R.id.rbKo;
+        return R.id.rbRu;
     }
 
     private int getTextViewId(String langCode) {
@@ -188,7 +198,8 @@ public class ChangeLanguageFragment extends Fragment {
         if ("en".equals(langCode)) return R.id.tvEn;
         if ("fr".equals(langCode)) return R.id.tvFr;
         if ("zh".equals(langCode)) return R.id.tvZh;
-        return R.id.tvKo;
+        if ("ko".equals(langCode)) return R.id.tvKo;
+        return R.id.tvRu;
     }
     
     private int getCheckIconId(String langCode) {
@@ -196,6 +207,7 @@ public class ChangeLanguageFragment extends Fragment {
         if ("en".equals(langCode)) return R.id.ivCheckEn;
         if ("fr".equals(langCode)) return R.id.ivCheckFr;
         if ("zh".equals(langCode)) return R.id.ivCheckZh;
-        return R.id.ivCheckKo;
+        if ("ko".equals(langCode)) return R.id.ivCheckKo;
+        return R.id.ivCheckRu;
     }
 }

@@ -149,6 +149,7 @@
     <string name="lang_french">프랑스어</string>
     <string name="lang_chinese">중국어</string>
     <string name="lang_korean">한국어</string>
+    <string name="lang_russian">러시아어</string>
 
     <!-- Others -->
     <string name="home">홈</string>
@@ -252,5 +253,7 @@
     <string name="notif_msg_task_review">멤버가 작업을 제출했습니다: %s</string>
     <string name="notif_msg_task_almost_overdue">작업 \'%s\' 이 곧 기한 초과됩니다. 빨리 완료해 주세요!</string>
 </resources>
+
+
 
 

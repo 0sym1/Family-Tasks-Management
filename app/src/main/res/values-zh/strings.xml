@@ -149,6 +149,7 @@
     <string name="lang_french">法语</string>
     <string name="lang_chinese">中文</string>
     <string name="lang_korean">韩语</string>
+    <string name="lang_russian">俄语</string>
 
     <!-- Others -->
     <string name="home">首页</string>
@@ -252,5 +253,7 @@
     <string name="notif_msg_task_review">成员已提交任务：%s</string>
     <string name="notif_msg_task_almost_overdue">任务“%s”即将逾期，请尽快完成！</string>
 </resources>
+
+
 
 

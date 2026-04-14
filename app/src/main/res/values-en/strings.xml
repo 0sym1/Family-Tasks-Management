@@ -149,6 +149,7 @@
     <string name="lang_french">French</string>
     <string name="lang_chinese">Chinese</string>
     <string name="lang_korean">Korean</string>
+    <string name="lang_russian">Russian</string>
 
     <!-- Others -->
     <string name="home">Home</string>

@@ -1,0 +1,261 @@
+<resources>
+    <string name="app_name">Семейные задачи</string>
+
+    <!-- Welcome -->
+    <string name="app_title">Управление
+Семейными
+Задачами</string>
+    <string name="btn_login">Войти</string>
+    <string name="btn_register">Регистрация</string>
+    <string name="btn_cancel">Отмена</string>
+    <string name="or">или</string>
+
+    <!-- Login -->
+    <string name="title_login">Вход</string>
+    <string name="label_username">Имя пользователя</string>
+    <string name="label_password">Пароль</string>
+    <string name="hint_username">Введите имя пользователя</string>
+    <string name="hint_password">Введите пароль</string>
+
+    <!-- Register -->
+    <string name="title_register">Регистрация</string>
+    <string name="label_name">Полное имя</string>
+    <string name="label_email">Эл. почта</string>
+    <string name="label_confirm_password">Подтвердите
+пароль</string>
+    <string name="hint_name">Введите ваше имя</string>
+    <string name="hint_email">Введите вашу эл. почту</string>
+    <string name="hint_confirm_password">Повторите пароль</string>
+
+    <!-- Errors -->
+    <string name="error_empty_fields">Пожалуйста, заполните все поля</string>
+    <string name="error_password_mismatch">Пароли не совпадают</string>
+    <string name="error_invalid_username">Неверное имя пользователя</string>
+    <string name="error_fill_new_password">Пожалуйста, заполните оба поля нового пароля</string>
+
+    <!-- Home -->
+    <string name="home_title">Главная</string>
+    <string name="home_welcome">Привет, %s</string>
+    <string name="home_workspace_description">Это рабочие пространства, которыми вы управляете</string>
+    <string name="hint_search_workspace">Поиск рабочего пространства...</string>
+    <string name="btn_delete">Удалить</string>
+    <string name="access">Открыть</string>
+    <string name="workspace_name_demo">Склад</string>
+    <string name="label_workspace_name">Название workspace</string>
+    <string name="hint_enter_workspace_name">Введите название workspace...</string>
+    <string name="btn_add">Добавить</string>
+
+    <!-- Workspace -->
+    <string name="workspaces">Главная</string>
+    <string name="workspace_detail">Детали</string>
+    <string name="create_workspace">Создать workspace</string>
+    <string name="invite_member">Пригласить участника</string>
+    <string name="workspace_created">Рабочее пространство успешно создано!</string>
+    <string name="ranking">Рейтинг</string>
+    <string name="member_list">Список участников</string>
+    <string name="filter">Фильтр</string>
+    <string name="search_task_hint">Введите название задачи...</string>
+    <string name="label_name_simple">Название</string>
+    <string name="label_description_simple">Описание</string>
+    <string name="hint_enter_workspace_description">Введите описание (необязательно)</string>
+    <string name="hint_search_member">Поиск участника...</string>
+    <string name="member_count_format">%d участников</string>
+    <string name="created_by_format">Создано: %s</string>
+    <string name="task_count_format">%1$d/%2$d задач</string>
+    <string name="label_me">Я</string>
+
+    <!-- Task -->
+    <string name="tasks">Задачи</string>
+    <string name="my_tasks">Мои задачи</string>
+    <string name="task_detail">Детали задачи</string>
+    <string name="create_task">Добавить задачу</string>
+    <string name="edit_task">Редактировать задачу</string>
+    <string name="task_created">Задача успешно создана!</string>
+    <string name="task_completed">Задача завершена!</string>
+    <string name="label_task_name">Название задачи</string>
+    <string name="hint_task_name">Введите здесь...</string>
+    <string name="label_task_description">Описание</string>
+    <string name="hint_task_description">Введите подробное описание...</string>
+    <string name="label_status">Статус</string>
+    <string name="label_start_date">Дата начала</string>
+    <string name="label_end_date">Срок</string>
+    <string name="label_end_time">Время окончания</string>
+    <string name="label_repeat">Повтор</string>
+    <string name="label_created_by">Создал</string>
+    <string name="label_assigned_to">Назначено</string>
+    <string name="status_doing">В ПРОЦЕССЕ</string>
+    <string name="status_done">ГОТОВО</string>
+    <string name="status_todo">НЕ НАЧАТО</string>
+    <string name="status_review">ПРОВЕРКА</string>
+    <string name="status_pending">ОЖИДАЕТ</string>
+    <string name="status_overdue">ПРОСРОЧЕНО</string>
+    <string name="btn_save">Сохранить</string>
+    <string name="btn_apply">Применить</string>
+    <string name="hint_date_format">dd/mm/yyyy</string>
+    <string name="hint_time_format">hh:mm</string>
+    <string name="repeat_on">Вкл</string>
+    <string name="repeat_off">Выкл</string>
+    <string name="repeat_daily">Ежедневно</string>
+    <string name="repeat_weekly">Еженедельно</string>
+    <string name="label_select_days">Выберите дни</string>
+    <string name="label_end_repeat">Окончание повтора</string>
+    <string name="repeat_never">Никогда</string>
+    <string name="repeat_after">После</string>
+    <string name="repeat_times">раз</string>
+    <string name="repeat_after_date">После даты</string>
+    <string name="btn_confirm">Подтвердить</string>
+    <string name="task_deadline_label">Срок: %s</string>
+    <string name="task_deadline_prefix">Срок:</string>
+    <string name="task_repeat_finish">Окончание: %s</string>
+    <string name="hint_assigned_to">Выберите исполнителя...</string>
+    <string name="error_select_assignee">Пожалуйста, выберите исполнителя</string>
+    <string name="delete_task_title">Удалить задачу</string>
+    <string name="delete_task_confirm">Вы уверены, что хотите удалить эту задачу?</string>
+    <string name="task_deleted">Задача удалена</string>
+    <string name="invitation_sent_to">Приглашение отправлено: %s</string>
+    <string name="email_not_registered">Этот email не зарегистрирован</string>
+    <string name="enter_email_hint">Пожалуйста, введите email</string>
+    <string name="invitation_msg">Вас пригласили в рабочее пространство %s</string>
+    <string name="work_report">Отчет по работе</string>
+
+    <!-- Invite Dialog -->
+    <string name="dialog_invite_title">Введите пользователя, которого хотите пригласить</string>
+    <string name="hint_enter_email">Введите email...</string>
+    <string name="btn_send_invite">Пригласить</string>
+
+    <!-- Edit Repeat -->
+    <string name="edit_repeat_title">Изменить повтор</string>
+    <string name="repeat_label">Повтор</string>
+    <string name="daily">Ежедневно</string>
+    <string name="weekly">Еженедельно</string>
+    <string name="choose_days_label">Выбрать дни</string>
+    <string name="end_repeat_label">Окончание повтора</string>
+    <string name="never">Никогда</string>
+    <string name="after">После</string>
+    <string name="times">раз</string>
+    <string name="after_date">После даты</string>
+    <string name="date_placeholder">dd/mm/yyyy</string>
+    <string name="mon">Пн</string>
+    <string name="tue">Вт</string>
+    <string name="wed">Ср</string>
+    <string name="thu">Чт</string>
+    <string name="fri">Пт</string>
+    <string name="sat">Сб</string>
+    <string name="sun">Вс</string>
+    <string name="confirm">Подтвердить</string>
+    <string name="cancel">Отмена</string>
+
+    <!-- Change Language -->
+    <string name="select_language_title">Выберите язык</string>
+    <string name="lang_vietnamese">Вьетнамский</string>
+    <string name="lang_english">Английский</string>
+    <string name="lang_french">Французский</string>
+    <string name="lang_chinese">Китайский</string>
+    <string name="lang_korean">Корейский</string>
+    <string name="lang_russian">Русский</string>
+
+    <!-- Others -->
+    <string name="home">Главная</string>
+    <string name="notifications">Уведомления</string>
+    <string name="empty_notifications">Уведомлений нет</string>
+    <string name="rewards">Награды</string>
+    <string name="history">История</string>
+    <string name="chatbot">AI помощник</string>
+    <string name="settings">Настройки</string>
+    <string name="profile">Профиль</string>
+    <string name="invitation_sent">Приглашение отправлено!</string>
+    <string name="history_title">История работы</string>
+    <string name="tab_all">Все</string>
+    <string name="tab_task">Задачи</string>
+    <string name="tab_point">Баллы</string>
+    <string name="sample_task">Получено +5 баллов</string>
+    <string name="sample_reason">Причина: вовремя</string>
+    <string name="feature_updating">Функция обновляется</string>
+    <string name="loading">Загрузка...</string>
+    <string name="unknown">Неизвестно</string>
+
+    <!-- Chatbot -->
+    <string name="empty_chatbot_history">Начните первый чат</string>
+    <string name="hint_chatbot_input">Напишите что-нибудь ...</string>
+    <string name="btn_send">Отправить</string>
+
+    <!-- Work Report -->
+    <string name="content_desc_back">Назад</string>
+    <string name="title_work_report">Отчет по работе</string>
+    <string name="weekly_tasks">Задачи за неделю</string>
+    <string name="monthly_tasks">Задачи за месяц</string>
+    <string name="work_time">Рабочее время</string>
+    <string name="completion_progress">Прогресс выполнения</string>
+    <string name="tasks_by_week">Задачи по неделям</string>
+    <string name="actual_efficiency">Фактическая эффективность</string>
+    <string name="work_report_loading_data">Загрузка данных...</string>
+    <string name="work_report_workspace_other">Другое</string>
+    <string name="work_report_no_completed_tasks_10_days">Нет завершенных задач за последние 10 дней</string>
+    <string name="work_report_duration_hours_minutes">%1$dч %2$dм</string>
+    <string name="work_report_duration_minutes">%1$dм</string>
+    <string name="work_report_center_total_time">ОБЩЕЕ ВРЕМЯ
+%1$s</string>
+    <string name="work_report_completed_tasks">Завершенные задачи</string>
+    <string name="work_report_planned">План</string>
+    <string name="work_report_actual">Факт</string>
+
+    <!-- Profile -->
+    <string name="profile_title">Профиль</string>
+    <string name="profile_avatar">Аватар</string>
+    <string name="profile_edit_avatar">Изменить аватар</string>
+    <string name="profile_points">Баллы: %d</string>
+    <string name="profile_points_default">Баллы: 0</string>
+    <string name="profile_change_password">Сменить пароль?</string>
+    <string name="profile_old_password">Введите текущий пароль</string>
+    <string name="profile_new_password">Введите новый пароль</string>
+    <string name="profile_confirm_password">Подтвердите новый пароль</string>
+    <string name="profile_language">Язык</string>
+    <string name="profile_save">Сохранить</string>
+    <string name="profile_save_success">Данные успешно сохранены!</string>
+    <string name="profile_logout">Выйти</string>
+    <string name="btn_logout">Выйти</string>
+    <string name="avatar_update_success">Аватар успешно обновлен!</string>
+
+    <!-- Reward -->
+    <string name="reward_points">Баллы: %d</string>
+    <string name="reward_history">История наград</string>
+    <string name="overdue_penalty">Штраф за просрочку: %s</string>
+
+    <!-- History Dynamic Text -->
+    <string name="history_today">Сегодня</string>
+    <string name="history_yesterday">Вчера</string>
+    <string name="history_created_task"> создал(а) задачу</string>
+    <string name="history_overdue_task"> просрочил(а) задачу</string>
+    <string name="history_done_task"> завершил(а) задачу</string>
+    <string name="history_pending_task"> отправил(а) задачу</string>
+    <string name="history_in_progress_task"> начал(а) задачу</string>
+    <string name="history_updated_task"> обновил(а) задачу</string>
+    <string name="history_label_task">Задача: %s</string>
+    <string name="history_label_variation">Изменение: %s</string>
+    <string name="history_done_task_reward">Задача завершена</string>
+    <string name="history_overdue_task_reward">Задача просрочена</string>
+    <string name="history_done_task_late_reward">Задача завершена (с опозданием)</string>
+
+    <!-- Notification Action Buttons -->
+    <string name="btn_accept">Принять</string>
+    <string name="btn_decline">Отклонить</string>
+    <string name="notification_placeholder">Содержимое уведомления</string>
+
+    <!-- Placeholders and Misc -->
+    <string name="history_placeholder_title">Заголовок</string>
+    <string name="history_placeholder_detail">Детали</string>
+    <string name="placeholder_time">13:22</string>
+
+    <!-- New Notification Strings -->
+    <string name="notif_title_new_task">Новая задача</string>
+    <string name="notif_msg_new_task">Вам назначена новая задача: %s</string>
+    <string name="notif_title_task_done">Задача выполнена</string>
+    <string name="notif_msg_task_done">Задача "%1$s" одобрена. Вы получили %2$d баллов.</string>
+    <string name="notif_title_task_overdue">Просроченная задача</string>
+    <string name="notif_msg_task_overdue">Задача "%1$s" просрочена. С вас списано %2$d баллов.</string>
+    <string name="notif_title_task_review">Запрос на проверку задачи</string>
+    <string name="notif_msg_task_review">Участник отправил задачу: %s</string>
+    <string name="notif_msg_task_almost_overdue">Задача "%s" скоро будет просрочена. Завершите ее как можно скорее!</string>
+</resources>
+
+

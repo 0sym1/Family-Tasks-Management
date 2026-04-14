@@ -16,6 +16,7 @@ public class LocaleHelper {
     }
 
     public static Context setLocale(Context context, String language) {
+        language = normalizeLanguage(language);
         persist(context, language);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return updateResources(context, language);
@@ -24,7 +25,15 @@ public class LocaleHelper {
     }
 
     public static String getSavedLanguage(Context context, String defaultLanguage) {
-        return getPersistedData(context, defaultLanguage);
+        return normalizeLanguage(getPersistedData(context, defaultLanguage));
+    }
+
+    private static String normalizeLanguage(String language) {
+        if ("vi".equals(language) || "en".equals(language) || "fr".equals(language)
+                || "zh".equals(language) || "ko".equals(language) || "ru".equals(language)) {
+            return language;
+        }
+        return "vi";
     }
 
     private static String getPersistedData(Context context, String defaultLanguage) {
@@ -45,7 +54,7 @@ public class LocaleHelper {
 
         Configuration configuration = context.getResources().getConfiguration();
         configuration.setLocale(locale);
-        configuration.setLayoutDirection(locale);
+        configuration.setLayoutDirection(Locale.ENGLISH);
 
         return context.createConfigurationContext(configuration);
     }
@@ -58,7 +67,7 @@ public class LocaleHelper {
         Configuration configuration = resources.getConfiguration();
         configuration.locale = locale;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            configuration.setLayoutDirection(locale);
+            configuration.setLayoutDirection(Locale.ENGLISH);
         }
 
         resources.updateConfiguration(configuration, resources.getDisplayMetrics());

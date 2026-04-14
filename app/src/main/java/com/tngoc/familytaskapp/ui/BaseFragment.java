@@ -17,6 +17,8 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        view.setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
         
         // Thêm hiệu ứng vào khi hiện Fragment
         Animation fadeIn = AnimationUtils.loadAnimation(requireContext(), R.anim.tab_enter);
